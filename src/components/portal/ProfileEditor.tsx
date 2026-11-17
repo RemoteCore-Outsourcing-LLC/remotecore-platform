@@ -99,6 +99,13 @@ export function ProfileEditor({ initial, categories, email, media, mediaDone }: 
         <p className="pedit__count"><b>{count} of {NAV.length}</b> sections complete</p>
         <div className="meter" aria-hidden="true"><i style={{ width: `${(count / NAV.length) * 100}%` }} /></div>
         <nav>{NAV.map(([k, label]) => <a key={k} href={`#${k}`} className={done[k] ? "is-done" : ""}>{label}</a>)}</nav>
+        {count === NAV.length && (
+          <div className="pdone" role="status">
+            <b>Your profile is complete</b>
+            <span>You are ready to apply.</span>
+            <a className="btn btn--main btn--sm" href="/portal/jobs">Browse jobs</a>
+          </div>
+        )}
       </aside>
 
       <div className="pedit__main">
