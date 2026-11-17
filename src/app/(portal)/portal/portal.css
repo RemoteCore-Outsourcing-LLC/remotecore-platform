@@ -111,3 +111,17 @@ a { color: var(--teal); text-underline-offset: 3px; }
   .psec__head, .psec__body, .psec__foot, .psec__intro { padding-left: 16px; padding-right: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { .btn, .meter i, .chip-check { transition: none; } }
+
+/* resume and voice */
+.media { grid-template-columns: 1fr 1fr; }
+.mbox { display: grid; gap: 10px; align-content: start; padding: 16px; border-radius: var(--r-sm); background: #FBFAFD; box-shadow: inset 0 0 0 1px var(--line); }
+.mbox h3 { font-size: 16px; font-weight: 700; }
+.mbox .soft { font-size: 14.5px; }
+.mfile a { font-weight: 600; word-break: break-all; }
+.mrow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.maudio { width: 100%; height: 40px; }
+.mrec { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--danger); font-variant-numeric: tabular-nums; }
+.mrec i { width: 10px; height: 10px; border-radius: 50%; background: var(--danger); animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: .2; } }
+@media (max-width: 760px) { .media { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .mrec i { animation: none; } }

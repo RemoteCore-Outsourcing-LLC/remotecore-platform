@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getSession } from "@/lib/supabase/server";
 import { ProfileEditor, type ProfileData } from "@/components/portal/ProfileEditor";
+import { MediaSection } from "@/components/portal/MediaSection";
 
 export const metadata: Metadata = { title: "My profile", robots: { index: false } };
 
@@ -41,13 +42,23 @@ export default async function ProfilePage() {
     certs: { qualifications: s(p.qualifications), items: (certs.data ?? []).map((x) => ({ name: s(x.name), issuer: s(x.issuer), year: s(x.year) })) },
     skills: { skills: (skills.data ?? []).map((x) => x.skill).join(", "), languages: (langs.data ?? []).map((l) => ({ language: s(l.language), level: cap(s(l.level)) })) },
   };
+  // Short lived links to the user's own private files (10 minutes).
+  const sign = async (bucket: string, path: unknown) => {
+    if (!path) return null;
+    const { data } = await sb.storage.from(bucket).createSignedUrl(String(path), 600);
+    return data?.signedUrl ?? null;
+  };
+  const [resumeUrl, audioUrl] = await Promise.all([sign("resumes", p.resume_path), sign("audio", p.audio_path)]);
+  const resume = resumeUrl ? { name: `Your resume (${String(p.resume_path).split(".").pop()?.toUpperCase()})`, url: resumeUrl } : null;
+  const audio = audioUrl ? { url: audioUrl } : null;
+
   return (
     <div className="pwrap">
       <header className="phead">
         <h1>My profile</h1>
         <p>Employers see this when you apply. Save each part as you go.</p>
       </header>
-      <ProfileEditor initial={initial} categories={(cats.data ?? []).map((x) => x.name)} email={s(profile.email)} />
+      <ProfileEditor media={<MediaSection userId={user.id} resume={resume} audio={audio} />} mediaDone={!!resume && !!audio} initial={initial} categories={(cats.data ?? []).map((x) => x.name)} email={s(profile.email)} />
     </div>
   );
 }

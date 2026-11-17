@@ -14,8 +14,8 @@ export type ProfileData = {
   skills: { skills: string; languages: Row[] };
 };
 
-const NAV: [SectionKey, string][] = [
-  ["about", "About you"], ["work_prefs", "Pay and availability"], ["computer", "Computer and internet"],
+const NAV: [SectionKey | "media", string][] = [
+  ["about", "About you"], ["media", "Resume and voice"], ["work_prefs", "Pay and availability"], ["computer", "Computer and internet"],
   ["work", "Work history"], ["education", "Education"], ["certs", "Qualifications"], ["skills", "Skills and languages"],
 ];
 
@@ -69,7 +69,7 @@ function ListEditor({ rows, setRows, blank, render, addLabel, err }: {
   );
 }
 
-export function ProfileEditor({ initial, categories, email }: { initial: ProfileData; categories: string[]; email: string }) {
+export function ProfileEditor({ initial, categories, email, media, mediaDone }: { initial: ProfileData; categories: string[]; email: string; media: ReactNode; mediaDone: boolean }) {
   const [about, setAbout] = useState(initial.about);
   const [prefs, setPrefs] = useState(initial.work_prefs);
   const [pc, setPc] = useState(initial.computer);
@@ -81,7 +81,8 @@ export function ProfileEditor({ initial, categories, email }: { initial: Profile
   const zones = useMemo(() => (typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["UTC"]), []);
   const dials = useMemo(() => Array.from(new Set(COUNTRIES.map((c) => c.dial))).sort((a, b) => Number(a.slice(1)) - Number(b.slice(1))), []);
 
-  const done: Record<SectionKey, boolean> = {
+  const done: Record<SectionKey | "media", boolean> = {
+    media: mediaDone,
     about: !!(initial.about.full_name && initial.about.phone && initial.about.country),
     work_prefs: !!(initial.work_prefs.expected_salary && initial.work_prefs.employment_types.length && initial.work_prefs.time_zone),
     computer: !!initial.computer.computer_type,
@@ -119,6 +120,8 @@ export function ProfileEditor({ initial, categories, email }: { initial: Profile
             <F label="Professional summary" wide><textarea rows={4} maxLength={2000} value={about.summary} onChange={(e) => setAbout({ ...about, summary: e.target.value })} /></F>
           </div>
         </Section>
+
+        {media}
 
         <Section id="work_prefs" title="Pay and availability" done={done.work_prefs} status={s.work_prefs.res} pending={s.work_prefs.pending} onSave={() => s.work_prefs.save(prefs)}>
           <div className="pgrid">
