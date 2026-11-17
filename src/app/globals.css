@@ -1,1 +1,4 @@
-/* Site styles live in /public/site.css for now. */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; font-family: "Geist", system-ui, sans-serif; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; }

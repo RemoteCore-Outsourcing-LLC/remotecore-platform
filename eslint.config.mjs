@@ -12,6 +12,11 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
+    // Public pages use plain links on purpose: each page load mounts the scroll engine fresh.
+    // Plain <img> is used for small local images that are already sized and compressed.
+    rules: { "@next/next/no-html-link-for-pages": "off", "@next/next/no-img-element": "off", "@next/next/no-css-tags": "off" },
+  },
+  {
     ignores: [
       "node_modules/**",
       ".next/**",
