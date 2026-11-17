@@ -6,8 +6,10 @@ export { esc };
 
 export const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://remotecoreoutsourcing.com";
 
-export function layout({ preview, heading, paragraphs, button, note }: {
-  preview: string; heading: string; paragraphs: string[]; button?: { label: string; href: string }; note?: string;
+const ACCOUNT_FOOTER = `You get this email because you have an account on <a href="${SITE}" style="color:#8A84A0">remotecoreoutsourcing.com</a>.`;
+
+export function layout({ preview, heading, paragraphs, button, note, footer }: {
+  preview: string; heading: string; paragraphs: string[]; button?: { label: string; href: string }; note?: string; footer?: string;
 }) {
   // paragraphs and note may hold simple trusted markup (<b>); every value from a user is escaped by the caller.
   const p = paragraphs.map((t) => `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#24104A">${t}</p>`).join("");
@@ -22,7 +24,7 @@ export function layout({ preview, heading, paragraphs, button, note }: {
 <tr><td style="background:#ffffff;border-radius:16px;padding:32px 28px;border:1px solid #E4E0EE">
 <h1 style="margin:0 0 18px;font-size:24px;line-height:1.25;color:#24104A">${heading}</h1>${p}${btn}${nt}
 </td></tr>
-<tr><td style="padding:18px 4px 0;font-size:12.5px;line-height:1.6;color:#8A84A0">RemoteCore Outsourcing LLC · 816 William S Canning Blvd #1036, Fall River, MA 02721, United States<br>You get this email because you have an account on <a href="${SITE}" style="color:#8A84A0">remotecoreoutsourcing.com</a>.</td></tr>
+<tr><td style="padding:18px 4px 0;font-size:12.5px;line-height:1.6;color:#8A84A0">RemoteCore Outsourcing LLC · 816 William S Canning Blvd #1036, Fall River, MA 02721, United States<br>${footer ?? ACCOUNT_FOOTER}</td></tr>
 </table></td></tr></table></body></html>`;
 }
 

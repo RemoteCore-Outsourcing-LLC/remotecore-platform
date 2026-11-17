@@ -111,3 +111,13 @@ export async function applyToJob(input: { jobId: string; note: string; documents
   revalidatePath("/portal", "layout");
   return { ok: true, appliedAt: app.created_at, ref: app.id.slice(0, 8).toUpperCase() };
 }
+
+// Weekly job alert emails, on or off.
+export async function setJobAlerts(on: boolean): Promise<Result> {
+  const { sb, user } = await me();
+  if (!user) return { ok: false, message: "Please log in again." };
+  const { error } = await sb.from("seeker_profiles").update({ job_alerts: on }).eq("user_id", user.id);
+  if (error) return { ok: false, message: "We could not save this. Please try again." };
+  revalidatePath("/portal/settings");
+  return { ok: true };
+}

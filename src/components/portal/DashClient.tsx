@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useTransition } from "react";
-import { toggleSave, markAllRead, setMarketplace, deleteAccount } from "@/app/(portal)/portal/actions";
+import { toggleSave, markAllRead, setMarketplace, setJobAlerts, deleteAccount } from "@/app/(portal)/portal/actions";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 
 export function SaveJobButton({ jobId, saved: initial, compact }: { jobId: string; saved: boolean; compact?: boolean }) {
@@ -77,6 +77,29 @@ export function MarketplaceToggle({ consent, status, since }: { consent: boolean
         <span className="switch__text"><b>Show my profile in the Talent Marketplace</b><span className="soft">{state}{on && since ? ` Consent given ${since}.` : ""}</span></span>
       </label>
       <p className="soft small">Your card shows only your first name, headline, skills and country. Your email, phone number, resume and voice introduction stay private. Employers ask RemoteCore for an introduction.</p>
+      {msg && <span className="ferr" role="alert">{msg}</span>}
+    </div>
+  );
+}
+
+export function JobAlertsToggle({ on: initial, hasCategories }: { on: boolean; hasCategories: boolean }) {
+  const [on, setOn] = useState(initial);
+  const [msg, setMsg] = useState("");
+  const [pending, start] = useTransition();
+  const flip = () => start(async () => {
+    const next = !on; setOn(next); setMsg("");
+    const r = await setJobAlerts(next);
+    if (!r.ok) { setOn(!next); setMsg(r.message ?? "Try again."); }
+  });
+  return (
+    <div className="psec__body">
+      <label className="switch">
+        <input type="checkbox" role="switch" checked={on} onChange={flip} disabled={pending} />
+        <span className="switch__track" aria-hidden="true"><i /></span>
+        <span className="switch__text"><b>Weekly job alerts</b><span className="soft">{on ? "Every Monday we email you new jobs in the categories you chose." : "Off. You will not get job alert emails."}</span></span>
+      </label>
+      {on && !hasCategories && <p className="soft small">Choose your preferred categories in <a href="/portal/profile">your profile</a> so we know which jobs to send.</p>}
+      <p className="soft small">Emails about your own applications always reach you.</p>
       {msg && <span className="ferr" role="alert">{msg}</span>}
     </div>
   );

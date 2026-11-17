@@ -1,7 +1,7 @@
 import "server-only";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendEmail, adminEmails } from "./send";
-import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged } from "./templates";
+import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin } from "./templates";
 
 const ref = (id: string) => id.slice(0, 8).toUpperCase();
 
@@ -35,4 +35,18 @@ export async function notifyStatusChange(appId: string) {
   if (!a?.job || !a.who) return;
   const mail = statusChanged({ name: a.who.full_name, job: a.job.title, status: a.status });
   if (mail) await sendEmail({ to: a.who.email, ...mail });
+}
+
+// The first time a new account confirms its email: welcome the job seeker and tell the team.
+// The welcomed_at stamp is set in the same step, so a second click on the link sends nothing.
+export async function notifyNewAccount(userId: string) {
+  const { data: p } = await supabaseAdmin().from("profiles")
+    .update({ welcomed_at: new Date().toISOString() }).eq("id", userId).is("welcomed_at", null)
+    .select("role, full_name, email, country").maybeSingle();
+  if (!p || p.role !== "job_seeker") return;
+  const team = adminEmails();
+  await Promise.allSettled([
+    sendEmail({ to: p.email, ...welcomeSeeker({ name: p.full_name }) }),
+    team.length ? sendEmail({ to: team, ...newSeekerAdmin({ name: p.full_name, email: p.email, country: p.country ?? "" }) }) : null,
+  ]);
 }

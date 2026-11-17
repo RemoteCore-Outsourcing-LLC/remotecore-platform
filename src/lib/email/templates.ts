@@ -2,8 +2,8 @@ import { layout, textVersion, esc, SITE } from "./layout";
 import type { Mail } from "./send";
 
 type Built = Omit<Mail, "to">;
-function build(subject: string, preview: string, heading: string, paragraphs: string[], button?: { label: string; href: string }, note?: string): Built {
-  return { subject, html: layout({ preview, heading, paragraphs, button, note }), text: textVersion(heading, paragraphs, button, note) };
+function build(subject: string, preview: string, heading: string, paragraphs: string[], button?: { label: string; href: string }, note?: string, footer?: string): Built {
+  return { subject, html: layout({ preview, heading, paragraphs, button, note, footer }), text: textVersion(heading, paragraphs, button, note) };
 }
 const first = (name: string) => esc((name || "").trim().split(" ")[0] || "there");
 const when = (iso: string) => new Date(iso).toLocaleString("en-US", { dateStyle: "long", timeStyle: "short", timeZone: "America/New_York" }) + " (US Eastern time)";
@@ -86,3 +86,180 @@ export const authRecovery = build(
   { label: "Choose a new password", href: "{{ .ConfirmationURL }}" },
   "This link works for 1 hour. If you did not ask for this, ignore this email and your password stays the same.",
 );
+
+// Footers for people who may not have an account yet, and for internal alerts.
+const FORM_FOOTER = `You get this email because you sent a form on <a href="${SITE}" style="color:#8A84A0">remotecoreoutsourcing.com</a>.`;
+const TEAM_FOOTER = "Internal alert for the RemoteCore team.";
+const money = (cents: number, currency = "USD") => new Intl.NumberFormat("en-US", { style: "currency", currency: currency.toUpperCase() }).format(cents / 100);
+const day = (iso: string) => new Date(iso).toLocaleDateString("en-US", { dateStyle: "long", timeZone: "America/New_York" });
+const row = (label: string, value: string) => `<b>${esc(label)}:</b> ${esc(value)}`;
+
+/* ---------- Job seekers ---------- */
+
+// Sent once, right after a new job seeker confirms their email.
+export function welcomeSeeker(a: { name: string }) {
+  return build(
+    "Welcome to RemoteCore",
+    "Your account is ready. Finish your profile so employers can find you.",
+    "Your account is ready",
+    [
+      `Hi ${first(a.name)},`,
+      "Your email is confirmed and your RemoteCore account is ready.",
+      "Next, finish your profile. Add your work history, skills, resume and a short voice introduction. Complete profiles get reviewed first.",
+    ],
+    { label: "Finish my profile", href: `${SITE}/portal/profile` },
+  );
+}
+
+export type AlertJob = { title: string; category: string; facts: string; url: string };
+
+// Weekly: new jobs in the categories the seeker chose in their profile.
+export function jobAlert(a: { name: string; jobs: AlertJob[]; unsubscribe: string }) {
+  const n = a.jobs.length;
+  const list = a.jobs.map((j) => `<a href="${j.url}" style="color:#0B7F77;font-weight:600;text-decoration:none">${esc(j.title)}</a><br><span style="font-size:14px;color:#5B5571">${esc([j.category, j.facts].filter(Boolean).join(" · "))}</span>`);
+  return build(
+    n === 1 ? `A new remote job for you: ${a.jobs[0].title}` : `${n} new remote jobs for you this week`,
+    a.jobs.slice(0, 3).map((j) => j.title).join(", "),
+    n === 1 ? "A new job that fits your profile" : `${n} new jobs that fit your profile`,
+    [`Hi ${first(a.name)},`, "These jobs were posted this week in the categories you chose.", ...list],
+    { label: "See all jobs", href: `${SITE}/portal/jobs` },
+    `You chose these categories in your profile. <a href="${SITE}/portal/profile" style="color:#5B5571">Change them</a> or <a href="${a.unsubscribe}" style="color:#5B5571">stop job alerts</a>.`,
+  );
+}
+
+/* ---------- Employers ---------- */
+
+// Right after an employer creates a company account. RemoteCore approves new employers before they can post.
+export function employerWelcome(a: { name: string; company: string }) {
+  return build(
+    "We received your company account",
+    "Our team checks every new employer account. We will email you when it is approved.",
+    "Thanks for registering",
+    [
+      `Hi ${first(a.name)},`,
+      `We received the account for <b>${esc(a.company)}</b>.`,
+      "Our team checks every new employer account before it goes live. We will email you as soon as yours is approved. Until then you can log in and finish your company profile.",
+    ],
+    { label: "Go to my dashboard", href: `${SITE}/portal` },
+  );
+}
+
+export function employerApproved(a: { name: string; company: string }) {
+  return build(
+    "Your company account is approved",
+    "You can now post jobs and send staffing requests.",
+    "Your account is approved",
+    [`Hi ${first(a.name)},`, `<b>${esc(a.company)}</b> is approved on RemoteCore.`, "You can now post jobs, send staffing requests and review candidates from your dashboard."],
+    { label: "Post a job", href: `${SITE}/portal` },
+  );
+}
+
+// After a staffing request, from the dashboard or the public form.
+export function staffingRequestReceived(a: { name: string; position: string; ref: string; account: boolean }) {
+  return build(
+    `We received your staffing request for ${a.position}`,
+    "A recruiter will review it and contact you about next steps.",
+    "Staffing request received",
+    [
+      `Hi ${first(a.name)},`,
+      `We received your request for <b>${esc(a.position)}</b>. Your reference is <b>${esc(a.ref)}</b>.`,
+      "A recruiter will review the details and contact you to talk about next steps and the candidates we can find for you.",
+    ],
+    a.account ? { label: "See my requests", href: `${SITE}/portal` } : undefined,
+    undefined,
+    a.account ? undefined : FORM_FOOTER,
+  );
+}
+
+// RemoteCore moves a staffing request forward (for example, candidates shared or interviews set).
+export function recruitmentUpdate(a: { name: string; position: string; update: string }) {
+  return build(
+    `Update on your request for ${a.position}`,
+    a.update,
+    "Recruitment update",
+    [`Hi ${first(a.name)},`, esc(a.update), `Position: <b>${esc(a.position)}</b>`],
+    { label: "Open my dashboard", href: `${SITE}/portal` },
+  );
+}
+
+// Stripe confirmed a payment.
+export function paymentReceived(a: { name: string; amountCents: number; currency: string; description: string; at: string; receiptUrl?: string }) {
+  return build(
+    `Payment received: ${money(a.amountCents, a.currency)}`,
+    `Thank you. We received your payment for ${a.description}.`,
+    "Payment received",
+    [`Hi ${first(a.name)},`, `Thank you. We received your payment of <b>${money(a.amountCents, a.currency)}</b> on ${day(a.at)}.`, row("For", a.description)],
+    a.receiptUrl ? { label: "View my receipt", href: a.receiptUrl } : { label: "See my billing", href: `${SITE}/portal` },
+  );
+}
+
+// A new invoice is ready to pay.
+export function invoiceReady(a: { name: string; number: string; amountCents: number; currency: string; description: string; due?: string; payUrl: string }) {
+  return build(
+    `Invoice ${a.number} from RemoteCore: ${money(a.amountCents, a.currency)}`,
+    `${money(a.amountCents, a.currency)} for ${a.description}${a.due ? `, due ${day(a.due)}` : ""}.`,
+    "You have a new invoice",
+    [
+      `Hi ${first(a.name)},`,
+      `Invoice <b>${esc(a.number)}</b> for <b>${money(a.amountCents, a.currency)}</b> is ready.`,
+      row("For", a.description),
+      ...(a.due ? [row("Due", day(a.due))] : []),
+    ],
+    { label: "View and pay", href: a.payUrl },
+    "You can pay by card on the secure page. Reply to this email if anything looks wrong.",
+  );
+}
+
+/* ---------- RemoteCore team ---------- */
+
+const team = (subject: string, heading: string, lines: string[], href = `${SITE}/portal`) =>
+  build(subject, lines[0].replace(/<[^>]+>/g, ""), heading, lines, { label: "Open the dashboard", href }, undefined, TEAM_FOOTER);
+
+export const newSeekerAdmin = (a: { name: string; email: string; country: string }) =>
+  team(`New job seeker: ${a.name || a.email}`, "New job seeker", [`<b>${esc(a.name || "A new job seeker")}</b> created an account and confirmed their email.`, row("Email", a.email), ...(a.country ? [row("Country", a.country)] : [])]);
+
+export const newEmployerAdmin = (a: { company: string; contact: string; email: string; country: string; industry: string }) =>
+  team(`New employer to approve: ${a.company}`, "New employer account", [`<b>${esc(a.company)}</b> registered and is waiting for approval.`, row("Contact", a.contact), row("Email", a.email), ...(a.country ? [row("Country", a.country)] : []), ...(a.industry ? [row("Industry", a.industry)] : [])]);
+
+export const newJobPostAdmin = (a: { title: string; company: string; status: string }) =>
+  team(`New job post: ${a.title}`, "New job post", [`<b>${esc(a.company)}</b> posted <b>${esc(a.title)}</b>.`, row("Status", a.status)]);
+
+export const newStaffingRequestAdmin = (a: { company: string; contact: string; email: string; position: string; hires: string; ref: string }) =>
+  team(`New staffing request: ${a.position} for ${a.company}`, "New staffing request", [`<b>${esc(a.company)}</b> needs <b>${esc(a.position)}</b>.`, row("Hires", a.hires || "Not given"), row("Contact", `${a.contact} (${a.email})`), row("Reference", a.ref)]);
+
+export const newPaymentAdmin = (a: { company: string; amountCents: number; currency: string; description: string }) =>
+  team(`Payment received: ${money(a.amountCents, a.currency)} from ${a.company}`, "New payment", [`<b>${esc(a.company)}</b> paid <b>${money(a.amountCents, a.currency)}</b>.`, row("For", a.description)]);
+
+/* ---------- Public forms ---------- */
+
+export const FORM_NAMES: Record<string, string> = {
+  consultation: "Consultation request", "staffing-request": "Staffing request", candidate: "Candidate details",
+  contact: "Contact form message", introduction: "Candidate introduction request", "career-session": "Career session booking",
+  "learning-notify": "Learning Hub waiting list",
+};
+const label = (k: string) => k.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
+
+// To the team: every field the visitor sent. Reply goes straight to the visitor.
+export function formAdmin(kind: string, entry: Record<string, string>, ref: string) {
+  const name = entry.full_name || entry.contact_name || entry.email || "Someone";
+  const fields = Object.entries(entry).filter(([k]) => k !== "consent").map(([k, v]) => row(label(k), v).replace(/\n/g, "<br>"));
+  return team(`${FORM_NAMES[kind] ?? "New form"}: ${name}`, FORM_NAMES[kind] ?? "New form", [`<b>${esc(name)}</b> sent the ${esc((FORM_NAMES[kind] ?? "form").toLowerCase())} form. Reply to this email to answer them.`, ...fields, row("Reference", ref)]);
+}
+
+const FORM_REPLY: Record<string, { subject: string; heading: string; line: (e: Record<string, string>) => string; button?: { label: string; href: string } }> = {
+  consultation: { subject: "We received your consultation request", heading: "Consultation request received", line: () => "Thanks for reaching out. A member of our team will contact you to set a time that works for you." },
+  candidate: { subject: "We received your details", heading: "Thanks for your interest", line: () => "We received your details. To apply for open jobs and be seen by employers, create your free profile.", button: { label: "Create my profile", href: `${SITE}/register/job-seeker` } },
+  contact: { subject: "We received your message", heading: "Message received", line: () => "Thanks for your message. Our team will reply to you by email." },
+  introduction: { subject: "We received your introduction request", heading: "Introduction request received", line: () => "Thanks. We will check that the candidates you chose are available and get back to you about the next steps." },
+  "career-session": { subject: "We received your booking request", heading: "Booking request received", line: (e) => `Thanks for booking${e.service ? ` <b>${esc(e.service)}</b>` : " a career session"}. We will email you to set a time.` },
+  "learning-notify": { subject: "You are on the Learning Hub list", heading: "You are on the list", line: () => "Thanks. We will email you when the first courses open in the RemoteCore Learning Hub." },
+};
+
+// To the visitor: a short receipt for the form they sent.
+export function formReceived(kind: string, entry: Record<string, string>, ref: string): Built | null {
+  if (kind === "staffing-request") return staffingRequestReceived({ name: entry.full_name, position: entry.roles || "your open roles", ref, account: false });
+  const r = FORM_REPLY[kind];
+  if (!r) return null;
+  const name = entry.full_name || entry.contact_name || "";
+  return build(r.subject, r.line(entry).replace(/<[^>]+>/g, ""), r.heading, [`Hi ${first(name)},`, r.line(entry), `Your reference is <b>${esc(ref)}</b>.`], r.button, undefined, FORM_FOOTER);
+}

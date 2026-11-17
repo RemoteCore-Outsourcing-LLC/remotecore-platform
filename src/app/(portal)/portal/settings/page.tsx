@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { getSession } from "@/lib/supabase/server";
 import { shortDate } from "@/lib/portal/seeker";
 import { PageHead } from "@/components/portal/Dash";
-import { PasswordForm, MarketplaceToggle, DeleteAccount } from "@/components/portal/DashClient";
+import { PasswordForm, MarketplaceToggle, JobAlertsToggle, DeleteAccount } from "@/components/portal/DashClient";
 
 export const metadata: Metadata = { title: "Settings", robots: { index: false } };
 
 export default async function SettingsPage() {
   const { sb, user, profile } = await getSession();
   if (!user || !profile) return null;
-  const { data: sp } = await sb.from("seeker_profiles").select("marketplace_consent, marketplace_consent_at, marketplace_status").eq("user_id", user.id).maybeSingle();
+  const { data: sp } = await sb.from("seeker_profiles").select("marketplace_consent, marketplace_consent_at, marketplace_status, job_alerts, preferred_categories").eq("user_id", user.id).maybeSingle();
   return (
     <div className="pwrap pwrap--narrow">
       <PageHead title="Settings" sub="Your login, privacy and account." />
@@ -28,6 +28,12 @@ export default async function SettingsPage() {
           <header className="psec__head"><h2 id="pw-h">Password</h2></header>
           <PasswordForm />
         </section>
+        {profile.role === "job_seeker" && (
+          <section className="psec" aria-labelledby="al-h">
+            <header className="psec__head"><h2 id="al-h">Emails</h2></header>
+            <JobAlertsToggle on={sp?.job_alerts ?? true} hasCategories={(sp?.preferred_categories?.length ?? 0) > 0} />
+          </section>
+        )}
         {profile.role === "job_seeker" && (
           <section className="psec" aria-labelledby="mk-h">
             <header className="psec__head"><h2 id="mk-h">Privacy</h2></header>

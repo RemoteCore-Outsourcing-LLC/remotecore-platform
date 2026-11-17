@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { sendEmail, adminEmails } from "@/lib/email/send";
+import { formAdmin, formReceived } from "@/lib/email/templates";
 
 // Every public form posts here. Each kind lists its required fields.
 const KINDS: Record<string, { required: string[]; consent?: string[] }> = {
@@ -43,12 +45,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ kind: s
     return NextResponse.json({ error: "Please check your email address." }, { status: 400 });
   }
 
-  const { error } = await supabaseAdmin().from("form_submissions").insert({ kind, email: entry.email ?? null, data: entry });
-  if (error) {
-    console.error("[form] save failed", kind, error.message);
+  const { data: saved, error } = await supabaseAdmin().from("form_submissions").insert({ kind, email: entry.email ?? null, data: entry }).select("id").single();
+  if (error || !saved) {
+    console.error("[form] save failed", kind, error?.message);
     return NextResponse.json({ error: "We could not send this right now. Please try again in a minute." }, { status: 500 });
   }
-  // TODO (Resend step): email the admin and send the visitor a confirmation.
+  // Alert the team (reply goes to the visitor) and send the visitor a short receipt. Email problems never fail the form.
+  const ref = saved.id.slice(0, 8).toUpperCase();
+  const mails: Promise<unknown>[] = [];
+  const team = adminEmails();
+  if (team.length) mails.push(sendEmail({ to: team, replyTo: entry.email, ...formAdmin(kind, entry, ref) }));
+  const receipt = entry.email ? formReceived(kind, entry, ref) : null;
+  if (receipt) mails.push(sendEmail({ to: entry.email, ...receipt }));
+  await Promise.allSettled(mails);
 
   return NextResponse.json({ ok: true });
 }
