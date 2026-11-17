@@ -295,3 +295,27 @@ a.rows__title:hover { text-decoration: underline; }
   .facts dd { margin-bottom: 8px; }
 }
 @media (prefers-reduced-motion: reduce) { .switch__track, .switch__track i, .job { transition: none; } }
+
+/* apply */
+.apply { margin-top: 20px; display: grid; gap: 18px; padding: 24px 28px; border-radius: var(--r); background: var(--surface); box-shadow: 0 1px 2px rgba(36,16,74,.05), 0 0 0 1px var(--line); scroll-margin-top: 80px; }
+.apply h2 { font-size: 20px; font-weight: 700; }
+.apply__send { padding: 14px 16px; border-radius: var(--r-sm); background: #FBFAFD; box-shadow: inset 0 0 0 1px var(--line); display: grid; gap: 8px; }
+.apply__label { font-size: 12.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-soft); }
+.apply__send ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; font-size: 14.5px; }
+.apply__req { padding: 10px 12px; border-radius: var(--r-sm); background: var(--plum-soft); color: var(--ink); font-size: 14.5px; }
+.apply__docs { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.apply__docs li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; background: #FBFAFD; box-shadow: inset 0 0 0 1px var(--line); font-size: 14.5px; }
+.apply__docs li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.apply__docs .linkbtn { color: var(--danger); }
+.apply__ok { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; cursor: pointer; }
+.apply__ok input { accent-color: var(--teal); width: 18px; height: 18px; margin: 2px 0 0; flex-shrink: 0; }
+.apply__foot { display: flex; justify-content: flex-end; align-items: center; gap: 16px; flex-wrap: wrap; padding-top: 4px; border-top: 1px solid var(--line); padding-top: 16px; }
+.apply__act { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.apply--done { grid-template-columns: auto 1fr; align-items: start; gap: 16px; color: var(--teal); border-left: 4px solid var(--teal); outline: none; }
+.apply--done > div { display: grid; gap: 6px; color: var(--ink); }
+.apply--sent { display: flex; justify-content: space-between; align-items: center; gap: 16px; border-left: 4px solid var(--teal); }
+@media (max-width: 600px) {
+  .apply { padding: 18px 16px; }
+  .apply__foot .btn { width: 100%; }
+  .apply--sent { flex-direction: column; align-items: stretch; }
+}

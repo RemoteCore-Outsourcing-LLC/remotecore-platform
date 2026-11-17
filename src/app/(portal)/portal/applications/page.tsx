@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getSession } from "@/lib/supabase/server";
-import { APP_STATUS, shortDate } from "@/lib/portal/seeker";
+import { APP_STATUS } from "@/lib/portal/seeker";
 import { StatusPill, StatusTrack, Empty, PageHead } from "@/components/portal/Dash";
+import { LocalTime } from "@/components/portal/DashClient";
 
 export const metadata: Metadata = { title: "My applications", robots: { index: false } };
 
@@ -11,7 +12,7 @@ export default async function ApplicationsPage() {
   const { sb, user } = await getSession();
   if (!user) return null;
   const { data } = await sb.from("applications")
-    .select("id, status, created_at, updated_at, jobs(id, title, status), application_status_history(to_status, changed_at)")
+    .select("id, status, created_at, updated_at, extra_documents, jobs(id, title, status), application_status_history(to_status, changed_at)")
     .eq("seeker_id", user.id).order("updated_at", { ascending: false });
   const apps = data ?? [];
   return (
@@ -29,7 +30,7 @@ export default async function ApplicationsPage() {
                 <header className="app__head">
                   <div>
                     <h2>{job ? <a href={`/portal/jobs/${job.id}`}>{job.title}</a> : "Job no longer listed"}</h2>
-                    <p className="soft small">Applied {shortDate(a.created_at)}{job && job.status !== "published" ? " · This job is closed" : ""}</p>
+                    <p className="soft small">Applied <LocalTime iso={a.created_at} />{a.extra_documents?.length ? ` · Resume and ${a.extra_documents.length} ${a.extra_documents.length === 1 ? "document" : "documents"} sent` : " · Resume sent"}{job && job.status !== "published" ? " · This job is closed" : ""}</p>
                   </div>
                   <StatusPill status={a.status} />
                 </header>
@@ -37,7 +38,7 @@ export default async function ApplicationsPage() {
                 {hist.length > 1 && (
                   <details className="app__hist">
                     <summary>History</summary>
-                    <ol>{hist.map((h, i) => <li key={i}><span>{APP_STATUS[h.to_status]?.label ?? h.to_status}</span><span className="soft">{shortDate(h.changed_at)}</span></li>)}</ol>
+                    <ol>{hist.map((h, i) => <li key={i}><span>{APP_STATUS[h.to_status]?.label ?? h.to_status}</span><span className="soft"><LocalTime iso={h.changed_at} /></span></li>)}</ol>
                   </details>
                 )}
               </article>

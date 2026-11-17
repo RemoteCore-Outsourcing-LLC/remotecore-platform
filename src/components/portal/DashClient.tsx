@@ -1,5 +1,5 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toggleSave, markAllRead, setMarketplace, deleteAccount } from "@/app/(portal)/portal/actions";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 
@@ -111,4 +111,11 @@ export function DeleteAccount() {
       </div>
     </form>
   );
+}
+
+// Date and time in the visitor's own time zone (the server does not know it).
+export function LocalTime({ iso }: { iso: string }) {
+  const [text, setText] = useState(() => new Date(iso).toLocaleDateString("en-US", { dateStyle: "long", timeZone: "UTC" }));
+  useEffect(() => { setText(new Date(iso).toLocaleString("en-US", { dateStyle: "long", timeStyle: "short" })); }, [iso]);
+  return <time dateTime={iso}>{text}</time>;
 }

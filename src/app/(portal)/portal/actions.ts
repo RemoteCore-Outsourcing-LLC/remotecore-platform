@@ -65,3 +65,47 @@ export async function deleteAccount(confirm: string): Promise<Result> {
   await sb.auth.signOut();
   return { ok: true };
 }
+
+// Apply for a job with the saved profile and resume. Extra documents are already uploaded by the browser
+// into the applicant's own private folder; only their paths come in here.
+export async function applyToJob(input: { jobId: string; note: string; documents: string[]; confirm: boolean }): Promise<Result & { appliedAt?: string; ref?: string }> {
+  const { sb, user } = await me();
+  if (!user) return { ok: false, message: "Your session ended. Please log in again." };
+  const { jobId, confirm } = input;
+  const note = String(input.note ?? "").trim().slice(0, 1500);
+  const documents = Array.isArray(input.documents) ? input.documents.slice(0, 3) : [];
+  if (!UUID.test(jobId)) return { ok: false, message: "Unknown job." };
+  if (!confirm) return { ok: false, message: "Please tick the box to confirm." };
+  if (documents.some((d) => typeof d !== "string" || !d.startsWith(`${user.id}/`) || d.includes(".."))) return { ok: false, message: "One of the files is not yours." };
+
+  const [{ data: job }, { data: sp }, { data: existing }] = await Promise.all([
+    sb.from("jobs").select("id, title, status, deadline, documents_required").eq("id", jobId).maybeSingle(),
+    sb.from("seeker_profiles").select("resume_path").eq("user_id", user.id).maybeSingle(),
+    sb.from("applications").select("id").eq("job_id", jobId).eq("seeker_id", user.id).maybeSingle(),
+  ]);
+  if (existing) return { ok: false, message: "You already applied for this job." };
+  if (!job || job.status !== "published" || (job.deadline && job.deadline < new Date().toISOString().slice(0, 10))) return { ok: false, message: "This job is no longer open." };
+  if (!sp?.resume_path) return { ok: false, message: "Add your resume to your profile first." };
+  if (job.documents_required && documents.length === 0) return { ok: false, message: "This job asks for an extra document. Please add it." };
+
+  // Keep a copy of the resume as it is today, so replacing it later does not change what this employer received.
+  const ext = sp.resume_path.split(".").pop();
+  const snapshot = `${user.id}/applied-${jobId.slice(0, 8)}-${Date.now()}.${ext}`;
+  const admin = supabaseAdmin();
+  const copied = await admin.storage.from("resumes").copy(sp.resume_path, snapshot);
+  const resumePath = copied.error ? sp.resume_path : snapshot;
+
+  const { data: app, error } = await sb.from("applications")
+    .insert({ job_id: jobId, seeker_id: user.id, note: note || null, resume_path: resumePath, extra_documents: documents })
+    .select("id, created_at").single();
+  if (error || !app) {
+    if (!copied.error) await admin.storage.from("resumes").remove([snapshot]);
+    return { ok: false, message: error?.code === "23505" ? "You already applied for this job." : "We could not send your application. Please try again." };
+  }
+  await admin.from("notifications").insert({
+    user_id: user.id, title: "Application received", link: "/portal/applications",
+    body: `We received your application for ${job.title}. You can follow its status in My applications.`,
+  });
+  revalidatePath("/portal", "layout");
+  return { ok: true, appliedAt: app.created_at, ref: app.id.slice(0, 8).toUpperCase() };
+}
