@@ -2,15 +2,44 @@ import type { Metadata } from "next";
 import { Close, PageHero, Steps } from "@/components/site/Blocks";
 import { Consent, Field, Form, Select } from "@/components/site/Form";
 import { talentCategories } from "@/lib/site";
+import { supabaseServer } from "@/lib/supabase/server";
+import { readFilters, searchJobs, categories, PER_PAGE, activeCount } from "@/lib/jobs/search";
+import { JobSearch, ResultsHead, Pager } from "@/components/jobs/JobSearch";
+import { PublicJobCard } from "@/components/jobs/PublicJob";
 
 export const metadata: Metadata = { title: "Find Opportunities", description: "Join the RemoteCore talent network and explore remote roles that match your skills and experience." };
 
-export default function FindOpportunities() {
+export default async function FindOpportunities({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const f = readFilters(await searchParams);
+  const sb = await supabaseServer();
+  const [res, cats] = await Promise.all([searchJobs(sb, f), categories(sb)]);
+  const searching = !!f.q || activeCount(f) > 0;
   return (
     <>
       <PageHero eyebrow="Find Opportunities" title="Your Skills Deserve Opportunity." lede="Join the RemoteCore talent network to explore remote roles and connect with opportunities aligned with your skills and experience.">
         <a className="btn btn--main" href="#join">Join Our Talent Network</a>
+        <a className="btn btn--ghost" href="#jobs">See open jobs</a>
       </PageHero>
+
+      <section className="sec sec--pale" id="jobs" aria-labelledby="jobs-h">
+        <div className="wrap jobboard">
+          <div className="head"><h2 id="jobs-h">Open remote jobs</h2><p className="lede">Search by job title, skill or industry. Every role here is open now.</p></div>
+          <JobSearch base="/find-opportunities" anchor="#jobs" f={f} cats={cats} />
+          {res.jobs.length === 0 ? (
+            <div className="pj-empty">
+              <h3>{searching ? "No jobs match this search" : "No open jobs right now"}</h3>
+              <p>{searching ? "Try fewer words or remove a filter." : "New roles are added often. Create your profile now so you can apply the moment one opens."}</p>
+              {searching ? <a href="/find-opportunities#jobs">Clear the search</a> : <a className="btn btn--main" href="/register/job-seeker">Create Your Profile</a>}
+            </div>
+          ) : (
+            <>
+              <ResultsHead total={res.total} f={f} />
+              <div className="pjs">{res.jobs.map((j) => <PublicJobCard key={j.id} job={j} />)}</div>
+              <Pager base="/find-opportunities" anchor="#jobs" f={f} total={res.total} per={PER_PAGE} />
+            </>
+          )}
+        </div>
+      </section>
 
       <section className="sec">
         <div className="wrap">

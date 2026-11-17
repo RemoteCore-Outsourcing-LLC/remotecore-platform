@@ -300,3 +300,23 @@ figure { margin: 0; }
 .hint { font-style: normal; font-size: 13px; color: var(--sc-ink-soft); }
 .form small a, .form .check a { color: var(--teal); }
 @media (max-width: 860px) { .auth__in { grid-template-columns: 1fr; } .auth__panel { justify-self: stretch; max-width: none; } }
+
+/* job board and public job page */
+.jobboard { max-width: 960px; }
+.jobpage { padding-top: calc(var(--bar) + clamp(24px, 4vw, 48px)); }
+.jobpage__back { margin: 0 0 16px; font-size: 15px; }
+.jobpage__back a { color: var(--teal); font-weight: 600; }
+.jobpage__back a::before { content: "\2190\00a0"; }
+.jobpage__card { background: #fff; border-radius: 20px; box-shadow: 0 0 0 1px var(--line), var(--shadow); overflow: hidden; }
+.jobpage__card header { display: grid; gap: 12px; padding: clamp(22px, 4vw, 40px); border-bottom: 1px solid var(--line); }
+.jobpage__card h1 { font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.8rem); }
+.jobpage__cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 10px; }
+.jobpage__cta .soft { font-size: 15px; }
+.jobpage__cta .soft a { color: var(--teal); font-weight: 600; }
+.jobpage__body { display: grid; gap: 26px; padding: clamp(22px, 4vw, 40px); }
+.jobpage__body h2 { font-size: 19px; margin-bottom: 8px; }
+.jobpage__body p { margin: 0; white-space: pre-line; line-height: 1.65; max-width: 70ch; color: var(--sc-ink); }
+.jobpage__body dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 24px; margin: 0; font-size: 15.5px; }
+.jobpage__body dt { color: var(--sc-ink-soft); }
+.jobpage__body dd { margin: 0; font-weight: 500; }
+@media (max-width: 600px) { .jobpage__body dl { grid-template-columns: 1fr; gap: 2px; } .jobpage__body dd { margin-bottom: 8px; } .jobpage__cta .btn { width: 100%; } }
