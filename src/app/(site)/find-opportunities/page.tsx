@@ -63,7 +63,7 @@ export default function FindOpportunities() {
       </section>
 
       <Close title="Take the Next Step in Your Remote Career.">
-        <a className="btn btn--main" href="#join">Create Your Profile</a>
+        <a className="btn btn--main" href="/register/job-seeker">Create Your Profile</a>
       </Close>
     </>
   );

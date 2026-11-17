@@ -10,10 +10,10 @@ export default function Register() {
         <p className="eyebrow">Create an account</p>
         <h1>Who are you joining as?</h1>
         <div className="cards" style={{ marginTop: 32, maxWidth: 820 }}>
-          <a className="card" href="/find-opportunities#join" style={{ textDecoration: "none" }}>
+          <a className="card" href="/register/job-seeker" style={{ textDecoration: "none" }}>
             <h3>I am looking for work</h3>
             <p>Join the talent network, build your profile and apply for remote roles.</p>
-            <span className="btn btn--main btn--sm" style={{ alignSelf: "start", marginTop: 8 }}>Join Our Talent Network</span>
+            <span className="btn btn--main btn--sm" style={{ alignSelf: "start", marginTop: 8 }}>Create a job seeker account</span>
           </a>
           <a className="card" href="/hire-talent#request" style={{ textDecoration: "none" }}>
             <h3>I want to hire talent</h3>

@@ -1,27 +1,14 @@
 import type { Metadata } from "next";
+import { AuthShell } from "@/components/auth/AuthShell";
+import { LoginForm } from "@/components/auth/LoginForm";
 
 export const metadata: Metadata = { title: "Log in", robots: { index: false } };
 
-// TODO (Supabase step): real email + password login, then send each role to its dashboard.
-export default function Login() {
+export default async function Login({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
+  const sp = await searchParams;
   return (
-    <section className="phero">
-      <div className="wrap split split--top">
-        <div>
-          <p className="eyebrow">Log in</p>
-          <h1>Welcome back.</h1>
-          <p className="lede">Job seekers, employers and the RemoteCore team all log in here.</p>
-        </div>
-        <div className="panel">
-          <h2>Log in</h2>
-          <form className="form" action="#" aria-describedby="login-soon">
-            <label className="field"><span>Email</span><input type="email" name="email" autoComplete="email" disabled /></label>
-            <label className="field"><span>Password</span><input type="password" name="password" autoComplete="current-password" disabled /></label>
-            <button className="btn btn--main" type="button" disabled>Log in</button>
-            <small id="login-soon">Accounts open soon. New here? <a href="/register">Create an account</a>.</small>
-          </form>
-        </div>
-      </div>
-    </section>
+    <AuthShell title="Welcome back." lede="Job seekers, employers and the RemoteCore team all log in here.">
+      <LoginForm next={sp.next} linkError={sp.error === "link"} />
+    </AuthShell>
   );
 }

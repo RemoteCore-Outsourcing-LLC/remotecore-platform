@@ -285,3 +285,18 @@ figure { margin: 0; }
 @media (max-width: 1439px) and (min-width: 1280px) { .bar__right .btn--main { display: none; } }
 /* the parent of staggered kids must not hide itself */
 [data-sc-stagger][data-sc-in] { opacity: 1; transform: none; }
+
+/* auth screens */
+.auth__in { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
+.auth__side { padding-top: 12px; }
+.auth__panel { max-width: 520px; width: 100%; justify-self: end; }
+.auth__panel h2 { font-size: 26px; font-weight: 800; }
+.auth .form { margin-top: 0; }
+.combo { display: grid; grid-template-columns: 112px 1fr; gap: 8px; }
+.combo select, .combo input { font: 400 16px/1.4 var(--sc-font-text); border: 1.5px solid var(--line); border-radius: var(--r-sm); padding: 12px 10px; min-height: 48px; background: #fff; color: var(--sc-ink); width: 100%; }
+.combo select:focus, .combo input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-soft); }
+.field input[aria-invalid="true"], .field select[aria-invalid="true"], .combo [aria-invalid="true"] { border-color: #B4231A; }
+.ferr { color: #B4231A; font-size: 13.5px; }
+.hint { font-style: normal; font-size: 13px; color: var(--sc-ink-soft); }
+.form small a, .form .check a { color: var(--teal); }
+@media (max-width: 860px) { .auth__in { grid-template-columns: 1fr; } .auth__panel { justify-self: stretch; max-width: none; } }
