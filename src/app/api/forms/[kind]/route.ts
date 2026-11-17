@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 // Every public form posts here. Each kind lists its required fields.
 const KINDS: Record<string, { required: string[]; consent?: string[] }> = {
@@ -42,9 +43,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ kind: s
     return NextResponse.json({ error: "Please check your email address." }, { status: 400 });
   }
 
-  // TODO (Supabase step): save `entry` in the form_submissions table with kind, ip hash and time.
+  const { error } = await supabaseAdmin().from("form_submissions").insert({ kind, email: entry.email ?? null, data: entry });
+  if (error) {
+    console.error("[form] save failed", kind, error.message);
+    return NextResponse.json({ error: "We could not send this right now. Please try again in a minute." }, { status: 500 });
+  }
   // TODO (Resend step): email the admin and send the visitor a confirmation.
-  console.log(`[form] ${kind}`, Object.keys(entry).join(","));
 
   return NextResponse.json({ ok: true });
 }
