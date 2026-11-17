@@ -2,6 +2,7 @@
 import { revalidatePath } from "next/cache";
 import { supabaseServer } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { notifyNewApplication } from "@/lib/email/notify";
 
 type Result = { ok: boolean; message?: string };
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -106,6 +107,7 @@ export async function applyToJob(input: { jobId: string; note: string; documents
     user_id: user.id, title: "Application received", link: "/portal/applications",
     body: `We received your application for ${job.title}. You can follow its status in My applications.`,
   });
+  await notifyNewApplication(app.id);
   revalidatePath("/portal", "layout");
   return { ok: true, appliedAt: app.created_at, ref: app.id.slice(0, 8).toUpperCase() };
 }
