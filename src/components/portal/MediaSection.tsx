@@ -22,6 +22,14 @@ async function upload(bucket: string, path: string, file: Blob, type: string) {
   return error;
 }
 
+
+// Browsers often label .webm and .m4a files as video, so trust the file name when the type is not audio.
+const BY_EXT: Record<string, string> = { mp3: "audio/mpeg", m4a: "audio/mp4", mp4: "audio/mp4", wav: "audio/wav", webm: "audio/webm", ogg: "audio/ogg", aac: "audio/aac" };
+function audioType(f: File) {
+  if (f.type.startsWith("audio/")) return f.type;
+  return BY_EXT[f.name.split(".").pop()?.toLowerCase() ?? ""] ?? f.type;
+}
+
 export function MediaSection({ userId, resume, audio }: Props) {
   const done = !!resume && !!audio;
   return (
@@ -161,7 +169,7 @@ function AudioBox({ userId, current }: { userId: string; current: Props["audio"]
         {(state === "idle") && <button type="button" className="btn btn--ghost btn--sm" onClick={() => input.current?.click()}>Upload a file</button>}
         {msg && <span className={msg.ok ? "saved" : "ferr"} role={msg.ok ? "status" : "alert"}>{msg.text}</span>}
       </div>
-      <input ref={input} type="file" accept="audio/*,.mp3,.m4a,.wav,.webm" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) save(f, f.type || ({ mp3: "audio/mpeg", m4a: "audio/mp4", wav: "audio/wav", webm: "audio/webm" } as Record<string, string>)[f.name.split(".").pop()!.toLowerCase()] || ""); e.target.value = ""; }} />
+      <input ref={input} type="file" accept="audio/*,.mp3,.m4a,.wav,.webm" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) save(f, audioType(f)); e.target.value = ""; }} />
     </div>
   );
 }
