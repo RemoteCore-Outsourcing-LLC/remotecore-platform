@@ -2,12 +2,15 @@ import type { Metadata } from "next";
 import { Close, PageHero } from "@/components/site/Blocks";
 import { Consent, Field, Form } from "@/components/site/Form";
 import { Marketplace, type Profile } from "@/components/site/Marketplace";
+import { publishedListings } from "@/lib/marketplace";
+
+// Fresh listings within 5 minutes; publishing from the admin screen refreshes it at once.
+export const revalidate = 300;
 
 export const metadata: Metadata = { title: "Talent Marketplace", description: "Explore skilled remote professionals across healthcare administration, customer support, virtual assistance, and business operations." };
 
-// Sample profiles until real, consented profiles are approved by an admin.
-// TODO (database step): load approved profiles from Supabase instead.
-const profiles: Profile[] = [
+// Sample profiles, shown only until the first real candidate is published by an admin.
+const samples: Profile[] = [
   { id: "RC-1042", name: "Amara O.", role: "Patient Intake Coordinator", specialty: "Healthcare Administration", summary: "Scheduling, patient registration and insurance eligibility checks for busy outpatient clinics.", years: "5+ years", skills: ["EHR documentation", "Insurance verification", "Scheduling"], availability: "Full time", zone: "Africa / Europe", languages: ["English"] },
   { id: "RC-1077", name: "Marco D.", role: "Customer Support Specialist", specialty: "Customer Support", summary: "Phone, email and live chat support for online stores, with ticket and CRM follow up.", years: "3 to 5 years", skills: ["Zendesk", "Live chat", "CRM"], availability: "Full time", zone: "Asia Pacific", languages: ["English", "Filipino"] },
   { id: "RC-1103", name: "Lucía R.", role: "Executive Assistant", specialty: "Virtual Assistance", summary: "Inbox and calendar management, travel planning and document preparation for executives.", years: "5+ years", skills: ["Google Workspace", "Calendar management", "Travel"], availability: "Part time", zone: "Americas", languages: ["English", "Spanish"] },
@@ -18,7 +21,10 @@ const profiles: Profile[] = [
   { id: "RC-1219", name: "Daniela V.", role: "Virtual Assistant", specialty: "Virtual Assistance", summary: "Data entry, research, meeting coordination and general admin support.", years: "1 to 3 years", skills: ["Data entry", "Research", "Excel"], availability: "Full time", zone: "Americas", languages: ["English", "Spanish"] },
 ];
 
-export default function TalentMarketplace() {
+export default async function TalentMarketplace() {
+  const real = await publishedListings();
+  const isSample = real.length === 0;
+  const profiles = isSample ? samples : real;
   return (
     <>
       <PageHero eyebrow="RemoteCore Talent Marketplace" title="Discover Talent. Build Your Team." lede="Explore skilled remote professionals across healthcare administration, customer support, virtual assistance, and business operations. Find a potential match and let RemoteCore coordinate the next step.">
@@ -28,8 +34,8 @@ export default function TalentMarketplace() {
 
       <section className="sec sec--pale" id="browse">
         <div className="wrap">
-          <Marketplace profiles={profiles} />
-          <p className="soft" style={{ marginTop: 22, fontSize: 14 }}>Profiles are published with candidate permission. Candidate availability and suitability are confirmed during the introduction process. The profiles shown now are samples.</p>
+          <Marketplace profiles={profiles} sample={isSample} />
+          <p className="soft" style={{ marginTop: 22, fontSize: 14 }}>Profiles are published with candidate permission. Candidate availability and suitability are confirmed during the introduction process.{isSample ? " The profiles shown now are samples and are not available for hire." : ""}</p>
         </div>
       </section>
 

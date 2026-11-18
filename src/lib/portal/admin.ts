@@ -20,5 +20,10 @@ export const LEVEL_LABEL: Record<string, string> = { owner: "Owner", staff: "Sta
 // What each admin action is called in the activity log.
 export const LOG_LABEL: Record<string, string> = {
   account_status: "Changed account status", company_status: "Changed company status", admin_level: "Changed team access",
-  team_added: "Added to the team", account_deleted: "Deleted an account",
+  team_added: "Added to the team", account_deleted: "Deleted an account", marketplace: "Changed the marketplace listing",
+};
+
+export const LISTING_STATUS: Record<string, { label: string; tone: "good" | "bad" | "neutral" | "info" }> = {
+  hidden: { label: "Not listed", tone: "neutral" }, pending: { label: "Wants to be listed", tone: "info" },
+  published: { label: "Listed", tone: "good" }, paused: { label: "Paused", tone: "neutral" },
 };

@@ -1,7 +1,8 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { setAccountStatus, setCompanyStatus, setAdminLevel, addTeamMember, deleteAccount } from "@/app/(portal)/portal/admin/actions";
+import { openSeekerFile, addTag, removeTag, addNote, deleteNote, setListing } from "@/app/(portal)/portal/admin/candidate-actions";
 
 type Msg = { ok: boolean; text: string } | null;
 type Res = { ok: boolean; message?: string; id?: string };
@@ -17,7 +18,7 @@ function useAction() {
     setMsg({ ok: true, text: okText });
     if (after) after(r); else router.refresh();
   });
-  return { msg, pending, run };
+  return { msg, pending, run, router };
 }
 
 const Note = ({ msg }: { msg: Msg }) => (msg ? <span className={msg.ok ? "saved" : "ferr"} role={msg.ok ? "status" : "alert"}>{msg.text}</span> : null);
@@ -109,5 +110,110 @@ export function AddTeamMemberForm() {
         <button className="btn btn--main btn--sm" disabled={pending}>{pending ? "Adding..." : "Add to the team"}</button>
       </div>
     </form>
+  );
+}
+
+// Opens a private file in a new tab through a fresh 5 minute link.
+export function SeekerFileButton({ seekerId, kind, appId, index = 0, label }: { seekerId: string; kind: "resume" | "document"; appId?: string; index?: number; label: string }) {
+  const [pending, start] = useTransition();
+  const [err, setErr] = useState("");
+  const open = () => {
+    const tab = window.open("", "_blank");
+    start(async () => {
+      setErr("");
+      const r = await openSeekerFile(seekerId, kind, appId, index);
+      if (r.ok && r.url) { if (tab) tab.location.href = r.url; else location.href = r.url; return; }
+      tab?.close();
+      setErr(r.message ?? "Please try again.");
+    });
+  };
+  return (
+    <span className="cfile">
+      <button type="button" className="btn btn--ghost btn--sm" disabled={pending} onClick={open}>
+        <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7zM14 3v5h5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+        {pending ? "Opening..." : label}
+      </button>
+      {err && <span className="ferr" role="alert">{err}</span>}
+    </span>
+  );
+}
+
+export function SeekerVoice({ seekerId }: { seekerId: string }) {
+  const ref = useRef<HTMLAudioElement>(null);
+  const [src, setSrc] = useState("");
+  const [pending, start] = useTransition();
+  const [err, setErr] = useState("");
+  const load = () => start(async () => {
+    setErr("");
+    const r = await openSeekerFile(seekerId, "audio");
+    if (!r.ok || !r.url) { setErr(r.message ?? "Please try again."); return; }
+    setSrc(r.url);
+    requestAnimationFrame(() => ref.current?.play().catch(() => {}));
+  });
+  return (
+    <div className="cvoice">
+      {src ? <audio ref={ref} className="maudio" controls src={src} preload="auto" /> : (
+        <button type="button" className="btn btn--soft btn--sm" disabled={pending} onClick={load}>
+          <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
+          {pending ? "Loading..." : "Play voice intro"}
+        </button>
+      )}
+      {err && <span className="ferr" role="alert">{err}</span>}
+    </div>
+  );
+}
+
+// Tags group candidates (for example "Medical billing" or "Spanish speaker"). Suggestions come from tags already in use.
+export function TagEditor({ seekerId, tags, known }: { seekerId: string; tags: string[]; known: string[] }) {
+  const { msg, pending, run, router } = useAction();
+  const [v, setV] = useState("");
+  const listId = `tags-${seekerId}`;
+  return (
+    <div className="aact">
+      {tags.length > 0 ? (
+        <ul className="chips">
+          {tags.map((t) => (
+            <li key={t} className="taginput__tag">{t}
+              <button type="button" aria-label={`Remove tag ${t}`} disabled={pending} onClick={() => run(() => removeTag(seekerId, t), "Tag removed.")}>×</button>
+            </li>
+          ))}
+        </ul>
+      ) : <p className="soft small">No tags yet.</p>}
+      <form className="aact__row" onSubmit={(e) => { e.preventDefault(); const t = v; run(() => addTag(seekerId, t), "Tag added.", () => { setV(""); router.refresh(); }); }}>
+        <label className="field"><span>Add a tag</span><input list={listId} value={v} onChange={(e) => setV(e.target.value)} maxLength={40} /></label>
+        <datalist id={listId}>{known.filter((k) => !tags.includes(k)).map((k) => <option key={k} value={k} />)}</datalist>
+        <button className="btn btn--ghost btn--sm" disabled={pending || !v.trim()}>Add</button>
+      </form>
+      <Note msg={msg} />
+    </div>
+  );
+}
+
+export function NoteForm({ seekerId }: { seekerId: string }) {
+  const { msg, pending, run, router } = useAction();
+  const [v, setV] = useState("");
+  return (
+    <form className="aact" onSubmit={(e) => { e.preventDefault(); const t = v; run(() => addNote(seekerId, t), "Note saved.", () => { setV(""); router.refresh(); }); }}>
+      <label className="field"><span>Add a private note</span><textarea rows={3} maxLength={4000} value={v} onChange={(e) => setV(e.target.value)} placeholder="Only the RemoteCore team sees notes." /></label>
+      <div className="aact__row"><button className="btn btn--ghost btn--sm" disabled={pending || v.trim().length < 2}>{pending ? "Saving..." : "Save note"}</button><Note msg={msg} /></div>
+    </form>
+  );
+}
+
+export function DeleteNoteButton({ noteId, seekerId }: { noteId: string; seekerId: string }) {
+  const { pending, run } = useAction();
+  return <button type="button" className="linkbtn small" disabled={pending} onClick={() => { if (confirm("Delete this note?")) run(() => deleteNote(noteId, seekerId), "Deleted."); }}>Delete</button>;
+}
+
+export function ListingButtons({ seekerId, status, consent }: { seekerId: string; status: string; consent: boolean }) {
+  const { msg, pending, run } = useAction();
+  return (
+    <div className="aact">
+      <div className="aact__row">
+        {status !== "published" && <button type="button" className="btn btn--main btn--sm" disabled={pending || !consent} onClick={() => run(() => setListing(seekerId, true), "Listed on the Talent Marketplace.")}>Publish on the marketplace</button>}
+        {status === "published" && <button type="button" className="btn btn--ghost btn--sm" disabled={pending} onClick={() => run(() => setListing(seekerId, false), "Taken off the marketplace.")}>Take off the marketplace</button>}
+      </div>
+      <Note msg={msg} />
+    </div>
   );
 }

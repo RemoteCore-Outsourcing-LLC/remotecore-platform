@@ -5,7 +5,7 @@ export type Profile = { id: string; role: string; name: string; specialty: strin
 
 const opts = (list: Profile[], k: keyof Profile) => Array.from(new Set(list.flatMap((p) => (Array.isArray(p[k]) ? (p[k] as string[]) : [p[k] as string])))).sort();
 
-export function Marketplace({ profiles }: { profiles: Profile[] }) {
+export function Marketplace({ profiles, sample = false }: { profiles: Profile[]; sample?: boolean }) {
   const [q, setQ] = useState("");
   const [f, setF] = useState({ specialty: "", years: "", availability: "", zone: "", language: "" });
   const shown = useMemo(() => {
@@ -49,7 +49,7 @@ export function Marketplace({ profiles }: { profiles: Profile[] }) {
 
       <div className="head" style={{ marginTop: 40, marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "end", gap: 16, flexWrap: "wrap", maxWidth: "none" }}>
         <h2>Explore Our Talent Network</h2>
-        <span className="soft" aria-live="polite">{shown.length} sample profiles</span>
+        <span className="soft" aria-live="polite">{shown.length} {sample ? "sample " : ""}{shown.length === 1 ? "profile" : "profiles"}</span>
       </div>
 
       {shown.length === 0 ? (

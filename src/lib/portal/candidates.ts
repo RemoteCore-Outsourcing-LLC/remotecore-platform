@@ -63,16 +63,7 @@ export async function candidateDetail(sb: SupabaseClient, companyId: string, app
     .eq("id", appId).eq("jobs.company_id", companyId).maybeSingle();
   if (!a) return null;
   const uid = a.seeker_id as string;
-  const [who, sp, pc, work, edu, certs, skills, langs] = await Promise.all([
-    sb.from("profiles").select("full_name, country").eq("id", uid).maybeSingle(),
-    sb.from("seeker_profiles").select("headline, summary, years_experience, employment_types, preferred_hours, time_zone, available_from, qualifications, expected_salary, salary_currency, audio_path, resume_path").eq("user_id", uid).maybeSingle(),
-    sb.from("computer_specs").select("computer_type, operating_system, processor, ram, storage, connection_type, download_mbps, upload_mbps, has_webcam, has_microphone, other_equipment").eq("user_id", uid).maybeSingle(),
-    sb.from("work_history").select("company, title, start_date, end_date, description").eq("user_id", uid).order("start_date", { ascending: false, nullsFirst: false }),
-    sb.from("education").select("school, degree, field, start_year, end_year").eq("user_id", uid).order("end_year", { ascending: false, nullsFirst: false }),
-    sb.from("certifications").select("name, issuer, year").eq("user_id", uid).order("year", { ascending: false, nullsFirst: false }),
-    sb.from("seeker_skills").select("skill").eq("user_id", uid),
-    sb.from("seeker_languages").select("language, level").eq("user_id", uid),
-  ]);
+  const { who, sp, pc, work, edu, certs, skills, langs } = await loadSeeker(sb, uid);
   const hist = ((a.application_status_history ?? []) as { to_status: string; changed_at: string }[])
     .slice().sort((x, y) => y.changed_at.localeCompare(x.changed_at));
   return {
@@ -90,4 +81,19 @@ export async function candidateDetail(sb: SupabaseClient, companyId: string, app
 export function fileLabel(path: string) {
   const base = path.split("/").pop() ?? path;
   return base.replace(/^doc-\d{10,}-/, "");
+}
+
+// Every part of a job seeker's profile. Row level security decides what the reader gets back.
+export async function loadSeeker(sb: SupabaseClient, uid: string) {
+  const [who, sp, pc, work, edu, certs, skills, langs] = await Promise.all([
+    sb.from("profiles").select("full_name, country").eq("id", uid).maybeSingle(),
+    sb.from("seeker_profiles").select("headline, summary, years_experience, employment_types, preferred_hours, time_zone, available_from, qualifications, expected_salary, salary_currency, audio_path, resume_path").eq("user_id", uid).maybeSingle(),
+    sb.from("computer_specs").select("computer_type, operating_system, processor, ram, storage, connection_type, download_mbps, upload_mbps, has_webcam, has_microphone, other_equipment").eq("user_id", uid).maybeSingle(),
+    sb.from("work_history").select("company, title, start_date, end_date, description").eq("user_id", uid).order("start_date", { ascending: false, nullsFirst: false }),
+    sb.from("education").select("school, degree, field, start_year, end_year").eq("user_id", uid).order("end_year", { ascending: false, nullsFirst: false }),
+    sb.from("certifications").select("name, issuer, year").eq("user_id", uid).order("year", { ascending: false, nullsFirst: false }),
+    sb.from("seeker_skills").select("skill").eq("user_id", uid),
+    sb.from("seeker_languages").select("language, level").eq("user_id", uid),
+  ]);
+  return { who, sp, pc, work, edu, certs, skills, langs };
 }
