@@ -227,9 +227,9 @@ async function AdminHome({ sb, name }: { sb: Awaited<ReturnType<typeof getSessio
         <header className="panel__head"><h2 id="num-h">Month by month</h2></header>
         <div className="tscroll">
           <table className="ntable">
-            <thead><tr><th scope="col">Month</th><th scope="col">Job seekers</th><th scope="col">Employers</th><th scope="col">Jobs posted</th><th scope="col">Applications</th><th scope="col">Requests and forms</th><th scope="col">Money in</th></tr></thead>
+            <thead><tr><th scope="col">Month</th><th scope="col">Job seekers</th><th scope="col">Employers</th><th scope="col">Jobs posted</th><th scope="col">Applications</th><th scope="col">Requests and forms</th><th scope="col"><a href="/portal/admin/billing?tab=payments">Money in (USD)</a></th></tr></thead>
             <tbody>
-              {stats.map((m) => <tr key={m.key}><th scope="row">{m.label}</th><td>{m.seekers}</td><td>{m.employers}</td><td>{m.jobs}</td><td>{m.apps}</td><td>{m.requests}</td><td className="soft">After Stripe</td></tr>)}
+              {stats.map((m) => <tr key={m.key}><th scope="row">{m.label}</th><td>{m.seekers}</td><td>{m.employers}</td><td>{m.jobs}</td><td>{m.apps}</td><td>{m.requests}</td><td>{new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(m.cents / 100)}</td></tr>)}
             </tbody>
           </table>
         </div>
@@ -240,21 +240,23 @@ async function AdminHome({ sb, name }: { sb: Awaited<ReturnType<typeof getSessio
 
 // Counts per month for the last 6 months. Money joins this table when Stripe is connected.
 async function monthly(sb: Awaited<ReturnType<typeof getSession>>["sb"], since: string) {
-  const [people, jobs, apps, reqs, forms] = await Promise.all([
+  const [people, jobs, apps, reqs, forms, pays] = await Promise.all([
     sb.from("profiles").select("role, created_at").gte("created_at", since).in("role", ["job_seeker", "employer"]).limit(10000),
     sb.from("jobs").select("created_at").gte("created_at", since).limit(10000),
     sb.from("applications").select("created_at").gte("created_at", since).limit(10000),
     sb.from("staffing_requests").select("created_at").gte("created_at", since).limit(10000),
     sb.from("form_submissions").select("created_at").gte("created_at", since).limit(10000),
+    sb.from("payments").select("type, amount_cents, currency, created_at").gte("created_at", since).eq("currency", "usd").limit(10000),
   ]);
   const months = Array.from({ length: 6 }, (_, i) => {
     const d = new Date(since); d.setUTCMonth(d.getUTCMonth() + i);
-    return { key: d.toISOString().slice(0, 7), label: d.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" }), seekers: 0, employers: 0, jobs: 0, apps: 0, requests: 0 };
+    return { key: d.toISOString().slice(0, 7), label: d.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" }), seekers: 0, employers: 0, jobs: 0, apps: 0, requests: 0, cents: 0 };
   }).reverse();
   const at = (iso: string) => months.find((m) => m.key === iso.slice(0, 7));
   for (const p of people.data ?? []) { const m = at(p.created_at); if (m) { if (p.role === "employer") m.employers++; else m.seekers++; } }
   for (const j of jobs.data ?? []) { const m = at(j.created_at); if (m) m.jobs++; }
   for (const a of apps.data ?? []) { const m = at(a.created_at); if (m) m.apps++; }
   for (const r of [...(reqs.data ?? []), ...(forms.data ?? [])]) { const m = at(r.created_at); if (m) m.requests++; }
+  for (const p of pays.data ?? []) { const m = at(p.created_at); if (m) m.cents += p.type === "refund" ? -p.amount_cents : p.amount_cents; }
   return months;
 }
