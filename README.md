@@ -14,3 +14,18 @@ Owned by RemoteCore Outsourcing LLC.
 3. `npm run dev`, then open http://localhost:3000
 
 This repository is public. Never commit a key, password or `.env.local`.
+
+## Where things are
+
+| Folder | What is in it |
+|---|---|
+| `src/app/(site)` | The public website: home, services, find opportunities, hire talent, talent marketplace, about, FAQ, contact, login and sign up pages |
+| `src/app/(portal)/portal` | Logged in screens for job seekers and employers (one portal, the menu changes by account type) |
+| `src/app/(portal)/portal/admin` | The admin dashboard: users, candidates, jobs, applications, inbox, billing, website settings, categories |
+| `src/app/api` | Form posts, the Stripe webhook, the weekly job alert job and the stop alerts link |
+| `src/lib/email` | Every email the platform sends (`templates.ts` holds the words) |
+| `src/lib/billing.ts` | Invoices, Stripe Checkout, payments and refunds |
+| `src/lib/content.ts`, `src/lib/heroes.ts` | Default page text. The admin Website screen overrides most of it |
+| `supabase/migrations` | The database, in order. Run a new file in the Supabase SQL editor to change the database |
+
+The weekly job alert schedule is in `vercel.json`.
