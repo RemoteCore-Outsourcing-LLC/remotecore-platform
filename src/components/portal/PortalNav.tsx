@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 
@@ -13,6 +14,10 @@ export function PortalNav({ role, name, unread }: { role: string; name: string; 
   const here = (href: string) => (href === "/portal" ? path === href : path === href || path.startsWith(`${href}/`));
   async function logout() { await supabaseBrowser().auth.signOut(); location.href = "/"; }
   const links = LINKS[role] ?? [];
+  // On a phone the menu scrolls sideways: bring the current page into view.
+  useEffect(() => {
+    document.querySelector<HTMLElement>(".pbar__nav [aria-current='page']")?.scrollIntoView({ inline: "center", block: "nearest" });
+  }, [path]);
   return (
     <header className="pbar">
       <div className="pbar__in">
