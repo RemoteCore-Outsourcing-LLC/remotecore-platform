@@ -1,6 +1,7 @@
 "use client";
 import { useState, type FormEvent } from "react";
 import { supabaseBrowser } from "@/lib/supabase/browser";
+import { safeNext } from "@/lib/safe-next";
 
 export function LoginForm({ next, linkError }: { next?: string; linkError?: boolean }) {
   const [error, setError] = useState(linkError ? "That link has expired or was already used. Log in, or ask for a new link." : "");
@@ -16,11 +17,11 @@ export function LoginForm({ next, linkError }: { next?: string; linkError?: bool
       setBusy(false);
       return;
     }
-    location.href = next && next.startsWith("/") && !next.startsWith("//") ? next : "/portal";
+    location.href = safeNext(next);
   }
 
   return (
-    <form className="form" onSubmit={onSubmit}>
+    <form className="form" method="post" onSubmit={onSubmit}>
       <h2>Log in</h2>
       <label className="field"><span>Email</span><input name="email" type="email" autoComplete="email" required /></label>
       <label className="field"><span>Password</span><input name="password" type="password" autoComplete="current-password" required /></label>

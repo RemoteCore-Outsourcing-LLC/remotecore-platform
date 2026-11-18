@@ -75,7 +75,7 @@ export function EmployerSignupForm() {
 
   const fe = (k: string) => errors[k] && <span className="ferr" id={`${k}-err`}>{errors[k]}</span>;
   return (
-    <form className="form" onSubmit={onSubmit} noValidate>
+    <form className="form" method="post" onSubmit={onSubmit} noValidate>
       <h2>Create your company account</h2>
       <label className="field"><span>Company name</span><input name="company" autoComplete="organization" aria-invalid={!!errors.company} />{fe("company")}</label>
       <label className="field"><span>Contact person</span><input name="full_name" autoComplete="name" aria-invalid={!!errors.full_name} />{fe("full_name")}</label>

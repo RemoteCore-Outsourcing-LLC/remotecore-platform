@@ -1,11 +1,14 @@
 import "server-only";
 import { getSession } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 // The signed in admin, for admin only pages. owner = may manage the team and delete accounts.
 export async function getAdmin() {
   const s = await getSession();
   const ok = !!s.user && s.profile?.role === "admin" && s.profile?.status === "active";
-  return { ...s, admin: ok, owner: ok && s.profile?.admin_level === "owner" };
+  // Admin screens read with the server key (only after this check), so they see contact details that
+  // row level security and column rights hide from everyone else. Writes still go through the admin's own login.
+  return { ...s, sb: ok ? supabaseAdmin() : s.sb, admin: ok, owner: ok && s.profile?.admin_level === "owner" };
 }
 
 export const ACCOUNT_STATUS: Record<string, { label: string; tone: "good" | "bad" | "neutral" | "info"; help: string }> = {

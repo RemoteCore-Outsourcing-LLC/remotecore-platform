@@ -17,7 +17,7 @@ async function requireAdmin() {
   const sb = await supabaseServer();
   const { data: { user } } = await sb.auth.getUser();
   if (!user) return null;
-  const { data: me } = await sb.from("profiles").select("id, full_name, email, role, status, admin_level").eq("id", user.id).single();
+  const { data: me } = await supabaseAdmin().from("profiles").select("id, full_name, email, role, status, admin_level").eq("id", user.id).single();
   if (!me || me.role !== "admin" || me.status !== "active") return null;
   return { sb, me, owner: me.admin_level === "owner" };
 }
@@ -38,7 +38,7 @@ export async function setAccountStatus(userId: string, status: string): Promise<
   if (!a) return { ok: false, message: "Please log in again." };
   if (!UUID.test(userId) || !STATUSES.includes(status as (typeof STATUSES)[number])) return { ok: false, message: "Something is wrong with this request." };
   if (userId === a.me.id) return { ok: false, message: "You cannot change your own account. Ask another owner." };
-  const { data: before } = await a.sb.from("profiles").select("status, role, email").eq("id", userId).maybeSingle();
+  const { data: before } = await supabaseAdmin().from("profiles").select("status, role, email").eq("id", userId).maybeSingle();
   if (!before) return { ok: false, message: "We could not find this account." };
   if (before.role === "admin" && !a.owner) return { ok: false, message: "Only an owner can change team accounts." };
   if (before.status === status) return { ok: true };
@@ -76,7 +76,7 @@ export async function setAdminLevel(userId: string, level: string): Promise<Resu
   if (!a?.owner) return { ok: false, message: "Only an owner can change team access." };
   if (!UUID.test(userId) || !["owner", "staff"].includes(level)) return { ok: false, message: "Something is wrong with this request." };
   if (userId === a.me.id) return { ok: false, message: "You cannot change your own access. Ask another owner." };
-  const { data: p } = await a.sb.from("profiles").select("role, admin_level, email").eq("id", userId).maybeSingle();
+  const { data: p } = await supabaseAdmin().from("profiles").select("role, admin_level, email").eq("id", userId).maybeSingle();
   if (p?.role !== "admin") return { ok: false, message: "This account is not on the team." };
   const { error } = await a.sb.from("profiles").update({ admin_level: level }).eq("id", userId);
   if (error) return { ok: false, message: "We could not change the access. Please try again." };

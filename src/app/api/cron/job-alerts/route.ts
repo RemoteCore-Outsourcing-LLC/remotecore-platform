@@ -22,12 +22,18 @@ export async function GET(req: Request) {
   const open = ((jobs ?? []) as unknown as (JobRow & { published_at: string })[]).filter((j) => !j.deadline || j.deadline >= today);
   if (!open.length) return NextResponse.json({ sent: 0, jobs: 0 });
 
-  const { data: seekers } = await db.from("seeker_profiles")
-    .select("user_id, preferred_categories, last_job_alert_at, profiles!inner(full_name, email, status, role)")
-    .eq("job_alerts", true).neq("preferred_categories", "{}");
+  // Read every job seeker who wants alerts, 1,000 at a time (the database returns at most 1,000 per request).
+  const seekers: { user_id: string; preferred_categories: string[]; last_job_alert_at: string | null; profiles: unknown }[] = [];
+  for (let from = 0; from < 100_000; from += 1000) {
+    const { data: page } = await db.from("seeker_profiles")
+      .select("user_id, preferred_categories, last_job_alert_at, profiles!inner(full_name, email, status, role)")
+      .eq("job_alerts", true).neq("preferred_categories", "{}").order("user_id").range(from, from + 999);
+    seekers.push(...((page ?? []) as typeof seekers));
+    if (!page || page.length < 1000) break;
+  }
 
   let sent = 0;
-  for (const s of seekers ?? []) {
+  for (const s of seekers) {
     const p = s.profiles as unknown as { full_name: string; email: string; status: string; role: string };
     if (p.role !== "job_seeker" || p.status !== "active" || !p.email) continue;
     const since = s.last_job_alert_at && s.last_job_alert_at > weekAgo ? s.last_job_alert_at : weekAgo;

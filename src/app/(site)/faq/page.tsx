@@ -15,7 +15,7 @@ export default async function FaqPage() {
       <Close title="Still have a question?">
         <a className="btn btn--main" href="/contact">Contact Us</a>
       </Close>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, "\\u003c") }} />
     </>
   );
 }

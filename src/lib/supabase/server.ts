@@ -18,6 +18,6 @@ export async function getSession() {
   const sb = await supabaseServer();
   const { data: { user } } = await sb.auth.getUser();
   if (!user) return { sb, user: null, profile: null };
-  const { data: profile } = await sb.from("profiles").select("*").eq("id", user.id).single();
+  const { data: profile } = await sb.rpc("my_profile").maybeSingle<Record<string, any>>(); // eslint-disable-line @typescript-eslint/no-explicit-any
   return { sb, user, profile };
 }

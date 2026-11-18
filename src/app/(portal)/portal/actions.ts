@@ -92,6 +92,7 @@ export async function applyToJob(input: { jobId: string; note: string; documents
   if (job.documents_required && documents.length === 0) return { ok: false, message: "This job asks for an extra document. Please add it." };
 
   // Keep a copy of the resume as it is today, so replacing it later does not change what this employer received.
+  if (!sp.resume_path.startsWith(`${user.id}/`) || sp.resume_path.includes("..")) return { ok: false, message: "Please upload your resume again on your profile." };
   const ext = sp.resume_path.split(".").pop();
   const snapshot = `${user.id}/applied-${jobId.slice(0, 8)}-${Date.now()}.${ext}`;
   const admin = supabaseAdmin();

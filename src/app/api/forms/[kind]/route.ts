@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendEmail, adminEmails } from "@/lib/email/send";
@@ -31,9 +32,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ kind: s
   // Bots fill the hidden field. Answer as if it worked and keep nothing.
   if (String(data.get("company_site") || "").trim()) return NextResponse.json({ ok: true });
 
+  // Only plain field names, a limited number of them, and limited length.
   const entry: Record<string, string> = {};
   for (const [k, v] of data.entries()) {
-    if (typeof v === "string" && k !== "company_site") entry[k] = v.trim().slice(0, 4000);
+    if (typeof v !== "string" || k === "company_site" || !/^[a-z][a-z0-9_]{0,39}$/.test(k)) continue;
+    if (Object.keys(entry).length >= 30) break;
+    entry[k] = v.trim().slice(0, 4000);
   }
   for (const f of spec.required) {
     if (!entry[f]) return NextResponse.json({ error: "Please fill in every required field." }, { status: 400 });
@@ -45,7 +49,21 @@ export async function POST(req: Request, { params }: { params: Promise<{ kind: s
     return NextResponse.json({ error: "Please check your email address." }, { status: 400 });
   }
 
-  const { data: saved, error } = await supabaseAdmin().from("form_submissions").insert({ kind, email: entry.email ?? null, data: entry }).select("id").single();
+  // Limits: 8 forms an hour from one visitor, 3 an hour for one email address. Over that we answer as if it worked
+  // and send nothing, so the form can not be used to send mail to strangers.
+  const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || req.headers.get("x-real-ip") || "unknown";
+  const ipHash = createHash("sha256").update(`${process.env.EMAIL_LINK_SECRET ?? ""}:${ip}`).digest("hex").slice(0, 32);
+  const hourAgo = new Date(Date.now() - 3_600_000).toISOString();
+  const db = supabaseAdmin();
+  const [byIp, byEmail] = await Promise.all([
+    db.from("form_submissions").select("id", { count: "exact", head: true }).eq("ip_hash", ipHash).gte("created_at", hourAgo),
+    entry.email ? db.from("form_submissions").select("id", { count: "exact", head: true }).eq("email", entry.email.toLowerCase()).gte("created_at", hourAgo) : Promise.resolve({ count: 0 }),
+  ]);
+  if ((byIp.count ?? 0) >= 8) return NextResponse.json({ error: "You sent several forms in a short time. Please wait an hour and try again." }, { status: 429 });
+  if ((byEmail.count ?? 0) >= 3) return NextResponse.json({ ok: true });
+  if (entry.email) entry.email = entry.email.toLowerCase();
+
+  const { data: saved, error } = await db.from("form_submissions").insert({ kind, email: entry.email ?? null, data: entry, ip_hash: ipHash }).select("id").single();
   if (error || !saved) {
     console.error("[form] save failed", kind, error?.message);
     return NextResponse.json({ error: "We could not send this right now. Please try again in a minute." }, { status: 500 });

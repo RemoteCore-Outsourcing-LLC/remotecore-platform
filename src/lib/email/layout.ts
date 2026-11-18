@@ -17,7 +17,7 @@ export function layout({ preview, heading, paragraphs, button, note, footer }: {
   const nt = note ? `<p style="margin:0;font-size:13.5px;line-height:1.55;color:#5B5571">${note}</p>` : "";
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${heading}</title></head>
 <body style="margin:0;padding:0;background:#F6F4FA;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
-<span style="display:none;max-height:0;overflow:hidden;opacity:0">${preview}</span>
+<span style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(preview.replace(/<[^>]+>/g, ""))}</span>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F4FA;padding:32px 12px"><tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px">
 <tr><td style="padding:0 4px 18px;font-size:18px;font-weight:800;color:#24104A;letter-spacing:-0.3px">RemoteCore <span style="color:#0B7F77;font-weight:700">Outsourcing</span></td></tr>

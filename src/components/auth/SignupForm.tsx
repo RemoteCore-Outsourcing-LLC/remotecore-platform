@@ -67,7 +67,7 @@ export function SignupForm() {
 
   const fe = (k: string) => errors[k] && <span className="ferr" id={`${k}-err`}>{errors[k]}</span>;
   return (
-    <form className="form" onSubmit={onSubmit} noValidate>
+    <form className="form" method="post" onSubmit={onSubmit} noValidate>
       <h2>Create your account</h2>
       <label className="field"><span>Full name</span><input name="full_name" autoComplete="name" aria-invalid={!!errors.full_name} />{fe("full_name")}</label>
       <label className="field"><span>Email</span><input name="email" type="email" autoComplete="email" aria-invalid={!!errors.email} />{fe("email")}</label>

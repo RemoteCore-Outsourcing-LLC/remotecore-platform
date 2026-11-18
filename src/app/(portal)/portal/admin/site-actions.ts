@@ -23,7 +23,7 @@ const log = (actorId: string, action: string, target: string, details: Record<st
   supabaseAdmin().from("admin_log").insert({ actor_id: actorId, action, target, details });
 
 const text = (max: number) => z.string().trim().max(max);
-const url = z.string().trim().max(300).refine((v) => v === "" || /^(https?:\/\/|\/|mailto:|tel:)/.test(v), "Start the link with https://, or / for a page on this site.");
+const url = z.string().trim().max(300).refine((v) => v === "" || /^(https?:\/\/[^\s/]|\/(?![\/\\])|mailto:|tel:)/.test(v), "Start the link with https://, or / for a page on this site.");
 const SCHEMAS = {
   company: z.object({
     phone: text(40), email: z.string().trim().max(200).refine((v) => v === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), "Enter a valid email."),

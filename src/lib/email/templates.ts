@@ -285,13 +285,14 @@ const FORM_REPLY: Record<string, { subject: string; heading: string; line: (e: R
   candidate: { subject: "We received your details", heading: "Thanks for your interest", line: () => "We received your details. To apply for open jobs and be seen by employers, create your free profile.", button: { label: "Create my profile", href: `${SITE}/register/job-seeker` } },
   contact: { subject: "We received your message", heading: "Message received", line: () => "Thanks for your message. Our team will reply to you by email." },
   introduction: { subject: "We received your introduction request", heading: "Introduction request received", line: () => "Thanks. We will check that the candidates you chose are available and get back to you about the next steps." },
-  "career-session": { subject: "We received your booking request", heading: "Booking request received", line: (e) => `Thanks for booking${e.service ? ` <b>${esc(e.service)}</b>` : " a career session"}. We will email you to set a time.` },
+  "career-session": { subject: "We received your booking request", heading: "Booking request received", line: (e) => `Thanks for booking${e.service ? ` <b>${esc(e.service.slice(0, 60))}</b>` : " a career session"}. We will email you to set a time.` },
   "learning-notify": { subject: "You are on the Learning Hub list", heading: "You are on the list", line: () => "Thanks. We will email you when the first courses open in the RemoteCore Learning Hub." },
 };
 
 // To the visitor: a short receipt for the form they sent.
 export function formReceived(kind: string, entry: Record<string, string>, ref: string): Built | null {
-  if (kind === "staffing-request") return staffingRequestReceived({ name: entry.full_name, position: entry.roles || "your open roles", ref, account: false });
+  // Receipts repeat as little of the visitor's own text as possible, and never much of it.
+  if (kind === "staffing-request") return staffingRequestReceived({ name: (entry.full_name || "").slice(0, 60), position: (entry.roles || "your open roles").slice(0, 60), ref, account: false });
   const r = FORM_REPLY[kind];
   if (!r) return null;
   const name = entry.full_name || entry.contact_name || "";

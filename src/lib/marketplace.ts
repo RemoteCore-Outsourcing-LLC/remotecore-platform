@@ -28,7 +28,7 @@ export async function publishedListings(): Promise<Profile[]> {
   const db = supabaseAdmin();
   const { data } = await db.from("seeker_profiles")
     .select("user_id, headline, summary, years_experience, employment_types, preferred_categories, time_zone, profiles!inner(full_name, status)")
-    .eq("marketplace_status", "published").eq("marketplace_consent", true).eq("profiles.status", "active")
+    .eq("marketplace_status", "published").eq("marketplace_consent", true).eq("profiles.status", "active").eq("profiles.role", "job_seeker")
     .order("marketplace_changed_at", { ascending: false, nullsFirst: false }).limit(200);
   const rows = data ?? [];
   if (!rows.length) return [];
