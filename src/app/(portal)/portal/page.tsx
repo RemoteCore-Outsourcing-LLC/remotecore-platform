@@ -23,7 +23,7 @@ export default async function PortalHome() {
         {c.status === "approved" ? (
           <section className="banner banner--ok" aria-labelledby="eok">
             <div><h2 id="eok">Your company account is approved</h2><p>You can post jobs, send staffing requests and review candidates.</p></div>
-            <div className="banner__act"><a className="btn btn--ghost" href="/portal/company">Edit company profile</a></div>
+            <div className="banner__act"><a className="btn btn--main" href="/portal/postings/new">Post a job</a><a className="btn btn--ghost" href="/portal/requests/new">Staffing request</a></div>
           </section>
         ) : c.status === "suspended" ? (
           <section className="banner" aria-labelledby="esus">
@@ -36,6 +36,7 @@ export default async function PortalHome() {
             <div className="banner__act"><a className="btn btn--ghost" href="/portal/company">Check your details</a></div>
           </section>
         )}
+        {c.status === "approved" && <EmployerTally sb={sb} companyId={c.id} />}
         <div className="dgrid" style={{ marginTop: 20 }}>
           <section className="panel" aria-labelledby="steps-h">
             <header className="panel__head"><h2 id="steps-h">Getting started</h2></header>
@@ -156,5 +157,25 @@ export default async function PortalHome() {
         </section>
       </div>
     </div>
+  );
+}
+
+// Live jobs, jobs waiting for review, applicants and open requests, for an approved employer.
+async function EmployerTally({ sb, companyId }: { sb: Awaited<ReturnType<typeof getSession>>["sb"]; companyId: string }) {
+  const head = { count: "exact" as const, head: true };
+  const [live, review, apps, reqs] = await Promise.all([
+    sb.from("jobs").select("id", head).eq("company_id", companyId).eq("status", "published"),
+    sb.from("jobs").select("id", head).eq("company_id", companyId).eq("status", "pending"),
+    sb.from("applications").select("id, jobs!inner(company_id)", head).eq("jobs.company_id", companyId),
+    sb.from("staffing_requests").select("id", head).eq("company_id", companyId).neq("status", "closed"),
+  ]);
+  const n = (x: { count: number | null }) => x.count ?? 0;
+  return (
+    <ul className="tally" aria-label="Summary" style={{ marginTop: 20 }}>
+      <li><a href="/portal/postings"><b>{n(live)}</b> live {n(live) === 1 ? "job" : "jobs"}</a></li>
+      <li><a href="/portal/postings"><b>{n(review)}</b> waiting for review</a></li>
+      <li><a href="/portal/postings"><b>{n(apps)}</b> {n(apps) === 1 ? "applicant" : "applicants"}</a></li>
+      <li><a href="/portal/requests"><b>{n(reqs)}</b> open {n(reqs) === 1 ? "request" : "requests"}</a></li>
+    </ul>
   );
 }

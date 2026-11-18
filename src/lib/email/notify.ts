@@ -1,7 +1,7 @@
 import "server-only";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendEmail, adminEmails } from "./send";
-import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin, employerWelcome, newEmployerAdmin, employerApproved } from "./templates";
+import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin, employerWelcome, newEmployerAdmin, employerApproved, newJobPostAdmin, staffingRequestReceived, newStaffingRequestAdmin } from "./templates";
 
 const ref = (id: string) => id.slice(0, 8).toUpperCase();
 
@@ -68,4 +68,28 @@ export async function notifyCompanyApproved(companyId: string) {
   if (!c || c.status !== "approved") return;
   await db.from("notifications").insert({ user_id: c.owner_id, title: "Your company account is approved", body: "You can now post jobs and send staffing requests.", link: "/portal" });
   await sendEmail({ to: c.email, ...employerApproved({ name: c.contact_person, company: c.name }) });
+}
+
+// A job was sent for review (new, or changed after it was approved). Tells the team.
+export async function notifyJobSubmitted(jobId: string, edited: boolean) {
+  const team = adminEmails();
+  if (!team.length) return;
+  const { data: j } = await supabaseAdmin().from("jobs").select("title, companies(name)").eq("id", jobId).maybeSingle();
+  if (!j) return;
+  const company = (j.companies as unknown as { name: string } | null)?.name ?? "RemoteCore";
+  await sendEmail({ to: team, ...newJobPostAdmin({ title: j.title, company, status: edited ? "Edited, waiting for a new review" : "New, waiting for review" }) });
+}
+
+// A staffing request from the employer dashboard: receipt to the employer, alert to the team, note in the bell.
+export async function notifyStaffingRequest(requestId: string) {
+  const db = supabaseAdmin();
+  const { data: r } = await db.from("staffing_requests").select("id, created_by, company_name, contact_name, email, position, number_needed").eq("id", requestId).maybeSingle();
+  if (!r) return;
+  const ref = r.id.slice(0, 8).toUpperCase();
+  const team = adminEmails();
+  await Promise.allSettled([
+    r.created_by ? db.from("notifications").insert({ user_id: r.created_by, title: "Staffing request received", body: `We received your request for ${r.position}. Reference ${ref}.`, link: "/portal/requests" }) : null,
+    sendEmail({ to: r.email, ...staffingRequestReceived({ name: r.contact_name ?? "", position: r.position, ref, account: true }) }),
+    team.length ? sendEmail({ to: team, ...newStaffingRequestAdmin({ company: r.company_name ?? "", contact: r.contact_name ?? "", email: r.email ?? "", position: r.position, hires: String(r.number_needed ?? ""), ref }) }) : null,
+  ]);
 }

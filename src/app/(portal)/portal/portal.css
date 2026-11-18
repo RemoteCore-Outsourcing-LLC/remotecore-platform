@@ -331,3 +331,27 @@ a.rows__title:hover { text-decoration: underline; }
 .esteps span { font-size: 14px; color: var(--ink-soft); }
 .epanel { display: grid; gap: 18px; }
 .epanel__body { padding: 0 22px 22px; }
+
+/* employer job form */
+.notice { padding: 14px 18px; border-radius: var(--r); background: #EEE9F7; color: var(--plum); font-size: 14.5px; line-height: 1.5; }
+.taginput { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; min-height: 46px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
+.taginput:focus-within { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-soft); }
+.taginput.is-bad { border-color: var(--danger); }
+.taginput input { flex: 1; min-width: 160px; min-height: 0; box-shadow: none !important; border: 0; outline: none; font: inherit; font-size: 15px; padding: 6px 4px; background: none; color: var(--ink); }
+.taginput__tag { display: inline-flex; align-items: center; gap: 4px; padding: 5px 6px 5px 11px; border-radius: 999px; background: var(--teal-soft); color: #075F59; font-size: 13.5px; font-weight: 600; }
+.taginput__tag button { border: 0; background: none; color: inherit; font-size: 17px; line-height: 1; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; }
+.taginput__tag button:hover { background: rgba(7,95,89,.12); }
+.payrow { display: grid; grid-template-columns: 96px 1fr 1fr 128px; gap: 8px; }
+.payrow input, .payrow select { width: 100%; min-width: 0; }
+.formbar { position: sticky; bottom: 0; z-index: 5; display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; padding: 14px 18px; border-radius: var(--r); background: rgba(255,255,255,.94); backdrop-filter: blur(8px); box-shadow: 0 -1px 0 var(--line), 0 8px 24px -12px rgba(36,16,74,.18); }
+.formbar .ferr { margin-right: auto; }
+@media (max-width: 620px) { .payrow { grid-template-columns: 1fr 1fr; } }
+.jrows li { gap: 18px; }
+.jrows li > div { flex: 1; }
+.jrows .pill { margin-right: 4px; }
+.jrows__apps { font-size: 14px; color: var(--ink-soft); white-space: nowrap; }
+.jrows__apps b { color: var(--ink); font-size: 16px; }
+.jact { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 720px) { .jrows li { flex-wrap: wrap; } .jrows li > div { flex-basis: 100%; } .jact { justify-content: flex-start; } }
+.back { margin-bottom: 10px; font-size: 14px; }
+@media (max-width: 520px) { .formbar { padding: 10px 12px; gap: 8px; flex-wrap: nowrap; } .formbar__cancel { display: none; } .formbar .ferr { display: none; } }
