@@ -50,6 +50,7 @@ export default async function PortalHome() {
       </div>
     );
   }
+  if (profile.role === "admin") return <AdminHome sb={sb} name={profile.full_name} />;
   if (profile.role !== "job_seeker") {
     return <div className="pwrap"><Empty title="Your dashboard is on its way">RemoteCore is setting up this part of the platform. We will email you when it is ready.</Empty></div>;
   }
@@ -179,5 +180,47 @@ async function EmployerTally({ sb, companyId }: { sb: Awaited<ReturnType<typeof 
       <li><a href="/portal/candidates?status=open"><b>{n(waiting)}</b> waiting on you</a></li>
       <li><a href="/portal/requests"><b>{n(reqs)}</b> open {n(reqs) === 1 ? "request" : "requests"}</a></li>
     </ul>
+  );
+}
+
+// The team's start page: what is waiting for a decision. More panels arrive with the next admin screens.
+async function AdminHome({ sb, name }: { sb: Awaited<ReturnType<typeof getSession>>["sb"]; name: string }) {
+  const head = { count: "exact" as const, head: true };
+  const week = new Date(Date.now() - 7 * 86_400_000).toISOString();
+  const [companies, jobs, requests, apps, seekers, pendingList] = await Promise.all([
+    sb.from("companies").select("id", head).eq("status", "pending"),
+    sb.from("jobs").select("id", head).eq("status", "pending"),
+    sb.from("staffing_requests").select("id", head).eq("status", "new"),
+    sb.from("applications").select("id", head).gte("created_at", week),
+    sb.from("profiles").select("id", head).eq("role", "job_seeker").gte("created_at", week),
+    sb.from("companies").select("id, name, owner_id, created_at, industry").eq("status", "pending").order("created_at").limit(6),
+  ]);
+  const n = (x: { count: number | null }) => x.count ?? 0;
+  const first = (name || "").split(" ")[0];
+  const pending = pendingList.data ?? [];
+  return (
+    <div className="pwrap">
+      <header className="phead"><h1>{first ? `Welcome, ${first}` : "Welcome"}</h1><p>What needs a decision today.</p></header>
+      <ul className="tally" aria-label="Summary">
+        <li><a href="/portal/admin/users?tab=employer&status=pending"><b>{n(companies)}</b> {n(companies) === 1 ? "company" : "companies"} to approve</a></li>
+        <li><span className="tally__plain"><b>{n(jobs)}</b> {n(jobs) === 1 ? "job" : "jobs"} to review</span></li>
+        <li><span className="tally__plain"><b>{n(requests)}</b> new staffing {n(requests) === 1 ? "request" : "requests"}</span></li>
+        <li><span className="tally__plain"><b>{n(apps)}</b> {n(apps) === 1 ? "application" : "applications"} this week</span></li>
+        <li><a href="/portal/admin/users"><b>{n(seekers)}</b> new job {n(seekers) === 1 ? "seeker" : "seekers"} this week</a></li>
+      </ul>
+      <section className="panel" aria-labelledby="ap-h">
+        <header className="panel__head"><h2 id="ap-h">Companies waiting for approval</h2>{pending.length > 0 && <a href="/portal/admin/users?tab=employer&status=pending">See all</a>}</header>
+        {pending.length === 0 ? <Empty title="Nothing waiting">New company accounts show up here until you approve them.</Empty> : (
+          <ul className="rows">
+            {pending.map((c) => (
+              <li key={c.id}>
+                <div><a className="rows__title" href={`/portal/admin/users/${c.owner_id}`}>{c.name}</a><span className="soft small">{[c.industry, `Signed up ${ago(c.created_at)}`].filter(Boolean).join(" · ")}</span></div>
+                <a className="btn btn--ghost btn--sm" href={`/portal/admin/users/${c.owner_id}`}>Review</a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
   );
 }

@@ -210,6 +210,18 @@ export function invoiceReady(a: { name: string; number: string; amountCents: num
   );
 }
 
+// A new member of the RemoteCore team. They set their own password with the reset link on the login page.
+export function teamInvite(a: { name: string; by: string; level: string }) {
+  return build(
+    "You were added to the RemoteCore team",
+    "Set your password and log in to the admin dashboard.",
+    `Welcome, ${first(a.name)}`,
+    [`${esc(a.by)} added you to the RemoteCore Outsourcing team as <b>${esc(a.level)}</b>.`, "To log in the first time, choose your password with the button below. Enter this email address and we send you a link."],
+    { label: "Choose my password", href: `${SITE}/forgot-password` },
+    "If you did not expect this, you can ignore this email.",
+  );
+}
+
 /* ---------- RemoteCore team ---------- */
 
 const team = (subject: string, heading: string, lines: string[], href = `${SITE}/portal`) =>
