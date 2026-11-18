@@ -31,6 +31,7 @@ export async function checkoutFor(invoiceId: string) {
   const items = (inv.invoice_items as { description: string; amount_cents: number }[]).filter((i) => i.amount_cents > 0);
   const session = await stripe().checkout.sessions.create({
     mode: "payment",
+    payment_method_types: ["card"], // card only, as the brief asks (no buy now pay later, no bank debits)
     customer_email: co.email,
     line_items: items.map((i) => ({ quantity: 1, price_data: { currency: inv.currency, unit_amount: i.amount_cents, product_data: { name: `${inv.number}: ${i.description}`.slice(0, 250) } } })),
     metadata: { invoice_id: inv.id, invoice_number: inv.number },
