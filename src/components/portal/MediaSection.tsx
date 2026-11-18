@@ -18,7 +18,9 @@ const MAX_SECONDS = 180;
 type Props = { userId: string; resume: { name: string; url: string } | null; audio: { url: string } | null };
 
 async function upload(bucket: string, path: string, file: Blob, type: string) {
-  const { error } = await supabaseBrowser().storage.from(bucket).upload(path, file, { contentType: type, upsert: false });
+  // Storage reads the type from the file itself, so give it the checked type (a .webm file can say video/webm).
+  const body = file.type === type ? file : new Blob([file], { type });
+  const { error } = await supabaseBrowser().storage.from(bucket).upload(path, body, { contentType: type, upsert: false });
   return error;
 }
 
