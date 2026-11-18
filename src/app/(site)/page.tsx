@@ -2,22 +2,28 @@
 import { Close, Icon } from "@/components/site/Blocks";
 import { HomeMotion } from "@/components/site/HomeMotion";
 
+// The nine approved service cards (RCO Homepage Corrections, 2026-11-17).
 const services = [
-  ["health", "Healthcare Administrative Support", "Helping healthcare teams focus on patient care."],
-  ["support", "Customer Experience & Support", "Every interaction matters."],
-  ["assist", "Virtual & Executive Assistance", "Less administrative work. More room to grow."],
-  ["sales", "Sales & Business Support", "Keep your business moving."],
+  ["support", "Customer Support", "Customer service representatives, live chat, email and phone support specialists."],
+  ["assist", "Virtual Administrative", "Virtual assistants, executive assistants, scheduling and administrative professionals."],
+  ["sales", "Sales & Marketing", "Sales representatives, lead generation specialists and digital marketing professionals."],
+  ["home", "Real Estate & Hospitality", "Property management assistants, reservation agents and guest support specialists."],
+  ["tech", "Technology & IT", "IT support specialists, software developers and technical support professionals."],
+  ["health", "Healthcare Administration", "Medical virtual assistants, patient coordinators and healthcare support staff."],
+  ["money", "Finance & Accounting", "Bookkeepers, billing specialists and accounting support professionals."],
+  ["clipboard", "Project Managers & Estimators", "Project coordinators, project managers and cost estimation professionals."],
+  ["plus", "Custom Roles", "Need something different? We’ll recruit talent based on your specific requirements."],
 ];
 const why = [
-  ["match", "Tailored Talent Matching"],
-  ["insight", "Healthcare Industry Insight"],
-  ["person", "Personalized Service"],
-  ["growth", "Career Development"],
+  ["match", "Tailored Talent Matching", "We match each role to the skills, experience and working hours your business needs."],
+  ["globe", "Global Talent Access", "Skilled professionals from the Caribbean, Latin America and the Philippines."],
+  ["person", "Personalized Service", "A recruitment team that takes the time to learn how your business works."],
+  ["receipt", "Transparent Hiring Costs", "Clear placement fees, agreed before we begin."],
 ];
 const profiles = [
-  { img: "/assets/p3.webp", name: "Amara O.", role: "Patient Intake Coordinator", text: "Scheduling, intake and insurance checks for outpatient clinics.", meta: "6 years · Full time · GMT+1" },
-  { img: "/assets/p1.webp", name: "Marco D.", role: "Customer Support Specialist", text: "Phone, email and chat support, ticket management and follow ups.", meta: "4 years · Full time · GMT+8" },
-  { img: "/assets/p2.webp", name: "Lucía R.", role: "Executive Assistant", text: "Inbox and calendar management, travel and document preparation.", meta: "9 years · Part time · GMT-5" },
+  { img: "/assets/p1.webp", name: "Marco D.", role: "Customer Support Specialist", skills: ["Zendesk", "Live chat", "Email support"], exp: "4 years", avail: "Full time · GMT+8" },
+  { img: "/assets/p2.webp", name: "Lucía R.", role: "Executive Assistant", skills: ["Calendar management", "Travel", "Google Workspace"], exp: "9 years", avail: "Part time · GMT-5" },
+  { img: "/assets/p3.webp", name: "Amara O.", role: "Patient Intake Coordinator", skills: ["Scheduling", "Insurance checks", "EHR"], exp: "6 years", avail: "Full time · GMT+1" },
 ];
 
 export default function Home() {
@@ -29,7 +35,7 @@ export default function Home() {
             <p className="brand">RemoteCore Outsourcing LLC</p>
             <p className="tagline">Global Talent.<br />Local Impact.</p>
             <h1>Build Your Dream Remote Team.</h1>
-            <p className="hero__sub">Connect with skilled, carefully screened remote professionals for healthcare administration, customer support, virtual assistance, and more.</p>
+            <p className="hero__sub">Connect with skilled, carefully screened remote professionals from the Caribbean, Latin America, and the Philippines. We help businesses find the right talent across multiple industries—without the complexity of traditional hiring.</p>
             <div className="btns">
               <a className="btn btn--main" href="/hire-talent">Hire Remote Talent</a>
               <a className="btn btn--line" href="/book-consultation">Book a Consultation</a>
@@ -55,14 +61,13 @@ export default function Home() {
         <div className="wrap">
           <div className="head" data-sc-in>
             <h2>Built for Businesses. Designed Around People.</h2>
-            <p className="lede">Great businesses are built by great people. We connect ambitious organizations with capable remote professionals who bring practical skills, fresh perspectives, and dependable support.</p>
+            <p className="lede">Great businesses are built by great people. At RemoteCore Outsourcing, we connect companies with skilled remote professionals across multiple industries, helping them build dependable teams, simplify recruitment, and grow with confidence.</p>
           </div>
-          <div className="cards" data-sc-in data-sc-stagger="70">
+          <div className="svc9" data-sc-in data-sc-stagger="50">
             {services.map(([icon, title, text]) => (
-              <a key={title} className="card" href="/services" style={{ textDecoration: "none" }}>
+              <a key={title} className="svc9__card" href={title === "Custom Roles" ? "/hire-talent#request" : "/services"}>
                 <Icon name={icon} />
-                <h3>{title}</h3>
-                <p>{text}</p>
+                <span><b>{title}</b><span>{text}</span></span>
               </a>
             ))}
           </div>
@@ -73,12 +78,13 @@ export default function Home() {
         <div className="wrap split">
           <div data-sc-in>
             <h2>More Than Recruitment. A Partner in Your Growth.</h2>
-            <p className="lede">We take time to understand your business, identify the skills that matter, and introduce professionals whose experience aligns with your goals.</p>
-            <div className="cards" style={{ marginTop: 28, gridTemplateColumns: "1fr 1fr" }}>
-              {why.map(([icon, label]) => (
-                <div key={label} className="card" style={{ padding: 18 }}>
+            <p className="lede">We take the time to understand your business, identify the skills that matter most, and connect you with qualified remote professionals who align with your goals, company culture, and operational needs. Our personalized recruitment approach helps you build a dependable team with confidence.</p>
+            <div className="why4">
+              {why.map(([icon, label, text]) => (
+                <div key={label} className="why4__card">
                   <Icon name={icon} />
-                  <h3 style={{ fontSize: 17 }}>{label}</h3>
+                  <h3>{label}</h3>
+                  <p>{text}</p>
                 </div>
               ))}
             </div>
@@ -110,7 +116,7 @@ export default function Home() {
             <div className="cap">
               <small>How hiring works</small>
               <p className="big">4. Select and onboard.</p>
-              <p>Choose your new team member, confirm the terms, and welcome them aboard.</p>
+              <p>Choose your preferred candidate, finalize your hiring arrangements, and welcome your new team member. With our direct-hire model, you pay your professional directly while RCO handles the recruitment placement process.</p>
               <a className="btn btn--main" href="/hire-talent">See How Hiring Works</a>
             </div>
           </div>
@@ -118,15 +124,15 @@ export default function Home() {
           <div className="rq" id="rq" aria-label="Sample staffing request">
             <div className="rq__head">
               <span className="ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 21V5l8-2v18M12 7h8v14M7 8h2M7 12h2M7 16h2M15 11h2M15 15h2" /></svg></span>
-              <div><h3>Staffing request</h3><p>Outpatient clinic, Texas</p></div>
+              <div><h3>Staffing request</h3><p>Online store, United States</p></div>
               <span className="rq__state" id="rqState" aria-live="polite">Request received</span>
             </div>
             <div className="rq__fields">
-              <div><span>Role</span><b>Patient Intake Coordinator</b></div>
+              <div><span>Role</span><b>Customer Support Specialist</b></div>
               <div><span>Number of hires</span><b>2</b></div>
-              <div><span>Schedule</span><b>8am to 5pm US Central</b></div>
+              <div><span>Schedule</span><b>9am to 6pm US Eastern</b></div>
               <div><span>Experience</span><b>2+ years</b></div>
-              <div><span>Skills</span><b>EHR, insurance verification</b></div>
+              <div><span>Skills</span><b>Live chat, email, order support</b></div>
               <div><span>Start date</span><b>January 5</b></div>
             </div>
             <div className="screen">
@@ -136,11 +142,11 @@ export default function Home() {
               <div><i />Availability</div>
             </div>
             <div className="short">
-              <div className="cand"><img src="/assets/p1.webp" width={720} height={900} alt="" /><div><b>Marco D.</b>4 years<span className="wave" data-wave="18" /></div></div>
-              <div className="cand" data-pick="1"><img src="/assets/p3.webp" width={720} height={900} alt="" /><span className="stamp">Selected</span><div><b>Amara O.</b>6 years<span className="wave" data-wave="18" /></div></div>
+              <div className="cand"><img src="/assets/p3.webp" width={720} height={900} alt="" /><div><b>Amara O.</b>3 years<span className="wave" data-wave="18" /></div></div>
+              <div className="cand" data-pick="1"><img src="/assets/p1.webp" width={720} height={900} alt="" /><span className="stamp">Selected</span><div><b>Marco D.</b>4 years<span className="wave" data-wave="18" /></div></div>
               <div className="cand"><img src="/assets/p2.webp" width={720} height={900} alt="" /><div><b>Lucía R.</b>5 years<span className="wave" data-wave="18" /></div></div>
             </div>
-            <p className="sample">Sample request and sample profiles</p>
+            <p className="sample">Example request with sample profiles</p>
           </div>
         </div>
       </section>
@@ -150,7 +156,7 @@ export default function Home() {
           <div className="rail" data-sc-pan="0.04">
             <div className="rail__lead">
               <h2>Meet the Talent Behind Great Teams.</h2>
-              <p className="soft">Explore professionals with the skills to support your business, or tell us what you need and let us recruit for you.</p>
+              <p className="soft">Explore skilled remote professionals across a wide range of industries. Browse available talent, discover their experience and expertise, or let our recruitment team find the right match for your business.</p>
               <div className="btns">
                 <a className="btn btn--main" href="/talent-marketplace">Browse Talent</a>
                 <a className="btn btn--ghost" href="/hire-talent#request">Request Talent</a>
@@ -160,10 +166,11 @@ export default function Home() {
               <article key={p.name} className="prof">
                 <img src={p.img} width={720} height={900} alt="" />
                 <div>
-                  <span className="tag tag--plum">Sample profile</span>
+                  <span className="tag tag--plum">Sample profile, not available for hire</span>
                   <h3>{p.role}</h3>
-                  <p>{p.text}</p>
-                  <span className="meta">{p.name} · {p.meta}</span>
+                  <ul className="prof__skills" aria-label="Skills">{p.skills.map((k) => <li key={k}>{k}</li>)}</ul>
+                  <dl className="prof__facts"><dt>Experience</dt><dd>{p.exp}</dd><dt>Availability</dt><dd>{p.avail}</dd></dl>
+                  <span className="meta">{p.name}</span>
                 </div>
               </article>
             ))}
@@ -171,8 +178,9 @@ export default function Home() {
         </div>
       </section>
 
-      <Close title="Ready to Build a Stronger Team?" text="Tell us about your staffing needs and let’s explore the right solution together.">
+      <Close compact title="Ready to Build a Stronger Team?" text="Tell us about your hiring needs, and let RemoteCore Outsourcing connect you with skilled international professionals who fit your business, budget, and goals. Your next great hire starts with a conversation.">
         <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
+        <a className="btn btn--line" href="/hire-talent#request">Request Talent</a>
       </Close>
       <HomeMotion />
     </>

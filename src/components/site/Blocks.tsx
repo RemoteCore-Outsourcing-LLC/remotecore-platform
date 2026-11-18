@@ -14,9 +14,9 @@ export function PageHero({ eyebrow, title, lede, children, badge }: { eyebrow?: 
   );
 }
 
-export function Close({ title, text, children }: { title: string; text?: string; children: ReactNode }) {
+export function Close({ title, text, children, compact }: { title: string; text?: string; children: ReactNode; compact?: boolean }) {
   return (
-    <section className="close">
+    <section className={compact ? "close close--compact" : "close"}>
       <div className="wrap">
         <div>
           <h2>{title}</h2>
@@ -74,6 +74,10 @@ const icons: Record<string, ReactNode> = {
   money: <path d="M3 7h18v10H3zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />,
   plan: <path d="M4 20h16M6 16V9l6-5 6 5v7M10 20v-5h4v5" />,
   plus: <path d="M12 5v14M5 12h14" />,
+  home: <path d="M3 11l9-7 9 7M5 10v10h14V10M10 20v-6h4v6" />,
+  globe: <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z" />,
+  clipboard: <path d="M9 4h6v3H9zM7 5H5v16h14V5h-2M8 12h8M8 16h5" />,
+  receipt: <path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6M9 16h3" />,
 };
 
 export function Icon({ name }: { name: keyof typeof icons | string }) {

@@ -7,7 +7,11 @@ export const company = {
   address: ["816 William S Canning Blvd #1036", "Fall River, MA 02721", "United States"],
   phone: "" as string,
   email: "" as string,
-  socials: [] as { label: string; href: string }[], // LinkedIn goes here once we have the page link
+  socials: [
+    { label: "LinkedIn", href: "https://www.linkedin.com/company/remotecore-outsourcing-llc" },
+    { label: "Instagram", href: "https://www.instagram.com/remotecoreoutsourcing" },
+    { label: "TikTok", href: "https://www.tiktok.com/@remotecore.outsou" },
+  ],
 };
 
 export const nav = [
