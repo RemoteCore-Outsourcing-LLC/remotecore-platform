@@ -163,10 +163,11 @@ export default async function PortalHome() {
 // Live jobs, jobs waiting for review, applicants and open requests, for an approved employer.
 async function EmployerTally({ sb, companyId }: { sb: Awaited<ReturnType<typeof getSession>>["sb"]; companyId: string }) {
   const head = { count: "exact" as const, head: true };
-  const [live, review, apps, reqs] = await Promise.all([
+  const [live, review, apps, waiting, reqs] = await Promise.all([
     sb.from("jobs").select("id", head).eq("company_id", companyId).eq("status", "published"),
     sb.from("jobs").select("id", head).eq("company_id", companyId).eq("status", "pending"),
     sb.from("applications").select("id, jobs!inner(company_id)", head).eq("jobs.company_id", companyId),
+    sb.from("applications").select("id, jobs!inner(company_id)", head).eq("jobs.company_id", companyId).in("status", ["application_received", "under_review", "shortlisted", "interview_stage"]),
     sb.from("staffing_requests").select("id", head).eq("company_id", companyId).neq("status", "closed"),
   ]);
   const n = (x: { count: number | null }) => x.count ?? 0;
@@ -174,7 +175,8 @@ async function EmployerTally({ sb, companyId }: { sb: Awaited<ReturnType<typeof 
     <ul className="tally" aria-label="Summary" style={{ marginTop: 20 }}>
       <li><a href="/portal/postings"><b>{n(live)}</b> live {n(live) === 1 ? "job" : "jobs"}</a></li>
       <li><a href="/portal/postings"><b>{n(review)}</b> waiting for review</a></li>
-      <li><a href="/portal/postings"><b>{n(apps)}</b> {n(apps) === 1 ? "applicant" : "applicants"}</a></li>
+      <li><a href="/portal/candidates"><b>{n(apps)}</b> {n(apps) === 1 ? "applicant" : "applicants"}</a></li>
+      <li><a href="/portal/candidates?status=open"><b>{n(waiting)}</b> waiting on you</a></li>
       <li><a href="/portal/requests"><b>{n(reqs)}</b> open {n(reqs) === 1 ? "request" : "requests"}</a></li>
     </ul>
   );

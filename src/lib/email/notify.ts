@@ -1,7 +1,7 @@
 import "server-only";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendEmail, adminEmails } from "./send";
-import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin, employerWelcome, newEmployerAdmin, employerApproved, newJobPostAdmin, staffingRequestReceived, newStaffingRequestAdmin } from "./templates";
+import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin, employerWelcome, newEmployerAdmin, employerApproved, newJobPostAdmin, staffingRequestReceived, newStaffingRequestAdmin, newEmployerMessageAdmin } from "./templates";
 
 const ref = (id: string) => id.slice(0, 8).toUpperCase();
 
@@ -92,4 +92,14 @@ export async function notifyStaffingRequest(requestId: string) {
     sendEmail({ to: r.email, ...staffingRequestReceived({ name: r.contact_name ?? "", position: r.position, ref, account: true }) }),
     team.length ? sendEmail({ to: team, ...newStaffingRequestAdmin({ company: r.company_name ?? "", contact: r.contact_name ?? "", email: r.email ?? "", position: r.position, hires: String(r.number_needed ?? ""), ref }) }) : null,
   ]);
+}
+
+// An employer wrote to RemoteCore from the Messages page. Tells the team; the reply comes from the admin dashboard.
+export async function notifyEmployerMessage(messageId: string, about?: string) {
+  const team = adminEmails();
+  if (!team.length) return;
+  const { data: m } = await supabaseAdmin().from("messages").select("body, companies(name, contact_person, email)").eq("id", messageId).maybeSingle();
+  if (!m) return;
+  const c = m.companies as unknown as { name: string; contact_person: string; email: string } | null;
+  await sendEmail({ to: team, replyTo: c?.email, ...newEmployerMessageAdmin({ company: c?.name ?? "An employer", contact: c?.contact_person ?? "", body: m.body, about }) });
 }

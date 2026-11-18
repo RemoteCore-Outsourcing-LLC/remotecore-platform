@@ -39,7 +39,7 @@ export default async function Postings({ searchParams }: { searchParams: Promise
                     <a className="rows__title" href={`/portal/postings/${j.id}`}>{j.title}</a>
                     <span className="soft small"><span className={`pill pill--${s.tone}`}>{s.label}</span> {s.help} {j.deadline ? `Apply by ${shortDate(j.deadline)}.` : ""}</span>
                   </div>
-                  <span className="jrows__apps"><b>{apps}</b> {apps === 1 ? "applicant" : "applicants"}</span>
+                  {apps > 0 ? <a className="jrows__apps" href={`/portal/candidates?job=${j.id}`}><b>{apps}</b> {apps === 1 ? "applicant" : "applicants"}</a> : <span className="jrows__apps"><b>0</b> applicants</span>}
                   <JobStatusActions id={j.id} status={j.status} approvedBefore={!!j.published_at} />
                 </li>
               );

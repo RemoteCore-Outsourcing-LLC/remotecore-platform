@@ -227,6 +227,9 @@ export const newJobPostAdmin = (a: { title: string; company: string; status: str
 export const newStaffingRequestAdmin = (a: { company: string; contact: string; email: string; position: string; hires: string; ref: string }) =>
   team(`New staffing request: ${a.position} for ${a.company}`, "New staffing request", [`<b>${esc(a.company)}</b> needs <b>${esc(a.position)}</b>.`, row("Hires", a.hires || "Not given"), row("Contact", `${a.contact} (${a.email})`), row("Reference", a.ref)]);
 
+export const newEmployerMessageAdmin = (a: { company: string; contact: string; body: string; about?: string }) =>
+  team(`New message from ${a.company}`, "New message from an employer", [`<b>${esc(a.company)}</b> (${esc(a.contact)}) sent a message.`, ...(a.about ? [row("About", a.about)] : []), `<span style="white-space:pre-line">${esc(a.body)}</span>`]);
+
 export const newPaymentAdmin = (a: { company: string; amountCents: number; currency: string; description: string }) =>
   team(`Payment received: ${money(a.amountCents, a.currency)} from ${a.company}`, "New payment", [`<b>${esc(a.company)}</b> paid <b>${money(a.amountCents, a.currency)}</b>.`, row("For", a.description)]);
 
