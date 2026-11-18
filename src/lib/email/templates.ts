@@ -222,6 +222,18 @@ export function teamInvite(a: { name: string; by: string; level: string }) {
   );
 }
 
+// Employer: RemoteCore approved their job, or sent it back with what to change.
+export function jobApproved(a: { name: string; title: string }) {
+  return build(`Your job is live: ${a.title}`, "Job seekers can now find it and apply.", "Your job is live",
+    [`Hi ${first(a.name)},`, `We approved <b>${esc(a.title)}</b>. Job seekers can now find it and apply. We email you when someone applies.`],
+    { label: "See your jobs", href: `${SITE}/portal/postings` });
+}
+export function jobNeedsChanges(a: { name: string; title: string; reason: string }) {
+  return build(`Please update your job: ${a.title}`, "A small change is needed before it goes live.", "Your job needs a change",
+    [`Hi ${first(a.name)},`, `Before <b>${esc(a.title)}</b> goes live, please change this:`, `<span style="white-space:pre-line">${esc(a.reason)}</span>`, "Open the job, make the change and send it for review again."],
+    { label: "Edit the job", href: `${SITE}/portal/postings` });
+}
+
 /* ---------- RemoteCore team ---------- */
 
 const team = (subject: string, heading: string, lines: string[], href = `${SITE}/portal`) =>

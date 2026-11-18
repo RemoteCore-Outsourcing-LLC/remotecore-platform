@@ -203,9 +203,9 @@ async function AdminHome({ sb, name }: { sb: Awaited<ReturnType<typeof getSessio
       <header className="phead"><h1>{first ? `Welcome, ${first}` : "Welcome"}</h1><p>What needs a decision today.</p></header>
       <ul className="tally" aria-label="Summary">
         <li><a href="/portal/admin/users?tab=employer&status=pending"><b>{n(companies)}</b> {n(companies) === 1 ? "company" : "companies"} to approve</a></li>
-        <li><span className="tally__plain"><b>{n(jobs)}</b> {n(jobs) === 1 ? "job" : "jobs"} to review</span></li>
+        <li><a href="/portal/admin/jobs?status=pending"><b>{n(jobs)}</b> {n(jobs) === 1 ? "job" : "jobs"} to review</a></li>
         <li><span className="tally__plain"><b>{n(requests)}</b> new staffing {n(requests) === 1 ? "request" : "requests"}</span></li>
-        <li><span className="tally__plain"><b>{n(apps)}</b> {n(apps) === 1 ? "application" : "applications"} this week</span></li>
+        <li><a href="/portal/admin/applications"><b>{n(apps)}</b> {n(apps) === 1 ? "application" : "applications"} this week</a></li>
         <li><a href="/portal/admin/users"><b>{n(seekers)}</b> new job {n(seekers) === 1 ? "seeker" : "seekers"} this week</a></li>
       </ul>
       <section className="panel" aria-labelledby="ap-h">

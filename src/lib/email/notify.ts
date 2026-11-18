@@ -1,7 +1,7 @@
 import "server-only";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendEmail, adminEmails } from "./send";
-import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin, employerWelcome, newEmployerAdmin, employerApproved, newJobPostAdmin, staffingRequestReceived, newStaffingRequestAdmin, newEmployerMessageAdmin } from "./templates";
+import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin, employerWelcome, newEmployerAdmin, employerApproved, newJobPostAdmin, staffingRequestReceived, newStaffingRequestAdmin, newEmployerMessageAdmin, jobApproved, jobNeedsChanges } from "./templates";
 
 const ref = (id: string) => id.slice(0, 8).toUpperCase();
 
@@ -102,4 +102,16 @@ export async function notifyEmployerMessage(messageId: string, about?: string) {
   if (!m) return;
   const c = m.companies as unknown as { name: string; contact_person: string; email: string } | null;
   await sendEmail({ to: team, replyTo: c?.email, ...newEmployerMessageAdmin({ company: c?.name ?? "An employer", contact: c?.contact_person ?? "", body: m.body, about }) });
+}
+
+// After the team reviews an employer's job: in app notice and email to the company.
+export async function notifyJobReviewed(jobId: string, approved: boolean, reason = "") {
+  const db = supabaseAdmin();
+  const { data: j } = await db.from("jobs").select("title, companies(owner_id, contact_person, email)").eq("id", jobId).maybeSingle();
+  const c = j?.companies as unknown as { owner_id: string; contact_person: string; email: string } | null;
+  if (!j || !c) return;
+  await Promise.allSettled([
+    db.from("notifications").insert({ user_id: c.owner_id, title: approved ? `Your job is live: ${j.title}` : `Please update your job: ${j.title}`, body: approved ? "Job seekers can now find it and apply." : reason, link: "/portal/postings" }),
+    sendEmail({ to: c.email, ...(approved ? jobApproved({ name: c.contact_person, title: j.title }) : jobNeedsChanges({ name: c.contact_person, title: j.title, reason })) }),
+  ]);
 }

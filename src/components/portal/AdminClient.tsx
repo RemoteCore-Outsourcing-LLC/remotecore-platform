@@ -2,6 +2,8 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { setAccountStatus, setCompanyStatus, setAdminLevel, addTeamMember, deleteAccount } from "@/app/(portal)/portal/admin/actions";
+import { reviewJob, adminSetJobStatus, removeJob, adminSetApplicationStatus, addCategory, renameCategory, moveCategory, deleteCategory } from "@/app/(portal)/portal/admin/job-actions";
+import { APP_STATUS } from "@/lib/portal/seeker";
 import { openSeekerFile, addTag, removeTag, addNote, deleteNote, setListing } from "@/app/(portal)/portal/admin/candidate-actions";
 
 type Msg = { ok: boolean; text: string } | null;
@@ -215,5 +217,97 @@ export function ListingButtons({ seekerId, status, consent }: { seekerId: string
       </div>
       <Note msg={msg} />
     </div>
+  );
+}
+
+// Approve an employer's job, or send it back with what to change.
+export function ReviewBox({ jobId }: { jobId: string }) {
+  const { msg, pending, run } = useAction();
+  const [reason, setReason] = useState("");
+  const [back, setBack] = useState(false);
+  return (
+    <div className="aact">
+      <div className="aact__row">
+        <button type="button" className="btn btn--main btn--sm" disabled={pending} onClick={() => run(() => reviewJob(jobId, true), "Approved. The job is live and we emailed the employer.")}>Approve and publish</button>
+        {!back && <button type="button" className="btn btn--ghost btn--sm" disabled={pending} onClick={() => setBack(true)}>Ask for changes</button>}
+      </div>
+      {back && (
+        <form className="aact" onSubmit={(e) => { e.preventDefault(); run(() => reviewJob(jobId, false, reason), "Sent back. We emailed the employer what to change."); }}>
+          <label className="field"><span>What should they change?</span><textarea rows={3} maxLength={1000} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="For example: please add the pay range and the working hours." /></label>
+          <div className="aact__row">
+            <button className="btn btn--ghost btn--sm" disabled={pending || reason.trim().length < 5}>Send back to the employer</button>
+            <button type="button" className="linkbtn small" onClick={() => setBack(false)}>Cancel</button>
+          </div>
+        </form>
+      )}
+      <Note msg={msg} />
+    </div>
+  );
+}
+
+export function AdminJobActions({ id, status, applicants }: { id: string; status: string; applicants: number }) {
+  const router = useRouter();
+  const { msg, pending, run } = useAction();
+  const go = (s: "published" | "paused" | "closed", text: string) => run(() => adminSetJobStatus(id, s), text);
+  return (
+    <div className="aact">
+      <div className="aact__row">
+        {(status === "paused" || status === "closed" || status === "draft") && <button type="button" className="btn btn--main btn--sm" disabled={pending} onClick={() => go("published", "The job is live.")}>Publish</button>}
+        {status === "published" && <button type="button" className="btn btn--ghost btn--sm" disabled={pending} onClick={() => go("paused", "Paused. Job seekers cannot see it now.")}>Pause</button>}
+        {status !== "closed" && <button type="button" className="btn btn--ghost btn--sm" disabled={pending} onClick={() => { if (confirm("Close this job? It stops taking applications.")) go("closed", "Closed."); }}>Close</button>}
+        {applicants === 0 && <button type="button" className="btn btn--danger btn--sm" disabled={pending} onClick={() => { if (confirm("Remove this job for good?")) run(() => removeJob(id), "Removed.", () => router.push("/portal/admin/jobs?removed=1")); }}>Remove</button>}
+      </div>
+      {applicants > 0 && <p className="soft small">People applied, so this job can be closed but not removed.</p>}
+      <Note msg={msg} />
+    </div>
+  );
+}
+
+// Status picker on one application, in the all applications list.
+export function AdminAppStatus({ appId, status }: { appId: string; status: string }) {
+  const { msg, pending, run } = useAction();
+  const [v, setV] = useState(status);
+  return (
+    <form className="aapp" onSubmit={(e) => { e.preventDefault(); run(() => adminSetApplicationStatus(appId, v), "Saved. We emailed the candidate."); }}>
+      <label className="sr-only" htmlFor={`st-${appId}`}>Status</label>
+      <select id={`st-${appId}`} value={v} onChange={(e) => setV(e.target.value)} disabled={pending}>
+        {Object.entries(APP_STATUS).map(([k, s]) => <option key={k} value={k}>{s.label}</option>)}
+      </select>
+      <button className="btn btn--ghost btn--sm" disabled={pending || v === status}>{pending ? "Saving..." : "Save"}</button>
+      <Note msg={msg} />
+    </form>
+  );
+}
+
+export function CategoryRow({ id, name, jobs, first, last }: { id: number; name: string; jobs: number; first: boolean; last: boolean }) {
+  const { msg, pending, run } = useAction();
+  const [v, setV] = useState(name);
+  return (
+    <li className="acat">
+      <form className="acat__name" onSubmit={(e) => { e.preventDefault(); run(() => renameCategory(id, v), "Renamed."); }}>
+        <label className="sr-only" htmlFor={`cat-${id}`}>Category name</label>
+        <input id={`cat-${id}`} value={v} onChange={(e) => setV(e.target.value)} maxLength={80} />
+        {v.trim() !== name && <button className="btn btn--ghost btn--sm" disabled={pending}>Rename</button>}
+      </form>
+      <span className="soft small nowrap">{jobs} {jobs === 1 ? "job" : "jobs"}</span>
+      <span className="acat__act">
+        <button type="button" className="btn btn--ghost btn--sm" aria-label={`Move ${name} up`} disabled={pending || first} onClick={() => run(() => moveCategory(id, -1), "Moved.")}>Up</button>
+        <button type="button" className="btn btn--ghost btn--sm" aria-label={`Move ${name} down`} disabled={pending || last} onClick={() => run(() => moveCategory(id, 1), "Moved.")}>Down</button>
+        <button type="button" className="linkbtn small" disabled={pending} onClick={() => { if (confirm(`Delete the category ${name}?`)) run(() => deleteCategory(id), "Deleted."); }}>Delete</button>
+      </span>
+      <Note msg={msg} />
+    </li>
+  );
+}
+
+export function AddCategoryForm() {
+  const { msg, pending, run, router } = useAction();
+  const [v, setV] = useState("");
+  return (
+    <form className="aact__row" onSubmit={(e) => { e.preventDefault(); const n = v; run(() => addCategory(n), "Added.", () => { setV(""); router.refresh(); }); }}>
+      <label className="field"><span>New category</span><input value={v} onChange={(e) => setV(e.target.value)} maxLength={80} /></label>
+      <button className="btn btn--main btn--sm" disabled={pending || v.trim().length < 2}>Add</button>
+      <Note msg={msg} />
+    </form>
   );
 }

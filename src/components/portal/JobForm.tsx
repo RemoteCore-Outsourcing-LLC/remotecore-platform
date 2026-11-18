@@ -1,6 +1,7 @@
 "use client";
 import { useState, useTransition, type KeyboardEvent } from "react";
 import { saveJob, type JobInput } from "@/app/(portal)/portal/employer-actions";
+import { adminSaveJob } from "@/app/(portal)/portal/admin/job-actions";
 import { CURRENCIES } from "@/lib/geo";
 import { TYPES, LEVELS } from "@/lib/jobs/search";
 import { PERIODS } from "@/lib/employer";
@@ -16,7 +17,9 @@ export const EMPTY_JOB: JobValues = {
   computer_requirements: "", hours_time_zone: "", deadline: "", documents_required: "",
 };
 
-export function JobForm({ id, status, initial, categories }: { id?: string; status?: string; initial: JobValues; categories: { id: number; name: string }[] }) {
+// admin: the RemoteCore team. Their jobs go live with no review, and on a new job they pick the company (or RemoteCore).
+export function JobForm({ id, status, initial, categories, admin }: { id?: string; status?: string; initial: JobValues; categories: { id: number; name: string }[]; admin?: { companies: { id: string; name: string }[] } }) {
+  const [companyId, setCompanyId] = useState("");
   const [v, setV] = useState<JobValues>(initial);
   const [skill, setSkill] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -41,9 +44,10 @@ export function JobForm({ id, status, initial, categories }: { id?: string; stat
   const save = (mode: "draft" | "submit") => start(async () => {
     setMsg("");
     const skills = skill.trim() ? Array.from(new Set([...v.skills, ...skill.split(",").map((s) => s.trim()).filter(Boolean)])) : v.skills;
-    const r = await saveJob({ ...v, skills, category_id: v.category_id } as unknown as JobInput, { id, mode });
+    const input = { ...v, skills, category_id: v.category_id } as unknown as JobInput;
+    const r = admin ? await adminSaveJob(input, { id, mode: mode === "submit" ? "publish" : "draft", companyId }) : await saveJob(input, { id, mode });
     setErrors(r.errors ?? {});
-    if (r.ok) { location.href = `/portal/postings?saved=${mode}`; return; }
+    if (r.ok) { location.href = admin ? `/portal/admin/jobs?saved=${mode === "submit" ? "live" : "draft"}` : `/portal/postings?saved=${mode}`; return; }
     setMsg(r.message ?? "Please try again.");
     document.querySelector<HTMLElement>("[aria-invalid=true]")?.focus();
   });
@@ -52,7 +56,20 @@ export function JobForm({ id, status, initial, categories }: { id?: string; stat
   const bad = (k: string) => !!errors[k];
   return (
     <form className="stack" onSubmit={(e) => { e.preventDefault(); save("submit"); }} noValidate>
-      {live && <p className="notice">Changes to a live job go to RemoteCore for review. The job is hidden from job seekers until we approve the new version.</p>}
+      {admin && !id && (
+        <section className="psec" aria-labelledby="j0">
+          <header className="psec__head"><h2 id="j0">Who is hiring</h2></header>
+          <div className="psec__body">
+            <label className="field"><span>Company</span>
+              <select value={companyId} onChange={(e) => setCompanyId(e.target.value)}>
+                <option value="">RemoteCore (our own job post)</option>
+                {admin.companies.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </label>
+          </div>
+        </section>
+      )}
+      {live && !admin && <p className="notice">Changes to a live job go to RemoteCore for review. The job is hidden from job seekers until we approve the new version.</p>}
 
       <section className="psec" aria-labelledby="j1">
         <header className="psec__head"><h2 id="j1">The role</h2></header>
@@ -121,9 +138,9 @@ export function JobForm({ id, status, initial, categories }: { id?: string; stat
 
       <div className="formbar">
         {msg && <span className="ferr" role="alert">{msg}</span>}
-        <a className="btn btn--ghost btn--sm formbar__cancel" href="/portal/postings">Cancel</a>
-        {canDraft && <button type="button" className="btn btn--ghost btn--sm" disabled={pending} onClick={() => save("draft")}>Save as draft</button>}
-        <button className="btn btn--main btn--sm" disabled={pending}>{pending ? "Saving..." : live ? "Send changes for review" : "Send for review"}</button>
+        <a className="btn btn--ghost btn--sm formbar__cancel" href={admin ? "/portal/admin/jobs" : "/portal/postings"}>Cancel</a>
+        {(canDraft || (admin && status !== "published")) && <button type="button" className="btn btn--ghost btn--sm" disabled={pending} onClick={() => save("draft")}>{admin && id ? "Save" : "Save as draft"}</button>}
+        <button className="btn btn--main btn--sm" disabled={pending}>{pending ? "Saving..." : admin ? (status === "published" ? "Save changes" : "Publish now") : live ? "Send changes for review" : "Send for review"}</button>
       </div>
     </form>
   );
