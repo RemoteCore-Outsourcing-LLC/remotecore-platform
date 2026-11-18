@@ -15,6 +15,7 @@ export default async function Services() {
       </PageHero>
 
       <section className="sec">
+        <h2 className="sr-only">Main services</h2>
         <div className="wrap cards" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }} data-sc-in data-sc-stagger="70">
           {main.map((s) => (
             <article key={s.name} className="card" id={s.icon}>

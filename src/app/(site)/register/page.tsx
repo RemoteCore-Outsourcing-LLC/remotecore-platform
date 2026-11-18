@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Create an account", robots: { index: false } };
+export const metadata: Metadata = { title: "Create an account", description: "Create a free RemoteCore Outsourcing account as a job seeker or as an employer." };
 
 export default function Register() {
   return (
@@ -8,6 +8,7 @@ export default function Register() {
       <div className="wrap">
         <p className="eyebrow">Create an account</p>
         <h1>Who are you joining as?</h1>
+        <h2 className="sr-only">Account types</h2>
         <div className="cards" style={{ marginTop: 32, maxWidth: 820 }}>
           <a className="card" href="/register/job-seeker" style={{ textDecoration: "none" }}>
             <h3>I am looking for work</h3>

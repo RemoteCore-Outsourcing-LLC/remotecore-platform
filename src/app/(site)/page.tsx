@@ -121,7 +121,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="rq" id="rq" aria-label="Sample staffing request">
+          <div className="rq" id="rq" aria-hidden="true">
             <div className="rq__head">
               <span className="ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 21V5l8-2v18M12 7h8v14M7 8h2M7 12h2M7 16h2M15 11h2M15 15h2" /></svg></span>
               <div><h3>Staffing request</h3><p>Online store, United States</p></div>

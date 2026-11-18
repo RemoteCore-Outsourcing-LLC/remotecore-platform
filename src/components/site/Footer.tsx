@@ -28,7 +28,7 @@ export async function Footer() {
             )}
           </div>
           <div>
-            <h4>For Businesses</h4>
+            <h2 className="foot__h">For Businesses</h2>
             <ul>
               <li><a href="/services">Our Services</a></li>
               <li><a href="/talent-marketplace">Talent Marketplace</a></li>
@@ -39,7 +39,7 @@ export async function Footer() {
             </ul>
           </div>
           <div>
-            <h4>For Professionals</h4>
+            <h2 className="foot__h">For Professionals</h2>
             <ul>
               <li><a href="/find-opportunities">Find Opportunities</a></li>
               <li><a href="/learning-hub">Learning Hub</a></li>
@@ -49,7 +49,7 @@ export async function Footer() {
             </ul>
           </div>
           <div>
-            <h4>Company</h4>
+            <h2 className="foot__h">Company</h2>
             <ul>
               <li><a href="/about">About Us</a></li>
               <li><a href="/contact">Contact Us</a></li>
