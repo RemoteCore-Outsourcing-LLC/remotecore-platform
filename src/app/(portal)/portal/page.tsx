@@ -2,12 +2,53 @@ import type { Metadata } from "next";
 import { getSession } from "@/lib/supabase/server";
 import { profileProgress, PROFILE_SECTIONS, JOB_COLUMNS, ago, type JobRow } from "@/lib/portal/seeker";
 import { JobCard, StatusPill, Empty } from "@/components/portal/Dash";
+import { ApprovalSteps, CompanyFacts, CompanyPill, type Company } from "@/components/portal/Employer";
 
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false } };
 
 export default async function PortalHome() {
   const { sb, user, profile } = await getSession();
   if (!user || !profile) return null;
+  if (profile.role === "employer") {
+    const { data } = await sb.from("companies").select("*").eq("owner_id", user.id).maybeSingle();
+    const c = data as Company | null;
+    const first = (c?.contact_person || profile.full_name || "").split(" ")[0];
+    if (!c) return <div className="pwrap"><Empty title="We could not find your company">Please contact RemoteCore and we will fix this for you.</Empty></div>;
+    return (
+      <div className="pwrap">
+        <header className="phead">
+          <h1>{first ? `Welcome, ${first}` : "Welcome"}</h1>
+          <p>{c.name}</p>
+        </header>
+        {c.status === "approved" ? (
+          <section className="banner banner--ok" aria-labelledby="eok">
+            <div><h2 id="eok">Your company account is approved</h2><p>You can post jobs, send staffing requests and review candidates.</p></div>
+            <div className="banner__act"><a className="btn btn--ghost" href="/portal/company">Edit company profile</a></div>
+          </section>
+        ) : c.status === "suspended" ? (
+          <section className="banner" aria-labelledby="esus">
+            <div><h2 id="esus">Your company account is paused</h2><p>Please contact RemoteCore to reopen it.</p></div>
+            <div className="banner__act"><a className="btn btn--main" href="/contact">Contact us</a></div>
+          </section>
+        ) : (
+          <section className="banner" aria-labelledby="ewait">
+            <div className="banner__grow"><h2 id="ewait">We are reviewing your company</h2><p>We check every new company account before it opens. We will email <b>{c.email}</b> as soon as it is approved.</p></div>
+            <div className="banner__act"><a className="btn btn--ghost" href="/portal/company">Check your details</a></div>
+          </section>
+        )}
+        <div className="dgrid" style={{ marginTop: 20 }}>
+          <section className="panel" aria-labelledby="steps-h">
+            <header className="panel__head"><h2 id="steps-h">Getting started</h2></header>
+            <div className="epanel__body"><ApprovalSteps status={c.status} /></div>
+          </section>
+          <section className="panel" aria-labelledby="co-h">
+            <header className="panel__head"><h2 id="co-h">Your company</h2><a href="/portal/company">Edit</a></header>
+            <div className="epanel__body epanel"><div><CompanyPill status={c.status} /></div><CompanyFacts c={c} /></div>
+          </section>
+        </div>
+      </div>
+    );
+  }
   if (profile.role !== "job_seeker") {
     return <div className="pwrap"><Empty title="Your dashboard is on its way">RemoteCore is setting up this part of the platform. We will email you when it is ready.</Empty></div>;
   }

@@ -37,7 +37,7 @@ export default function HireTalent() {
           </div>
           <div className="panel" id="request">
             <h2>Request Talent</h2>
-            <p>Tell us who you need. Our team reviews every request.</p>
+            <p>Tell us who you need. Our team reviews every request. Want to post jobs and follow candidates yourself? <a href="/register/employer">Create a company account</a>.</p>
             <Form kind="staffing-request" submitLabel="Submit Staffing Request" thanksText="Thank you for contacting RemoteCore. Our team will review your request and follow up.">
               <div className="two">
                 <Field label="Full name" name="full_name" required autoComplete="name" />

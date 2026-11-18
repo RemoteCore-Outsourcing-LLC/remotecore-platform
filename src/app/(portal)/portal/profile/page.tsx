@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { getSession } from "@/lib/supabase/server";
 import { ProfileEditor, type ProfileData } from "@/components/portal/ProfileEditor";
@@ -11,6 +12,7 @@ const cap = (v: string) => v.replace("_", " ").replace(/^\w/, (c) => c.toUpperCa
 
 export default async function ProfilePage() {
   const { sb, user, profile } = await getSession();
+  if (profile?.role === "employer") redirect("/portal/company");
   if (!user || !profile) return null;
   const [sp, pc, work, edu, certs, skills, langs, cats] = await Promise.all([
     sb.from("seeker_profiles").select("*").eq("user_id", user.id).maybeSingle(),

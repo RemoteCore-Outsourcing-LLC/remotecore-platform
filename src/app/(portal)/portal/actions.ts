@@ -3,6 +3,8 @@ import { revalidatePath } from "next/cache";
 import { supabaseServer } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { notifyNewApplication } from "@/lib/email/notify";
+import { z } from "zod";
+import { cleanWebsite } from "@/lib/employer";
 
 type Result = { ok: boolean; message?: string };
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -119,5 +121,28 @@ export async function setJobAlerts(on: boolean): Promise<Result> {
   const { error } = await sb.from("seeker_profiles").update({ job_alerts: on }).eq("user_id", user.id);
   if (error) return { ok: false, message: "We could not save this. Please try again." };
   revalidatePath("/portal/settings");
+  return { ok: true };
+}
+
+// Employer: edit the company profile. Status, owner and email stay as they are (the database guards them too).
+const companySchema = z.object({
+  name: z.string().trim().min(2, "Enter your company name.").max(200),
+  contact_person: z.string().trim().min(2, "Enter the contact person.").max(200),
+  phone: z.string().trim().max(40),
+  country: z.string().trim().max(100),
+  website: z.string().trim().max(300),
+  industry: z.string().trim().max(120),
+  description: z.string().trim().min(20, "Tell us a little about your company (at least 20 characters).").max(2000),
+});
+export async function updateCompany(input: z.input<typeof companySchema>): Promise<Result & { errors?: Record<string, string> }> {
+  const { sb, user } = await me();
+  if (!user) return { ok: false, message: "Please log in again." };
+  const parsed = companySchema.safeParse(input);
+  if (!parsed.success) return { ok: false, errors: Object.fromEntries(parsed.error.issues.map((i) => [String(i.path[0]), i.message])) };
+  const site = cleanWebsite(parsed.data.website);
+  if (site === null) return { ok: false, errors: { website: "Check the website address, for example yourcompany.com." } };
+  const { error } = await sb.from("companies").update({ ...parsed.data, website: site || null }).eq("owner_id", user.id);
+  if (error) return { ok: false, message: "We could not save this. Please try again." };
+  revalidatePath("/portal", "layout");
   return { ok: true };
 }

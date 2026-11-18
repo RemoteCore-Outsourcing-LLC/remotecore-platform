@@ -319,3 +319,15 @@ a.rows__title:hover { text-decoration: underline; }
   .apply__foot .btn { width: 100%; }
   .apply--sent { flex-direction: column; align-items: stretch; }
 }
+
+/* employer approval steps */
+.esteps { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; counter-reset: es; }
+.esteps li { position: relative; padding-left: 40px; display: grid; gap: 2px; counter-increment: es; }
+.esteps li::before { content: counter(es); position: absolute; left: 0; top: -1px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 700; background: var(--canvas); color: var(--ink-soft); box-shadow: inset 0 0 0 1px var(--line); }
+.esteps li.is-done::before { content: "✓"; background: var(--teal); color: #fff; box-shadow: none; }
+.esteps li.is-now::before { background: var(--plum); color: #fff; box-shadow: 0 0 0 4px #EEE9F7; }
+.esteps b { font-size: 15px; color: var(--ink); }
+.esteps li:not(.is-done):not(.is-now) b { color: var(--ink-soft); }
+.esteps span { font-size: 14px; color: var(--ink-soft); }
+.epanel { display: grid; gap: 18px; }
+.epanel__body { padding: 0 22px 22px; }

@@ -4,7 +4,7 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 
 const LINKS: Record<string, [string, string][]> = {
   job_seeker: [["/portal", "Dashboard"], ["/portal/jobs", "Jobs"], ["/portal/saved", "Saved"], ["/portal/applications", "Applications"], ["/portal/profile", "Profile"]],
-  employer: [["/portal", "Dashboard"]],
+  employer: [["/portal", "Dashboard"], ["/portal/company", "Company"]],
   admin: [["/portal", "Dashboard"]],
 };
 

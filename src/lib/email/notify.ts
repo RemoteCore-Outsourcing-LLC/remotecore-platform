@@ -1,7 +1,7 @@
 import "server-only";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendEmail, adminEmails } from "./send";
-import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin } from "./templates";
+import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin, employerWelcome, newEmployerAdmin, employerApproved } from "./templates";
 
 const ref = (id: string) => id.slice(0, 8).toUpperCase();
 
@@ -37,16 +37,35 @@ export async function notifyStatusChange(appId: string) {
   if (mail) await sendEmail({ to: a.who.email, ...mail });
 }
 
-// The first time a new account confirms its email: welcome the job seeker and tell the team.
+// The first time a new account confirms its email: welcome the person and tell the team.
 // The welcomed_at stamp is set in the same step, so a second click on the link sends nothing.
 export async function notifyNewAccount(userId: string) {
   const { data: p } = await supabaseAdmin().from("profiles")
     .update({ welcomed_at: new Date().toISOString() }).eq("id", userId).is("welcomed_at", null)
     .select("role, full_name, email, country").maybeSingle();
-  if (!p || p.role !== "job_seeker") return;
+  if (!p) return;
   const team = adminEmails();
+  if (p.role === "employer") {
+    const { data: c } = await supabaseAdmin().from("companies").select("name, contact_person, email, country, industry").eq("owner_id", userId).maybeSingle();
+    if (!c) return;
+    await Promise.allSettled([
+      sendEmail({ to: p.email, ...employerWelcome({ name: c.contact_person, company: c.name }) }),
+      team.length ? sendEmail({ to: team, ...newEmployerAdmin({ company: c.name, contact: c.contact_person, email: c.email, country: c.country ?? "", industry: c.industry ?? "" }) }) : null,
+    ]);
+    return;
+  }
+  if (p.role !== "job_seeker") return;
   await Promise.allSettled([
     sendEmail({ to: p.email, ...welcomeSeeker({ name: p.full_name }) }),
     team.length ? sendEmail({ to: team, ...newSeekerAdmin({ name: p.full_name, email: p.email, country: p.country ?? "" }) }) : null,
   ]);
+}
+
+// Call this from the admin screen right after a company is approved.
+export async function notifyCompanyApproved(companyId: string) {
+  const db = supabaseAdmin();
+  const { data: c } = await db.from("companies").select("owner_id, name, contact_person, email, status").eq("id", companyId).maybeSingle();
+  if (!c || c.status !== "approved") return;
+  await db.from("notifications").insert({ user_id: c.owner_id, title: "Your company account is approved", body: "You can now post jobs and send staffing requests.", link: "/portal" });
+  await sendEmail({ to: c.email, ...employerApproved({ name: c.contact_person, company: c.name }) });
 }
