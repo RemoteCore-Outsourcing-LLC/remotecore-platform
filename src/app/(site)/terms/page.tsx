@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Terms of Use", robots: { index: fals
 export default function Page() {
   return (
     <>
-      <PageHero eyebrow="Legal" title="Terms of Use" lede="Our Terms of Use is being finalized. If you have a question in the meantime, please contact us." />
+      <PageHero page="terms" />
       <section className="sec"><div className="wrap"><a className="btn btn--main" href="/contact">Contact Us</a></div></section>
     </>
   );

@@ -15,7 +15,7 @@ const services = [
 export default function CareerServices() {
   return (
     <>
-      <PageHero eyebrow="Career Services" title="Your Experience Deserves to Be Heard." lede="You may already have the skills employers need. We help you communicate your value clearly and confidently.">
+      <PageHero page="career-services">
         <a className="btn btn--main" href="#services">Explore Career Services</a>
       </PageHero>
 

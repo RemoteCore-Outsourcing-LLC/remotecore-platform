@@ -187,13 +187,15 @@ async function EmployerTally({ sb, companyId }: { sb: Awaited<ReturnType<typeof 
 async function AdminHome({ sb, name }: { sb: Awaited<ReturnType<typeof getSession>>["sb"]; name: string }) {
   const head = { count: "exact" as const, head: true };
   const week = new Date(Date.now() - 7 * 86_400_000).toISOString();
-  const [companies, jobs, requests, apps, seekers, pendingList] = await Promise.all([
+  const since = new Date(); since.setUTCMonth(since.getUTCMonth() - 5, 1); since.setUTCHours(0, 0, 0, 0);
+  const [companies, jobs, requests, apps, seekers, pendingList, stats] = await Promise.all([
     sb.from("companies").select("id", head).eq("status", "pending"),
     sb.from("jobs").select("id", head).eq("status", "pending"),
     sb.from("staffing_requests").select("id", head).eq("status", "new"),
     sb.from("applications").select("id", head).gte("created_at", week),
     sb.from("profiles").select("id", head).eq("role", "job_seeker").gte("created_at", week),
     sb.from("companies").select("id, name, owner_id, created_at, industry").eq("status", "pending").order("created_at").limit(6),
+    monthly(sb, since.toISOString()),
   ]);
   const n = (x: { count: number | null }) => x.count ?? 0;
   const first = (name || "").split(" ")[0];
@@ -204,7 +206,7 @@ async function AdminHome({ sb, name }: { sb: Awaited<ReturnType<typeof getSessio
       <ul className="tally" aria-label="Summary">
         <li><a href="/portal/admin/users?tab=employer&status=pending"><b>{n(companies)}</b> {n(companies) === 1 ? "company" : "companies"} to approve</a></li>
         <li><a href="/portal/admin/jobs?status=pending"><b>{n(jobs)}</b> {n(jobs) === 1 ? "job" : "jobs"} to review</a></li>
-        <li><span className="tally__plain"><b>{n(requests)}</b> new staffing {n(requests) === 1 ? "request" : "requests"}</span></li>
+        <li><a href="/portal/admin/inbox"><b>{n(requests)}</b> new staffing {n(requests) === 1 ? "request" : "requests"}</a></li>
         <li><a href="/portal/admin/applications"><b>{n(apps)}</b> {n(apps) === 1 ? "application" : "applications"} this week</a></li>
         <li><a href="/portal/admin/users"><b>{n(seekers)}</b> new job {n(seekers) === 1 ? "seeker" : "seekers"} this week</a></li>
       </ul>
@@ -221,6 +223,38 @@ async function AdminHome({ sb, name }: { sb: Awaited<ReturnType<typeof getSessio
           </ul>
         )}
       </section>
+      <section className="panel" aria-labelledby="num-h" style={{ marginTop: 20 }}>
+        <header className="panel__head"><h2 id="num-h">Month by month</h2></header>
+        <div className="tscroll">
+          <table className="ntable">
+            <thead><tr><th scope="col">Month</th><th scope="col">Job seekers</th><th scope="col">Employers</th><th scope="col">Jobs posted</th><th scope="col">Applications</th><th scope="col">Requests and forms</th><th scope="col">Money in</th></tr></thead>
+            <tbody>
+              {stats.map((m) => <tr key={m.key}><th scope="row">{m.label}</th><td>{m.seekers}</td><td>{m.employers}</td><td>{m.jobs}</td><td>{m.apps}</td><td>{m.requests}</td><td className="soft">After Stripe</td></tr>)}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   );
+}
+
+// Counts per month for the last 6 months. Money joins this table when Stripe is connected.
+async function monthly(sb: Awaited<ReturnType<typeof getSession>>["sb"], since: string) {
+  const [people, jobs, apps, reqs, forms] = await Promise.all([
+    sb.from("profiles").select("role, created_at").gte("created_at", since).in("role", ["job_seeker", "employer"]).limit(10000),
+    sb.from("jobs").select("created_at").gte("created_at", since).limit(10000),
+    sb.from("applications").select("created_at").gte("created_at", since).limit(10000),
+    sb.from("staffing_requests").select("created_at").gte("created_at", since).limit(10000),
+    sb.from("form_submissions").select("created_at").gte("created_at", since).limit(10000),
+  ]);
+  const months = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(since); d.setUTCMonth(d.getUTCMonth() + i);
+    return { key: d.toISOString().slice(0, 7), label: d.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" }), seekers: 0, employers: 0, jobs: 0, apps: 0, requests: 0 };
+  }).reverse();
+  const at = (iso: string) => months.find((m) => m.key === iso.slice(0, 7));
+  for (const p of people.data ?? []) { const m = at(p.created_at); if (m) { if (p.role === "employer") m.employers++; else m.seekers++; } }
+  for (const j of jobs.data ?? []) { const m = at(j.created_at); if (m) m.jobs++; }
+  for (const a of apps.data ?? []) { const m = at(a.created_at); if (m) m.apps++; }
+  for (const r of [...(reqs.data ?? []), ...(forms.data ?? [])]) { const m = at(r.created_at); if (m) m.requests++; }
+  return months;
 }

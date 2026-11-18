@@ -234,6 +234,13 @@ export function jobNeedsChanges(a: { name: string; title: string; reason: string
     { label: "Edit the job", href: `${SITE}/portal/postings` });
 }
 
+// Employer: the RemoteCore team answered their message.
+export function teamReply(a: { name: string; body: string }) {
+  return build("RemoteCore replied to your message", a.body.slice(0, 90), "New message from RemoteCore",
+    [`Hi ${first(a.name)},`, `<span style="white-space:pre-line">${esc(a.body)}</span>`],
+    { label: "Reply on your dashboard", href: `${SITE}/portal/messages` });
+}
+
 /* ---------- RemoteCore team ---------- */
 
 const team = (subject: string, heading: string, lines: string[], href = `${SITE}/portal`) =>

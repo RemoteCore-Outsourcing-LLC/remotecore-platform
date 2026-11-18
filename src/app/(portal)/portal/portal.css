@@ -467,3 +467,21 @@ a.jrows__apps:hover b { color: var(--teal); }
 .acat__act { display: flex; align-items: center; gap: 6px; }
 .areview { box-shadow: 0 1px 2px rgba(36,16,74,.05), 0 0 0 1.5px var(--plum); }
 @media (max-width: 600px) { .acat { padding: 10px 16px; } }
+/* website editor and inbox */
+.srows { display: grid; gap: 8px; margin-bottom: 8px; }
+.srow { display: grid; grid-template-columns: 160px 1fr auto; gap: 8px; align-items: center; }
+.srow input, .sedit textarea, .sedit input, .sedit select { width: 100%; min-width: 0; }
+.sedit { list-style: none; margin: 0; }
+.sedit__item { padding: 16px 0; border-top: 1px solid var(--line); display: grid; gap: 12px; }
+.sedit__item:first-child { border-top: 0; padding-top: 0; }
+.sedit__page { display: flex; gap: 12px; align-items: baseline; }
+.inbox { gap: 12px; }
+.tscroll { overflow-x: auto; padding: 0 22px 18px; }
+.ntable { width: 100%; border-collapse: collapse; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+.ntable th, .ntable td { text-align: right; padding: 9px 12px; border-top: 1px solid var(--line); white-space: nowrap; }
+.ntable th:first-child { text-align: left; }
+.ntable thead th { border-top: 0; color: var(--ink-soft); font-weight: 600; font-size: 13px; }
+.ntable tbody th { font-weight: 600; }
+@media (max-width: 600px) { .srow { grid-template-columns: 1fr; } .tscroll { padding: 0 16px 16px; } }
+.inbox .aact__row .field:first-child { flex: 0 0 170px; }
+@media (max-width: 600px) { .inbox .aact__row .field:first-child { flex: 1 1 100%; } }

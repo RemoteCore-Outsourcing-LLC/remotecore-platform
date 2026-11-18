@@ -15,7 +15,7 @@ const courses = [
 export default function LearningHub() {
   return (
     <>
-      <PageHero eyebrow="Learning Hub" title="Skills for Today. Confidence for Tomorrow." lede="The future of work belongs to those who keep learning. RemoteCore Learning Hub is being developed to provide practical, career focused training for individuals ready to strengthen their skills and prepare for new opportunities." badge="Coming Soon">
+      <PageHero page="learning-hub" badge="Coming Soon">
         <a className="btn btn--main" href="#courses">Explore Courses</a>
       </PageHero>
 

@@ -358,3 +358,8 @@ figure { margin: 0; }
 .foot .foot__social { list-style: none; display: flex; gap: 6px; margin: 16px 0 0; padding: 0; }
 .foot__social a { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; background: rgba(255,255,255,.06); color: #D9D1E8; padding: 0; }
 .foot__social a:hover { background: rgba(255,255,255,.14); color: #fff; text-decoration: none; }
+
+/* announcement banner, set from the admin dashboard */
+.announce { background: var(--teal); color: #fff; text-align: center; padding: 9px 16px; font-size: 14.5px; line-height: 1.45; }
+.announce p { margin: 0 auto; max-width: 70ch; }
+.announce a { color: #fff; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }

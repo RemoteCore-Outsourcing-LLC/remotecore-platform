@@ -1,24 +1,15 @@
 import type { Metadata } from "next";
 import { Close, Icon, PageHero } from "@/components/site/Blocks";
+import { getSettings } from "@/lib/settings";
 
 export const metadata: Metadata = { title: "Our Services", description: "Remote professionals for healthcare administration, customer support, virtual and executive assistance, sales support, and custom recruitment." };
 
-const main = [
-  { icon: "health", name: "Healthcare Administrative Support", title: "Helping Healthcare Teams Focus on Patient Care.", items: ["Appointment scheduling", "Patient intake and registration", "Insurance eligibility and benefits verification", "Medical records and EHR documentation", "Referral and follow up coordination", "Pharmacy communication and administrative support"], note: "Tasks are performed within client authorized workflows, applicable privacy requirements, and role scope." },
-  { icon: "support", name: "Customer Experience & Support", title: "Every Interaction Matters.", items: ["Inbound phone support", "Email and live chat", "Ticket management", "Customer follow ups", "Issue resolution", "CRM documentation", "Escalation coordination"] },
-  { icon: "assist", name: "Virtual & Executive Assistance", title: "Less Administrative Work. More Room to Grow.", items: ["Inbox and calendar management", "Scheduling", "Document preparation", "Research", "Data entry", "Meeting coordination", "General administrative support"] },
-  { icon: "sales", name: "Sales & Business Support", title: "Keep Your Business Moving.", items: ["Lead research", "Appointment setting", "CRM updates", "Outreach follow ups", "Pipeline administration", "Reporting support"] },
-];
-const more = [
-  ["tech", "Technology & IT", "Technical support, IT help desk, software troubleshooting and digital operations."],
-  ["money", "Finance & Accounting", "Bookkeeping, invoicing, payroll administration, expense tracking and financial reporting support."],
-  ["plan", "Project Managers & Estimators", "Project coordination, scheduling, cost estimation, budgeting, progress tracking and reporting."],
-];
 
-export default function Services() {
+export default async function Services() {
+  const { services: { main, more } } = await getSettings();
   return (
     <>
-      <PageHero eyebrow="Our Services" title="Solutions That Move Your Business Forward." lede="Every growing business reaches a point where the right support makes all the difference. RemoteCore helps you find professionals who can take on essential responsibilities and give your team more time to focus on what matters most.">
+      <PageHero page="services">
         <a className="btn btn--main" href="/hire-talent#request">Request Talent</a>
         <a className="btn btn--line" href="/book-consultation">Book a Consultation</a>
       </PageHero>
@@ -41,8 +32,8 @@ export default function Services() {
         <div className="wrap">
           <div className="head" data-sc-in><h2>More roles we recruit for</h2></div>
           <div className="cards" data-sc-in data-sc-stagger="70">
-            {more.map(([icon, t, d]) => (
-              <article key={t} className="card"><Icon name={icon} /><h3>{t}</h3><p>{d}</p></article>
+            {more.map((m) => (
+              <article key={m.name} className="card"><Icon name={m.icon} /><h3>{m.name}</h3><p>{m.text}</p></article>
             ))}
           </div>
         </div>

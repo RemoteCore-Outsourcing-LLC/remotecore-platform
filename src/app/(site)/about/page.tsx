@@ -14,7 +14,7 @@ const values = [
 export default function About() {
   return (
     <>
-      <PageHero eyebrow="About Us" title="Built on Experience. Driven by Opportunity." lede="RemoteCore Outsourcing was founded on a simple belief: businesses deserve access to capable talent, and skilled professionals deserve meaningful opportunities regardless of where they live." />
+      <PageHero page="about" />
 
       <section className="sec">
         <div className="wrap split split--top">

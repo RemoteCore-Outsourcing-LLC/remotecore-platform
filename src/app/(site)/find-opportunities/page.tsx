@@ -16,7 +16,7 @@ export default async function FindOpportunities({ searchParams }: { searchParams
   const searching = !!f.q || activeCount(f) > 0;
   return (
     <>
-      <PageHero eyebrow="Find Opportunities" title="Your Skills Deserve Opportunity." lede="Join the RemoteCore talent network to explore remote roles and connect with opportunities aligned with your skills and experience.">
+      <PageHero page="find-opportunities">
         <a className="btn btn--main" href="#join">Join Our Talent Network</a>
         <a className="btn btn--ghost" href="#jobs">See open jobs</a>
       </PageHero>

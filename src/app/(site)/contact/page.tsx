@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/site/Blocks";
 import { Consent, Field, Form, Select } from "@/components/site/Form";
-import { company } from "@/lib/site";
+import { getSettings } from "@/lib/settings";
 
 export const metadata: Metadata = { title: "Contact Us", description: "Contact RemoteCore Outsourcing about hiring remote talent, career opportunities, training, or anything else." };
 
 const types = ["I Want to Hire Talent", "I Am Looking for Work", "I Have a Learning Hub Question", "I Need Career Services Support", "General Inquiry"];
 
-export default function Contact() {
+export default async function Contact() {
+  const { company } = await getSettings();
   return (
     <>
-      <PageHero eyebrow="Contact Us" title="Let’s Start a Conversation." lede="Whether you need remote talent, want to explore career opportunities, or have questions about training, our team would love to hear from you." />
+      <PageHero page="contact" />
       <section className="sec sec--pale">
         <div className="wrap split split--top">
           <div className="panel">

@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
+import { heroFor } from "@/lib/settings";
 
-export function PageHero({ eyebrow, title, lede, children, badge }: { eyebrow?: string; title: string; lede?: string; children?: ReactNode; badge?: string }) {
+// page: the key in lib/heroes.ts. The title and intro come from the admin settings, or the built in text.
+export async function PageHero({ page, children, badge }: { page: string; children?: ReactNode; badge?: string }) {
+  const { eyebrow, title, lede } = await heroFor(page);
   return (
     <section className="phero">
       <div className="wrap">

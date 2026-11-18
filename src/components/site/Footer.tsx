@@ -1,7 +1,9 @@
-import { company } from "@/lib/site";
+import { company as base } from "@/lib/site";
+import { getSettings } from "@/lib/settings";
 import { Logo } from "./Logo";
 
-export function Footer() {
+export async function Footer() {
+  const company = { ...base, ...(await getSettings()).company };
   const year = new Date().getFullYear();
   return (
     <footer className="foot">

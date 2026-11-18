@@ -27,7 +27,7 @@ export default async function TalentMarketplace() {
   const profiles = isSample ? samples : real;
   return (
     <>
-      <PageHero eyebrow="RemoteCore Talent Marketplace" title="Discover Talent. Build Your Team." lede="Explore skilled remote professionals across healthcare administration, customer support, virtual assistance, and business operations. Find a potential match and let RemoteCore coordinate the next step.">
+      <PageHero page="talent-marketplace">
         <a className="btn btn--main" href="#browse">Browse Talent</a>
         <a className="btn btn--line" href="/hire-talent#request">Request Custom Recruitment</a>
       </PageHero>

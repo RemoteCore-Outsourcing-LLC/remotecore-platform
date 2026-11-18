@@ -1,7 +1,7 @@
 import "server-only";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendEmail, adminEmails } from "./send";
-import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin, employerWelcome, newEmployerAdmin, employerApproved, newJobPostAdmin, staffingRequestReceived, newStaffingRequestAdmin, newEmployerMessageAdmin, jobApproved, jobNeedsChanges } from "./templates";
+import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin, employerWelcome, newEmployerAdmin, employerApproved, newJobPostAdmin, staffingRequestReceived, newStaffingRequestAdmin, newEmployerMessageAdmin, jobApproved, jobNeedsChanges, teamReply } from "./templates";
 
 const ref = (id: string) => id.slice(0, 8).toUpperCase();
 
@@ -113,5 +113,17 @@ export async function notifyJobReviewed(jobId: string, approved: boolean, reason
   await Promise.allSettled([
     db.from("notifications").insert({ user_id: c.owner_id, title: approved ? `Your job is live: ${j.title}` : `Please update your job: ${j.title}`, body: approved ? "Job seekers can now find it and apply." : reason, link: "/portal/postings" }),
     sendEmail({ to: c.email, ...(approved ? jobApproved({ name: c.contact_person, title: j.title }) : jobNeedsChanges({ name: c.contact_person, title: j.title, reason })) }),
+  ]);
+}
+
+// The team answered an employer: in app notice and email to the company.
+export async function notifyTeamReply(messageId: string) {
+  const db = supabaseAdmin();
+  const { data: m } = await db.from("messages").select("body, companies(owner_id, contact_person, email)").eq("id", messageId).maybeSingle();
+  const c = m?.companies as unknown as { owner_id: string; contact_person: string; email: string } | null;
+  if (!m || !c) return;
+  await Promise.allSettled([
+    db.from("notifications").insert({ user_id: c.owner_id, title: "New message from RemoteCore", body: m.body.slice(0, 160), link: "/portal/messages" }),
+    sendEmail({ to: c.email, ...teamReply({ name: c.contact_person, body: m.body }) }),
   ]);
 }

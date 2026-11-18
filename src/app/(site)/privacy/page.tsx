@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Privacy Policy", robots: { index: fa
 export default function Page() {
   return (
     <>
-      <PageHero eyebrow="Legal" title="Privacy Policy" lede="Our Privacy Policy is being finalized. If you have a question in the meantime, please contact us." />
+      <PageHero page="privacy" />
       <section className="sec"><div className="wrap"><a className="btn btn--main" href="/contact">Contact Us</a></div></section>
     </>
   );

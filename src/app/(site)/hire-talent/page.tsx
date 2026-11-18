@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Hire Talent", description: "Tell us 
 export default function HireTalent() {
   return (
     <>
-      <PageHero eyebrow="Hire Talent" title="Your Next Great Hire Starts Here." lede="Finding the right remote professional should not feel overwhelming. We simplify recruitment so you can focus on running your business.">
+      <PageHero page="hire-talent">
         <a className="btn btn--main" href="#request">Request Talent</a>
         <a className="btn btn--line" href="/talent-marketplace">Browse Talent Marketplace</a>
       </PageHero>
