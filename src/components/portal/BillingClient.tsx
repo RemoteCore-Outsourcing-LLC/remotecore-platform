@@ -47,7 +47,8 @@ export function InvoiceForm({ companies, fees, presetCompany }: { companies: { i
     setMsg(null);
     const items = lines.map((l) => {
       const f = fee(l.feeTypeId);
-      const desc = f?.kind === "percent" ? `${l.description || f.name} (${l.percent}% of ${fmt(toCents(l.salary), v.currency)})` : l.description;
+      const base = l.description.trim() || f?.name || v.description.trim();
+      const desc = f?.kind === "percent" ? `${base} (${l.percent}% of ${fmt(toCents(l.salary), v.currency)})` : base;
       return { feeTypeId: l.feeTypeId, description: desc, amountCents: lineCents(l) };
     });
     const r = await createInvoice({ ...v, items }, send);
