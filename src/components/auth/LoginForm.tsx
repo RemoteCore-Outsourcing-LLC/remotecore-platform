@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { safeNext } from "@/lib/safe-next";
 
-export function LoginForm({ next, linkError }: { next?: string; linkError?: boolean }) {
+export function LoginForm({ next, linkError, signup = "/register" }: { next?: string; linkError?: boolean; signup?: string }) {
   const [error, setError] = useState(linkError ? "That link has expired or was already used. Log in, or ask for a new link." : "");
   const [busy, setBusy] = useState(false);
 
@@ -27,7 +27,7 @@ export function LoginForm({ next, linkError }: { next?: string; linkError?: bool
       <label className="field"><span>Password</span><input name="password" type="password" autoComplete="current-password" required /></label>
       {error && <p className="err" role="alert">{error}</p>}
       <button className="btn btn--main" type="submit" disabled={busy}>{busy ? "Logging in..." : "Log in"}</button>
-      <small><a href="/forgot-password">Forgot your password?</a> · New here? <a href="/register">Create an account</a></small>
+      <small><a href="/forgot-password">Forgot your password?</a> · New here? <a href={signup}>Create an account</a></small>
     </form>
   );
 }

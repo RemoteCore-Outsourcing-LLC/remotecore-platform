@@ -20,7 +20,8 @@ export function Header() {
             ))}
           </nav>
           <div className="bar__right">
-            <a className="btn btn--ghost btn--sm login" href="/login">Log in</a>
+            <a className="btn btn--ghost btn--sm login" href="/login?as=client">Client Login</a>
+            <a className="btn btn--ghost btn--sm login" href="/login?as=applicant">Applicant Login</a>
             <a className="btn btn--main btn--sm" href="/book-consultation">Book a Consultation</a>
             <button
               type="button"
@@ -50,7 +51,8 @@ export function Header() {
             </nav>
             <div className="btns">
               <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
-              <a className="btn btn--ghost" href="/login">Log in</a>
+              <a className="btn btn--ghost" href="/login?as=client">Client Login</a>
+              <a className="btn btn--ghost" href="/login?as=applicant">Applicant Login</a>
             </div>
           </div>
         </div>

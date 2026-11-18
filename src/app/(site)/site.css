@@ -58,7 +58,7 @@ a { color: inherit; }
 .sheet nav { display: grid; }
 .sheet nav a { padding: 14px 4px; font: 600 18px/1.2 var(--sc-font-display); text-decoration: none; border-bottom: 1px solid var(--line); }
 .sheet .btns { display: grid; gap: 10px; margin-top: 18px; }
-@media (max-width: 1279px) { .bar nav { display: none; } .menu-btn { display: grid; } }
+@media (max-width: 1439px) { .bar nav { display: none; } .menu-btn { display: grid; } }
 @media (max-width: 560px) { .bar__right .login, .bar__right .btn--main { display: none; } .logo img { width: 52px; } .logo span { font-size: 16px; } }
 
 /* page hero (inner pages) */
@@ -284,7 +284,9 @@ figure { margin: 0; }
 
 /* wider bar so the full menu fits */
 .bar .wrap { width: min(1380px, 100% - 2 * clamp(16px, 3vw, 40px)); }
-@media (max-width: 1439px) and (min-width: 1280px) { .bar__right .btn--main { display: none; } }
+/* Two login buttons: with the full menu showing, Book a Consultation waits for very wide screens. */
+@media (max-width: 1739px) and (min-width: 1440px) { .bar__right .btn--main { display: none; } }
+@media (max-width: 760px) { .bar__right .btn--main { display: none; } }
 /* the parent of staggered kids must not hide itself */
 [data-sc-stagger][data-sc-in] { opacity: 1; transform: none; }
 
