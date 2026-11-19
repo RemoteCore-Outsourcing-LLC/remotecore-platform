@@ -40,10 +40,17 @@ export default function Page() {
           <li>Fees for our services are agreed with you before work starts and are shown on each invoice.</li>
         </ul>
 
-        <h2>5. Payments</h2>
-        <p>Invoices are paid by card through Stripe, a secure payment provider. Payment is due by the date on the invoice. Refunds are handled under the agreement for that service. Stripe&apos;s own terms also apply to your payment.</p>
+        <h2>5. Placement Fees and Payment Terms</h2>
+        <p>RemoteCore Outsourcing LLC operates on a direct-hire model with no upfront search deposit. Upon selecting and extending an offer to a candidate introduced by RemoteCore Outsourcing, the Client agrees to pay a one-time flat placement fee as specified in the Client&apos;s Order Form or Consultation Agreement. Unless otherwise agreed in writing (such as an approved two-installment split of 50% due upon candidate start date and 50% due 30 calendar days thereafter), the full placement fee is due upon the candidate&apos;s accepted start date. Clients pay hired talent directly for hours worked with no ongoing hourly markup from RemoteCore Outsourcing.</p>
+        <p>Invoices are paid by card through Stripe, a secure payment provider. Payment is due by the date on the invoice. Stripe&apos;s own terms also apply to your payment.</p>
 
-        <h2>6. Things You May Not Do</h2>
+        <h2>6. 60-Day Free Replacement Guarantee</h2>
+        <p>RemoteCore Outsourcing provides a one-time free replacement guarantee for 60 calendar days following the placed candidate&apos;s start date. If the candidate resigns or is terminated for performance or fit reasons within this 60-day window, RemoteCore Outsourcing will source and place one replacement candidate at no additional placement fee. This guarantee is strictly contingent upon: (a) all placement fee invoices (including any approved installment payments) being paid on time and in full; (b) the Client notifying RemoteCore Outsourcing in writing within 5 business days of the candidate&apos;s departure; and (c) the termination not resulting from business downsizing, role elimination, non-payment of talent wages, or material changes to the original job description.</p>
+
+        <h2>7. Non-Circumvention</h2>
+        <p>For a period of 12 months following the introduction of any candidate by RemoteCore Outsourcing, the Client agrees not to directly or indirectly hire, contract, or engage such candidate outside of RemoteCore Outsourcing without paying the applicable flat placement fee.</p>
+
+        <h2>8. Things You May Not Do</h2>
         <ul>
           <li>Post false, misleading, offensive or illegal content.</li>
           <li>Pretend to be someone else, or use another person&apos;s information.</li>
@@ -53,28 +60,28 @@ export default function Page() {
           <li>Send spam or unwanted messages.</li>
         </ul>
 
-        <h2>7. Your Content</h2>
+        <h2>9. Your Content</h2>
         <p>You keep ownership of what you upload, such as your resume, voice introduction, job posts and messages. You allow RemoteCore to store, show and share it as needed to run the platform, as described in our <a href="/privacy">Privacy Policy</a>. You can remove it by editing your profile or deleting your account.</p>
 
-        <h2>8. Our Content</h2>
+        <h2>10. Our Content</h2>
         <p>The RemoteCore name, logo, website design and text belong to RemoteCore. You may not copy or reuse them without our written permission.</p>
 
-        <h2>9. Suspending or Closing Accounts</h2>
+        <h2>11. Suspending or Closing Accounts</h2>
         <p>You can delete your account at any time in your settings. We may suspend or close an account that breaks these terms, puts other users at risk, or is used for fraud.</p>
 
-        <h2>10. Disclaimers</h2>
+        <h2>12. Disclaimers</h2>
         <p>We work to keep the platform accurate and available, but we provide it &quot;as is&quot;. We do not promise it will always be available or free of errors. RemoteCore is not responsible for the decisions, conduct or information of employers or job seekers.</p>
 
-        <h2>11. Limitation of Liability</h2>
+        <h2>13. Limitation of Liability</h2>
         <p>To the extent the law allows, RemoteCore is not liable for indirect or consequential losses, such as lost profits or lost data, from your use of the platform. Our total liability to you for any claim is limited to the amount you paid us in the 12 months before the claim.</p>
 
-        <h2>12. Governing Law</h2>
+        <h2>14. Governing Law</h2>
         <p>These terms are governed by the laws of the Commonwealth of Massachusetts, United States, without regard to its conflict of law rules.</p>
 
-        <h2>13. Changes to These Terms</h2>
+        <h2>15. Changes to These Terms</h2>
         <p>We may update these terms. We will change the date at the top of this page, and tell account holders by email about important changes. If you keep using the platform after a change, you accept the new terms.</p>
 
-        <h2>14. Contact Us</h2>
+        <h2>16. Contact Us</h2>
         <LegalContact />
       </LegalBody>
     </>

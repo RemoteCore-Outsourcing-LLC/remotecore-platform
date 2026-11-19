@@ -19,7 +19,8 @@ const why = [
   ["match", "Tailored Talent Matching", "We match each role to the skills, experience and working hours your business needs."],
   ["globe", "Global Talent Access", "Skilled professionals from the Caribbean, Latin America and the Philippines."],
   ["person", "Personalized Service", "A recruitment team that takes the time to learn how your business works."],
-  ["receipt", "Transparent Hiring Costs", "Clear placement fees, agreed before we begin."],
+  ["receipt", "Transparent, Flat-Fee Pricing", "Hire pre-vetted remote professionals starting at $5/hr with a simple one-time flat placement fee, $0 upfront deposit, and no ongoing monthly markups."],
+  ["star", "60-Day Free Replacement Guarantee", "Hire with complete peace of mind. If a placed candidate isn't the right fit within their first 60 days, we'll source and place a replacement at no additional cost."],
 ];
 const profiles = [
   { img: "/assets/p1.webp", name: "Marco D.", role: "Customer Support Specialist", skills: ["Zendesk", "Live chat", "Email support"], exp: "4 years", avail: "Full time · US hours" },
@@ -41,7 +42,7 @@ export default async function Home() {
               <a className="btn btn--main" href="/hire-talent">Hire Remote Talent</a>
               <a className="btn btn--line" href="/book-consultation">Book a Consultation</a>
             </div>
-            <p className="hero__trust">Flexible staffing • Personalized recruitment • International talent</p>
+            <p className="hero__trust">Vetted talent starting at <b>$5/hr</b><i aria-hidden="true"> • </i><b>$0 upfront deposit</b><i aria-hidden="true"> • </i><b>60-day replacement guarantee</b></p>
           </div>
 
           <div className="scene" id="scene" aria-hidden="true">
@@ -98,28 +99,27 @@ export default async function Home() {
 
       <section className="req" id="request" data-sc-act="pin" data-sc-span="3.4">
         <div data-sc-stage>
+          <div className="req__left">
+          <h2 className="kicker">How Hiring Works</h2>
           <div className="caps">
             <div className="cap is-on">
-              <h2 className="kicker">How Hiring Works</h2>
               <h3 className="big">1. Tell Us What You Need.</h3>
               <p>Share the role, the skills, the working hours and when you want someone to start.</p>
             </div>
             <div className="cap">
-              <p className="kicker" aria-hidden="true">How Hiring Works</p>
               <h3 className="big">2. We Source and Screen.</h3>
               <p>We look for people with the right experience and check how they communicate.</p>
             </div>
             <div className="cap">
-              <p className="kicker" aria-hidden="true">How Hiring Works</p>
               <h3 className="big">3. Meet Your Shortlist.</h3>
               <p>Read short summaries, hear each person, and interview the ones you like.</p>
             </div>
             <div className="cap">
-              <p className="kicker" aria-hidden="true">How Hiring Works</p>
               <h3 className="big">4. Select and Onboard.</h3>
-              <p>Choose your preferred candidate, finalize your hiring arrangements, and welcome your new team member. With our direct-hire model, you pay your professional directly while RCO handles the recruitment placement process.</p>
+              <p>Choose your preferred candidate, pay your one-time flat placement fee only upon hire, and welcome your new team member. With our direct-hire model, you pay your professional directly (starting at $5/hr) with zero ongoing markups—backed by our 60-day replacement guarantee.</p>
               <a className="btn btn--main" href="/hire-talent">See How Hiring Works</a>
             </div>
+          </div>
           </div>
 
           <div className="rq" id="rq" aria-hidden="true">
@@ -134,7 +134,7 @@ export default async function Home() {
               <div><span>Schedule</span><b>9am to 6pm US Eastern</b></div>
               <div><span>Experience</span><b>2+ years</b></div>
               <div><span>Skills</span><b>Live chat, email, order support</b></div>
-              <div><span>Start date</span><b>January 5</b></div>
+              <div><span>Start date</span><b>Within 2 weeks</b></div>
             </div>
             <div className="screen">
               <div><i />Experience</div>
@@ -180,7 +180,7 @@ export default async function Home() {
       </section>
 
       <Proof />
-      <Close compact title="Ready to Build a Stronger Team?" text="Tell us about your hiring needs, and let RemoteCore Outsourcing connect you with skilled international professionals who fit your business, budget, and goals. Your next great hire starts with a conversation.">
+      <Close compact title="Ready to Build a Stronger Team?" text="Start your search with $0 upfront deposit and talent starting at $5/hr. Book a free consultation to receive your custom flat-fee placement quote.">
         <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
         <a className="btn btn--line" href="/hire-talent#request">Request Talent</a>
       </Close>

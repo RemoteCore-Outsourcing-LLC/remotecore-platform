@@ -6,14 +6,15 @@ export const SERVICE_ICONS = ["health", "support", "assist", "sales", "tech", "m
 export const DEFAULT_FAQ: [string, string][] = [
   ["What does RemoteCore Outsourcing do?", "We help businesses recruit remote professionals for healthcare administration, customer support, virtual assistance, and other business support roles."],
   ["How does the recruitment process work?", "Tell us what you need. We source and screen candidates, introduce suitable professionals, and support the selection process."],
-  ["Who pays the remote professional?", "Under our direct hire model, the client hires and pays the selected professional directly. RemoteCore charges an agreed placement fee."],
+  ["Who pays the remote professional?", "Under our direct hire model, the client hires and pays the selected professional directly. RemoteCore charges a one-time flat placement fee."],
   ["Can RemoteCore help with healthcare staffing?", "We recruit for non clinical healthcare administrative support roles, subject to the client’s requirements and applicable rules."],
   ["Can I browse talent before contacting RemoteCore?", "Yes. You can browse limited professional profiles and request an introduction through our team. Candidate details and availability are confirmed before interviews."],
   ["Can I join the talent network for free?", "Candidate registration is intended to be free. Any optional paid learning or career services are clearly separate from job applications."],
   ["Does joining guarantee a job?", "No. Registration allows consideration for suitable opportunities but does not guarantee placement."],
   ["Are Learning Hub courses mandatory for job seekers?", "No. Training and coaching are optional and not a condition of applying for opportunities."],
   ["Will I receive a certificate after training?", "Eligible learners who meet course requirements may receive a RemoteCore Certificate of Completion. This is not a third party professional license or vendor certification."],
-  ["How much does recruitment cost?", "Fees depend on the agreed recruitment terms. Contact our team for a proposal."],
+  ["How much does recruitment cost?", "Talent starts at $5/hr, paid directly to your hire. RemoteCore charges a one-time flat placement fee, due only when you hire, with $0 upfront deposit and no ongoing markups. Book a free consultation to receive your custom quote."],
+  ["Is there a guarantee?", "Yes. If a placed candidate is not the right fit within their first 60 days, we source and place one replacement at no additional placement fee. The full conditions are in our Terms of Use."],
   ["What if I need a role not listed?", "Submit your staffing needs through the Request Talent form and we can discuss your requirements."],
 ];
 

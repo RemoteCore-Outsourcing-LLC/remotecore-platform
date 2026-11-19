@@ -60,8 +60,9 @@ export default async function Services() {
         </div>
       </section>
 
-      <Close title="Your Business Is Unique. Your Hiring Should Be Too." text="Tell us the skills, experience, schedule, and responsibilities you need. We will work to identify suitable candidates.">
-        <a className="btn btn--main" href="/hire-talent#request">Request Talent</a>
+      <Close trust title="Your Business Is Unique. Your Hiring Should Be Too." text="Tell us the skills, experience, schedule, and responsibilities you need. We will work to identify suitable candidates.">
+        <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
+        <a className="btn btn--line" href="/hire-talent#request">Request Talent</a>
       </Close>
     </>
   );

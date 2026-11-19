@@ -29,7 +29,7 @@ export default function HireTalent() {
         <div className="wrap split split--top">
           <div data-sc-in>
             <h2>A Clear, Straightforward Hiring Model.</h2>
-            <p className="lede">Your business hires and pays its selected professional directly. RemoteCore charges an agreed recruitment placement fee for its recruitment services. Final terms are provided before engagement.</p>
+            <p className="lede">Your business hires and pays its selected professional directly, starting at $5/hr, with no ongoing markup. RemoteCore charges a one-time flat placement fee, due only when you hire, with $0 upfront deposit. Every placement comes with our 60-day free replacement guarantee. Your custom quote is provided during your free consultation.</p>
             <div className="btns" style={{ marginTop: 28 }}>
               <a className="btn btn--ghost" href="/talent-marketplace">Browse Talent Marketplace</a>
               <a className="btn btn--ghost" href="#request">Request Custom Recruitment</a>
@@ -68,7 +68,7 @@ export default function HireTalent() {
         </div>
       </section>
 
-      <Close title="Prefer to Discuss Your Hiring Needs First?" text="Book a short consultation and talk through the role with our team before you send a request.">
+      <Close trust title="Prefer to Discuss Your Hiring Needs First?" text="Book a short consultation and talk through the role with our team before you send a request.">
         <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
       </Close>
     </>
