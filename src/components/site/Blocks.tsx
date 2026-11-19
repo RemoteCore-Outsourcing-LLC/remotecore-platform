@@ -34,9 +34,8 @@ export function Close({ title, text, children, compact }: { title: string; text?
 export function Steps({ items }: { items: { title: string; text: string; action?: ReactNode }[] }) {
   return (
     <ol className="steps" data-sc-in data-sc-stagger="70">
-      {items.map((s, i) => (
+      {items.map((s) => (
         <li key={s.title}>
-          <span className="num" aria-hidden="true">{i + 1}</span>
           <h3>{s.title}</h3>
           <p>{s.text}</p>
           {s.action}

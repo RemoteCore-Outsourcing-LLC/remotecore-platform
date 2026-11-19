@@ -37,6 +37,11 @@ const SCHEMAS = {
     main: z.array(z.object({ icon: z.enum(SERVICE_ICONS as [string, ...string[]]), name: text(80).min(2), title: text(140).min(2), items: z.array(text(120)).max(12).transform((a) => a.filter(Boolean)), note: text(400).optional() })).max(8),
     more: z.array(z.object({ icon: z.enum(SERVICE_ICONS as [string, ...string[]]), name: text(80).min(2), text: text(300).min(2) })).max(12),
   }),
+  proof: z.object({
+    title: text(120).min(3, "Give the section a heading."),
+    quotes: z.array(z.object({ quote: text(600).min(10, "Every testimonial needs the client's words."), name: text(80).min(2, "Every testimonial needs a name."), role: text(120) })).max(6),
+    stats: z.array(z.object({ value: text(20).min(1, "Every number needs a value."), label: text(80).min(2, "Every number needs a label.") })).max(4),
+  }),
   heroes: z.record(z.string(), z.object({ title: text(140), lede: text(600) }))
     .refine((h) => Object.keys(h).every((k) => k in HERO_PAGES), "Unknown page."),
 };

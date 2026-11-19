@@ -4,5 +4,5 @@ import { ForgotForm } from "@/components/auth/PasswordForms";
 
 export const metadata: Metadata = { title: "Reset your password", robots: { index: false } };
 export default function Forgot() {
-  return <AuthShell title="Forgot your password?" lede="Enter your email and we will send you a link to choose a new one."><ForgotForm /></AuthShell>;
+  return <AuthShell title="Forgot Your Password?" lede="Enter your email and we will send you a link to choose a new one."><ForgotForm /></AuthShell>;
 }

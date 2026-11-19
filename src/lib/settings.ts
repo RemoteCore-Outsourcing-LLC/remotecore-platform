@@ -7,10 +7,11 @@ import { HERO_PAGES, type Hero } from "@/lib/heroes";
 
 // Everything on the public site the team can change from the admin dashboard, with the built in text as the fallback.
 export type CompanyInfo = { phone: string; email: string; address: string[]; socials: { label: string; href: string }[] };
+export type Proof = { title: string; quotes: { quote: string; name: string; role: string }[]; stats: { value: string; label: string }[] };
 export type Announcement = { active: boolean; text: string; link: string; linkLabel: string };
 export type Settings = {
   company: CompanyInfo; announcement: Announcement; faq: [string, string][];
-  services: { main: MainService[]; more: MoreService[] }; heroes: Record<string, Partial<Hero>>;
+  services: { main: MainService[]; more: MoreService[] }; heroes: Record<string, Partial<Hero>>; proof: Proof;
 };
 
 export const DEFAULTS: Settings = {
@@ -19,6 +20,8 @@ export const DEFAULTS: Settings = {
   faq: DEFAULT_FAQ,
   services: { main: DEFAULT_MAIN, more: DEFAULT_MORE },
   heroes: {},
+  // Testimonials and numbers on the homepage. Empty until the team adds real ones, and the section stays hidden until then.
+  proof: { title: "What Our Clients Say", quotes: [], stats: [] },
 };
 export const SETTINGS_TAG = "site-settings";
 
@@ -32,8 +35,9 @@ const load = unstable_cache(async (): Promise<Settings> => {
     faq: Array.isArray(m.get("faq")) && m.get("faq").length ? m.get("faq") : DEFAULTS.faq,
     services: { ...DEFAULTS.services, ...(m.get("services") ?? {}) },
     heroes: m.get("heroes") ?? {},
+    proof: { ...DEFAULTS.proof, ...(m.get("proof") ?? {}) },
   };
-}, ["site-settings-v1"], { tags: [SETTINGS_TAG], revalidate: 600 });
+}, ["site-settings-v2"], { tags: [SETTINGS_TAG], revalidate: 600 });
 
 export const getSettings = load;
 

@@ -5,12 +5,12 @@ import { getSettings } from "@/lib/settings";
 import { HERO_PAGES } from "@/lib/heroes";
 import { SERVICE_ICONS } from "@/lib/content";
 import { PageHead } from "@/components/portal/Dash";
-import { CompanyEditor, AnnouncementEditor, FaqEditor, ServicesEditor, HeroEditor } from "@/components/portal/SiteClient";
+import { CompanyEditor, AnnouncementEditor, FaqEditor, ServicesEditor, HeroEditor, ProofEditor } from "@/components/portal/SiteClient";
 
 export const metadata: Metadata = { title: "Website", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
-const SECTIONS = [["company", "Company details"], ["announcement", "Announcement"], ["headings", "Page headings"], ["services", "Services"], ["faq", "FAQ"]] as const;
+const SECTIONS = [["company", "Company details"], ["announcement", "Announcement"], ["headings", "Page headings"], ["services", "Services"], ["proof", "Testimonials"], ["faq", "FAQ"]] as const;
 
 export default async function Website() {
   const { admin } = await getAdmin();
@@ -40,6 +40,11 @@ export default async function Website() {
           <section className="psec" id="services" aria-labelledby="svc-h">
             <header className="psec__head"><h2 id="svc-h">Services</h2></header>
             <ServicesEditor initial={s.services} icons={SERVICE_ICONS} />
+          </section>
+          <section className="psec" id="proof" aria-labelledby="proof-h">
+            <header className="psec__head"><h2 id="proof-h">Testimonials and numbers</h2></header>
+            <p className="psec__intro">Shown on the homepage, above the last call to action. Use only real client words and real numbers. The section stays hidden until you add at least one.</p>
+            <ProofEditor initial={s.proof} />
           </section>
           <section className="psec" id="faq" aria-labelledby="faq-h">
             <header className="psec__head"><h2 id="faq-h">FAQ</h2></header>

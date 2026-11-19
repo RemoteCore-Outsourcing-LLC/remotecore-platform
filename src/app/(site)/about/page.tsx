@@ -19,7 +19,7 @@ export default function About() {
       <section className="sec">
         <div className="wrap split split--top">
           <div data-sc-in>
-            <h2>Our story</h2>
+            <h2>Our Story</h2>
             <p className="lede">Our approach is informed by firsthand experience in healthcare administration, customer support, and remote business operations. We understand how important clear communication, reliable support, and the right team members are to daily operations. RemoteCore connects businesses with professionals while supporting career growth through practical learning and preparation.</p>
           </div>
           <div className="cards" data-sc-in data-sc-stagger="80">
@@ -31,10 +31,10 @@ export default function About() {
 
       <section className="sec sec--pale">
         <div className="wrap">
-          <div className="head" data-sc-in><h2>Our values</h2></div>
-          <dl className="ledger" data-sc-in>
-            {values.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
-          </dl>
+          <div className="head" data-sc-in><h2>Our Values</h2></div>
+          <div className="ledger" data-sc-in>
+            {values.map(([k, v]) => <div key={k}><h3>{k}</h3><p>{v}</p></div>)}
+          </div>
         </div>
       </section>
 
@@ -42,13 +42,22 @@ export default function About() {
         <div className="wrap split split--top">
           <div data-sc-in>
             <p className="eyebrow" style={{ color: "var(--teal)" }}>About our leadership</p>
-            <h2>Built on Experience. Driven by Purpose.</h2>
+            <h2>Leadership Grounded in Real-World Operations.</h2>
           </div>
           <div data-sc-in>
-            <p className="lede" style={{ marginTop: 0 }}>RemoteCore Outsourcing was founded with a vision to bridge the gap between businesses seeking dependable talent and skilled professionals looking for meaningful career opportunities.</p>
-            <p className="lede">Our leadership brings experience across customer service, administration, team management, business operations, and workforce coordination.</p>
-            <p className="lede">We believe successful recruitment is about more than filling vacancies. It&apos;s about creating opportunities, building lasting partnerships, and helping businesses grow with confidence.</p>
+            <p className="lede" style={{ marginTop: 0 }}>Our leadership team has hands-on experience managing remote teams, supporting healthcare administrative workflows, and running the daily operations of a business.</p>
+            <p className="lede">That experience shapes how we screen candidates and how we match each person to the role, the schedule, and the team they will join.</p>
             <p className="lede" style={{ color: "var(--sc-ink)", fontWeight: 600 }}>Great talent knows no borders. Great partnerships create lasting success.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="sec sec--pale">
+        <div className="wrap">
+          <div className="card card--dark bridge" data-sc-in>
+            <Icon name="globe" />
+            <h2>A US Company With a Global Talent Network.</h2>
+            <p>RemoteCore is headquartered in Fall River, Massachusetts, and recruits professionals from the Caribbean, Latin America, and the Philippines. You work with a team based in the United States, with access to skilled people across time zones.</p>
           </div>
         </div>
       </section>

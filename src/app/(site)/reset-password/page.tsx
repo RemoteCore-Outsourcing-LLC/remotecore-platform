@@ -4,5 +4,5 @@ import { ResetForm } from "@/components/auth/PasswordForms";
 
 export const metadata: Metadata = { title: "New password", robots: { index: false } };
 export default function Reset() {
-  return <AuthShell title="Almost done." lede="Choose a new password for your account."><ResetForm /></AuthShell>;
+  return <AuthShell title="Almost Done." lede="Choose a new password for your account."><ResetForm /></AuthShell>;
 }

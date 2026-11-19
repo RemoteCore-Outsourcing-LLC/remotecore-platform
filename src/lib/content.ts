@@ -1,7 +1,7 @@
 // Default text for the parts of the site the team can edit from the admin dashboard.
 export type MainService = { icon: string; name: string; title: string; items: string[]; note?: string };
 export type MoreService = { icon: string; name: string; text: string };
-export const SERVICE_ICONS = ["health", "support", "assist", "sales", "tech", "money", "plan"];
+export const SERVICE_ICONS = ["health", "support", "assist", "sales", "tech", "money", "plan", "home"];
 
 export const DEFAULT_FAQ: [string, string][] = [
   ["What does RemoteCore Outsourcing do?", "We help businesses recruit remote professionals for healthcare administration, customer support, virtual assistance, and other business support roles."],
@@ -28,4 +28,5 @@ export const DEFAULT_MORE: MoreService[] = [
   { icon: "tech", name: "Technology & IT", text: "Technical support, IT help desk, software troubleshooting and digital operations." },
   { icon: "money", name: "Finance & Accounting", text: "Bookkeeping, invoicing, payroll administration, expense tracking and financial reporting support." },
   { icon: "plan", name: "Project Managers & Estimators", text: "Project coordination, scheduling, cost estimation, budgeting, progress tracking and reporting." },
+  { icon: "home", name: "Real Estate & Hospitality", text: "Property management assistants, reservation agents and guest support specialists." },
 ];

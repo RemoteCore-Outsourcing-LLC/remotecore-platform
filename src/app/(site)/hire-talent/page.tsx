@@ -15,9 +15,9 @@ export default function HireTalent() {
 
       <section className="sec">
         <div className="wrap">
-          <div className="head" data-sc-in><h2>How hiring works</h2></div>
+          <div className="head" data-sc-in><h2>How Hiring Works</h2></div>
           <Steps items={[
-            { title: "Tell Us Your Needs", text: "Share the job title, responsibilities, required skills, preferred working hours, experience level, and anticipated start date.", action: <a className="btn btn--main btn--sm" href="#request">Submit Staffing Request</a> },
+            { title: "Tell Us Your Needs", text: "Share the job title, responsibilities, required skills, preferred working hours, experience level, and anticipated start date." },
             { title: "We Source and Screen", text: "Our team searches for potential candidates and evaluates relevant experience, communication, and job specific requirements." },
             { title: "Meet Your Shortlist", text: "Review candidate summaries, interview suitable applicants, and assess who best fits your team." },
             { title: "Hire and Onboard", text: "Select your preferred candidate, confirm engagement terms, and onboard the new team member through your business process." },
@@ -68,9 +68,8 @@ export default function HireTalent() {
         </div>
       </section>
 
-      <Close title="Tell Us Who You Need.">
-        <a className="btn btn--main" href="#request">Request Talent</a>
-        <a className="btn btn--line" href="/book-consultation">Book a Consultation</a>
+      <Close title="Prefer to Discuss Your Hiring Needs First?" text="Book a short consultation and talk through the role with our team before you send a request.">
+        <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
       </Close>
     </>
   );

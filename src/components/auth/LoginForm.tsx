@@ -22,7 +22,7 @@ export function LoginForm({ next, linkError, signup = "/register" }: { next?: st
 
   return (
     <form className="form" method="post" onSubmit={onSubmit}>
-      <h2>Log in</h2>
+      <h2>Log In</h2>
       <label className="field"><span>Email</span><input name="email" type="email" autoComplete="email" required /></label>
       <label className="field"><span>Password</span><input name="password" type="password" autoComplete="current-password" required /></label>
       {error && <p className="err" role="alert">{error}</p>}

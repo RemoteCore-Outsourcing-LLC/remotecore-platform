@@ -65,7 +65,7 @@ export function EmployerSignupForm() {
   if (state === "sent") {
     return (
       <div className="thanks" role="status">
-        <h2>Check your email</h2>
+        <h2>Check Your Email</h2>
         <p>We sent a confirmation link to <b>{sentTo}</b>. Open it to confirm your email.</p>
         <p>Our team then reviews your company account. We will email you as soon as it is approved.</p>
         <p className="soft" style={{ fontSize: 14 }}>No email after a few minutes? Check your spam folder.</p>
@@ -76,7 +76,7 @@ export function EmployerSignupForm() {
   const fe = (k: string) => errors[k] && <span className="ferr" id={`${k}-err`}>{errors[k]}</span>;
   return (
     <form className="form" method="post" onSubmit={onSubmit} noValidate>
-      <h2>Create your company account</h2>
+      <h2>Create Your Company Account</h2>
       <label className="field"><span>Company name</span><input name="company" autoComplete="organization" aria-invalid={!!errors.company} />{fe("company")}</label>
       <label className="field"><span>Contact person</span><input name="full_name" autoComplete="name" aria-invalid={!!errors.full_name} />{fe("full_name")}</label>
       <label className="field"><span>Business email</span><input name="email" type="email" autoComplete="email" aria-invalid={!!errors.email} /><em className="hint">You will log in with this email.</em>{fe("email")}</label>

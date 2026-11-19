@@ -58,7 +58,7 @@ export function SignupForm() {
   if (state === "sent") {
     return (
       <div className="thanks" role="status">
-        <h2>Check your email</h2>
+        <h2>Check Your Email</h2>
         <p>We sent a confirmation link to <b>{sentTo}</b>. Open it to finish creating your account.</p>
         <p className="soft" style={{ fontSize: 14 }}>No email after a few minutes? Check your spam folder.</p>
       </div>
@@ -68,7 +68,7 @@ export function SignupForm() {
   const fe = (k: string) => errors[k] && <span className="ferr" id={`${k}-err`}>{errors[k]}</span>;
   return (
     <form className="form" method="post" onSubmit={onSubmit} noValidate>
-      <h2>Create your account</h2>
+      <h2>Create Your Account</h2>
       <label className="field"><span>Full name</span><input name="full_name" autoComplete="name" aria-invalid={!!errors.full_name} />{fe("full_name")}</label>
       <label className="field"><span>Email</span><input name="email" type="email" autoComplete="email" aria-invalid={!!errors.email} />{fe("email")}</label>
       <label className="field"><span>Country of residence</span>

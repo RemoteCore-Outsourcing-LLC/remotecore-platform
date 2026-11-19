@@ -65,7 +65,7 @@ export function money(n: number, cur = "USD") {
 }
 export function pay(j: Pick<JobRow, "salary_min" | "salary_max" | "salary_currency" | "salary_period">) {
   const cur = j.salary_currency || "USD";
-  const per = j.salary_period ? ` a ${j.salary_period}` : "";
+  const per = j.salary_period ? ` ${j.salary_period === "hour" ? "an" : "a"} ${j.salary_period}` : "";
   if (j.salary_min && j.salary_max) return `${money(j.salary_min, cur)} to ${money(j.salary_max, cur)}${per}`;
   if (j.salary_min) return `From ${money(j.salary_min, cur)}${per}`;
   if (j.salary_max) return `Up to ${money(j.salary_max, cur)}${per}`;

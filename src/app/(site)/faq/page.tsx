@@ -12,7 +12,7 @@ export default async function FaqPage() {
     <>
       <PageHero page="faq" />
       <section className="sec sec--pale"><div className="wrap"><Faq items={faqs} /></div></section>
-      <Close title="Still have a question?">
+      <Close title="Still Have a Question?">
         <a className="btn btn--main" href="/contact">Contact Us</a>
       </Close>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, "\\u003c") }} />

@@ -47,7 +47,7 @@ export function Form({ kind, submitLabel, thanksTitle = "Thank you.", thanksText
   return (
     <form className="form" onSubmit={onSubmit} noValidate>
       {children}
-      <label className="hp" aria-hidden="true">Leave this empty<input name="company_site" tabIndex={-1} autoComplete="off" /></label>
+      <div className="hp" aria-hidden="true"><input name="company_site" tabIndex={-1} autoComplete="off" aria-hidden="true" /></div>
       {error && <p className="err" role="alert">{error}</p>}
       <button className="btn btn--main" type="submit" disabled={state === "sending"}>
         {state === "sending" ? "Sending..." : submitLabel}

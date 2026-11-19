@@ -20,22 +20,25 @@ export default function CareerServices() {
       </PageHero>
 
       <section className="sec" id="services">
-        <div className="wrap cards" data-sc-in data-sc-stagger="70">
-          {services.map(([icon, t, d]) => (
-            <article key={t} className="card"><Icon name={icon} /><h3>{t}</h3><p>{d}</p></article>
-          ))}
+        <div className="wrap">
+          <div className="head" data-sc-in><h2>Career Support Services</h2></div>
+          <div className="cards" data-sc-in data-sc-stagger="70">
+            {services.map(([icon, t, d]) => (
+              <article key={t} className="card"><Icon name={icon} /><h3>{t}</h3><p>{d}</p></article>
+            ))}
+          </div>
         </div>
       </section>
 
       <section className="sec sec--pale">
         <div className="wrap">
-          <div className="head" data-sc-in><h2>How booking works</h2></div>
+          <div className="head" data-sc-in><h2>How Booking Works</h2></div>
           <Steps items={[
-            { title: "Choose a service", text: "Pick the help you need." },
-            { title: "Review the details", text: "See what is included, how long it takes, and the price once it is confirmed." },
-            { title: "Select a time", text: "Choose an available appointment." },
-            { title: "Pay if applicable", text: "Some services are paid. You always see the price before you book." },
-            { title: "Get your confirmation", text: "You receive a confirmation and instructions to prepare." },
+            { title: "Choose a Service", text: "Pick the support you need from the services above." },
+            { title: "Submit Your Request", text: "Fill in the short form below. It takes about a minute." },
+            { title: "Review Scope & Pricing", text: "We email you what is included, how long it takes, and the price. Nothing is charged before you agree." },
+            { title: "Confirm Your Session Time", text: "Choose a time that works for you from the options we send." },
+            { title: "Prepare & Attend", text: "You get a confirmation with simple steps to prepare, then join your session." },
           ]} />
         </div>
       </section>
@@ -48,8 +51,8 @@ export default function CareerServices() {
             <p style={{ fontSize: 15 }}>Career coaching and training do not guarantee employment or placement. These services are optional.</p>
           </div>
           <div className="panel" style={{ minWidth: "min(440px, 100%)" }}>
-            <h3>Book a Session</h3>
-            <Form kind="career-session" submitLabel="Book a Session" thanksText="Thanks. We received your request and will email you with available times.">
+            <h3>Request a Session</h3>
+            <Form kind="career-session" submitLabel="Submit Your Request" thanksText="Thanks. We received your request and will email you with available times.">
               <Field label="Full name" name="full_name" required autoComplete="name" />
               <Field label="Email" name="email" type="email" required autoComplete="email" />
               <Select label="Service" name="service" options={services.map((s) => s[1])} required />

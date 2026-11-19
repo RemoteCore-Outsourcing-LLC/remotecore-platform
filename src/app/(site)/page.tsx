@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { Close, Icon } from "@/components/site/Blocks";
 import { HomeMotion } from "@/components/site/HomeMotion";
+import { Proof } from "@/components/site/Proof";
 
 // The nine approved service cards (RCO Homepage Corrections, 2026-11-17).
 const services = [
@@ -21,12 +22,12 @@ const why = [
   ["receipt", "Transparent Hiring Costs", "Clear placement fees, agreed before we begin."],
 ];
 const profiles = [
-  { img: "/assets/p1.webp", name: "Marco D.", role: "Customer Support Specialist", skills: ["Zendesk", "Live chat", "Email support"], exp: "4 years", avail: "Full time · GMT+8" },
+  { img: "/assets/p1.webp", name: "Marco D.", role: "Customer Support Specialist", skills: ["Zendesk", "Live chat", "Email support"], exp: "4 years", avail: "Full time · US hours" },
   { img: "/assets/p2.webp", name: "Lucía R.", role: "Executive Assistant", skills: ["Calendar management", "Travel", "Google Workspace"], exp: "9 years", avail: "Part time · GMT-5" },
   { img: "/assets/p3.webp", name: "Amara O.", role: "Patient Intake Coordinator", skills: ["Scheduling", "Insurance checks", "EHR"], exp: "6 years", avail: "Full time · GMT+1" },
 ];
 
-export default function Home() {
+export default async function Home() {
   return (
     <>
       <section className="hero" id="hero">
@@ -99,23 +100,23 @@ export default function Home() {
         <div data-sc-stage>
           <div className="caps">
             <div className="cap is-on">
-              <small>How hiring works</small>
-              <h2 className="big">1. Tell us what you need.</h2>
+              <h2 className="kicker">How Hiring Works</h2>
+              <h3 className="big">1. Tell Us What You Need.</h3>
               <p>Share the role, the skills, the working hours and when you want someone to start.</p>
             </div>
             <div className="cap">
-              <small>How hiring works</small>
-              <p className="big">2. We source and screen.</p>
+              <p className="kicker" aria-hidden="true">How Hiring Works</p>
+              <h3 className="big">2. We Source and Screen.</h3>
               <p>We look for people with the right experience and check how they communicate.</p>
             </div>
             <div className="cap">
-              <small>How hiring works</small>
-              <p className="big">3. Meet your shortlist.</p>
+              <p className="kicker" aria-hidden="true">How Hiring Works</p>
+              <h3 className="big">3. Meet Your Shortlist.</h3>
               <p>Read short summaries, hear each person, and interview the ones you like.</p>
             </div>
             <div className="cap">
-              <small>How hiring works</small>
-              <p className="big">4. Select and onboard.</p>
+              <p className="kicker" aria-hidden="true">How Hiring Works</p>
+              <h3 className="big">4. Select and Onboard.</h3>
               <p>Choose your preferred candidate, finalize your hiring arrangements, and welcome your new team member. With our direct-hire model, you pay your professional directly while RCO handles the recruitment placement process.</p>
               <a className="btn btn--main" href="/hire-talent">See How Hiring Works</a>
             </div>
@@ -124,7 +125,7 @@ export default function Home() {
           <div className="rq" id="rq" aria-hidden="true">
             <div className="rq__head">
               <span className="ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 21V5l8-2v18M12 7h8v14M7 8h2M7 12h2M7 16h2M15 11h2M15 15h2" /></svg></span>
-              <div><h3>Staffing request</h3><p>Online store, United States</p></div>
+              <div><h3>Staffing Request</h3><p>Online store, United States</p></div>
               <span className="rq__state" id="rqState" aria-live="polite">Request received</span>
             </div>
             <div className="rq__fields">
@@ -142,9 +143,9 @@ export default function Home() {
               <div><i />Availability</div>
             </div>
             <div className="short">
-              <div className="cand"><img src="/assets/p3.webp" width={720} height={900} alt="" /><div><b>Amara O.</b>3 years<span className="wave" data-wave="18" /></div></div>
+              <div className="cand"><img src="/assets/p3.webp" width={720} height={900} alt="" /><div><b>Amara O.</b>6 years<span className="wave" data-wave="18" /></div></div>
               <div className="cand" data-pick="1"><img src="/assets/p1.webp" width={720} height={900} alt="" /><span className="stamp">Selected</span><div><b>Marco D.</b>4 years<span className="wave" data-wave="18" /></div></div>
-              <div className="cand"><img src="/assets/p2.webp" width={720} height={900} alt="" /><div><b>Lucía R.</b>5 years<span className="wave" data-wave="18" /></div></div>
+              <div className="cand"><img src="/assets/p2.webp" width={720} height={900} alt="" /><div><b>Lucía R.</b>9 years<span className="wave" data-wave="18" /></div></div>
             </div>
             <p className="sample">Example request with sample profiles</p>
           </div>
@@ -178,6 +179,7 @@ export default function Home() {
         </div>
       </section>
 
+      <Proof />
       <Close compact title="Ready to Build a Stronger Team?" text="Tell us about your hiring needs, and let RemoteCore Outsourcing connect you with skilled international professionals who fit your business, budget, and goals. Your next great hire starts with a conversation.">
         <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
         <a className="btn btn--line" href="/hire-talent#request">Request Talent</a>

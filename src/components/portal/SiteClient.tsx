@@ -2,7 +2,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { saveSetting, resetSetting, setInboxStatus, replyToCompany, type SettingKey } from "@/app/(portal)/portal/admin/site-actions";
-import type { CompanyInfo, Announcement } from "@/lib/settings";
+import type { CompanyInfo, Announcement, Proof } from "@/lib/settings";
 import type { MainService, MoreService } from "@/lib/content";
 
 type Msg = { ok: boolean; text: string } | null;
@@ -107,7 +107,7 @@ export function FaqEditor({ initial }: { initial: [string, string][] }) {
   );
 }
 
-const ICON_LABEL: Record<string, string> = { health: "Healthcare", support: "Support", assist: "Assistant", sales: "Sales", tech: "Technology", money: "Finance", plan: "Planning" };
+const ICON_LABEL: Record<string, string> = { health: "Healthcare", support: "Support", assist: "Assistant", sales: "Sales", tech: "Technology", money: "Finance", plan: "Planning", home: "Real estate" };
 
 export function ServicesEditor({ initial, icons }: { initial: { main: MainService[]; more: MoreService[] }; icons: string[] }) {
   const { msg, pending, save, reset } = useSave("services");
@@ -216,6 +216,47 @@ export function ReplyForm({ companyId }: { companyId: string }) {
         {msg && <span className={msg.ok ? "saved" : "ferr"} role={msg.ok ? "status" : "alert"}>{msg.text}</span>}
         <button className="btn btn--main btn--sm" disabled={pending || v.trim().length < 2}>{pending ? "Sending..." : "Send reply"}</button>
       </div>
+    </form>
+  );
+}
+
+// Homepage testimonials and numbers. Only real client words and real numbers: the section stays hidden while both lists are empty.
+export function ProofEditor({ initial }: { initial: Proof }) {
+  const { msg, pending, save, reset } = useSave("proof");
+  const [v, setV] = useState(initial);
+  const setQ = (i: number, k: "quote" | "name" | "role", val: string) => setV({ ...v, quotes: v.quotes.map((q, j) => (j === i ? { ...q, [k]: val } : q)) });
+  const setS = (i: number, k: "value" | "label", val: string) => setV({ ...v, stats: v.stats.map((s, j) => (j === i ? { ...s, [k]: val } : s)) });
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); save(v); }}>
+      <div className="psec__body pgrid">
+        <label className="field field--wide"><span>Section heading</span><input value={v.title} onChange={(e) => setV({ ...v, title: e.target.value })} maxLength={120} /></label>
+      </div>
+      <ol className="psec__body sedit">
+        {v.stats.map((s, i) => (
+          <li key={`s${i}`} className="sedit__item">
+            <div className="pgrid">
+              <label className="field"><span>Number {i + 1}</span><input value={s.value} onChange={(e) => setS(i, "value", e.target.value)} maxLength={20} placeholder="120+" /></label>
+              <label className="field"><span>What it counts</span><input value={s.label} onChange={(e) => setS(i, "label", e.target.value)} maxLength={80} placeholder="Professionals placed" /></label>
+            </div>
+            <div className="aact__row"><button type="button" className="linkbtn small" onClick={() => setV({ ...v, stats: v.stats.filter((_, j) => j !== i) })}>Remove</button></div>
+          </li>
+        ))}
+        {v.quotes.map((q, i) => (
+          <li key={`q${i}`} className="sedit__item">
+            <label className="field"><span>Testimonial {i + 1}, in the client&apos;s own words</span><textarea rows={3} value={q.quote} onChange={(e) => setQ(i, "quote", e.target.value)} maxLength={600} /></label>
+            <div className="pgrid">
+              <label className="field"><span>Name</span><input value={q.name} onChange={(e) => setQ(i, "name", e.target.value)} maxLength={80} placeholder="Jane D." /></label>
+              <label className="field"><span>Role and company <em className="hint">optional</em></span><input value={q.role} onChange={(e) => setQ(i, "role", e.target.value)} maxLength={120} placeholder="Practice Manager, Bright Dental" /></label>
+            </div>
+            <div className="aact__row"><button type="button" className="linkbtn small" onClick={() => setV({ ...v, quotes: v.quotes.filter((_, j) => j !== i) })}>Remove</button></div>
+          </li>
+        ))}
+      </ol>
+      <div className="psec__body aact__row">
+        <button type="button" className="btn btn--ghost btn--sm" disabled={v.stats.length >= 4} onClick={() => setV({ ...v, stats: [...v.stats, { value: "", label: "" }] })}>Add a number</button>
+        <button type="button" className="btn btn--ghost btn--sm" disabled={v.quotes.length >= 6} onClick={() => setV({ ...v, quotes: [...v.quotes, { quote: "", name: "", role: "" }] })}>Add a testimonial</button>
+      </div>
+      <Bar msg={msg} pending={pending} onReset={reset} />
     </form>
   );
 }

@@ -14,15 +14,26 @@ export const company = {
   ],
 };
 
-export const nav = [
+export type NavLink = { href: string; label: string };
+export type NavItem = NavLink | { label: string; children: NavLink[] };
+
+// The job seeker pages sit under one "For Talent" menu so the bar stays calm (Sasha's fixes, 2026-11-19).
+export const nav: NavItem[] = [
   { href: "/about", label: "About Us" },
   { href: "/services", label: "Our Services" },
   { href: "/talent-marketplace", label: "Talent Marketplace" },
   { href: "/hire-talent", label: "Hire Talent" },
-  { href: "/find-opportunities", label: "Find Opportunities" },
-  { href: "/learning-hub", label: "Learning Hub" },
-  { href: "/career-services", label: "Career Services" },
+  { label: "For Talent", children: [
+    { href: "/find-opportunities", label: "Find Opportunities" },
+    { href: "/learning-hub", label: "Learning Hub" },
+    { href: "/career-services", label: "Career Services" },
+  ] },
   { href: "/contact", label: "Contact Us" },
+];
+
+export const loginLinks: NavLink[] = [
+  { href: "/login?as=client", label: "Client Login" },
+  { href: "/login?as=applicant", label: "Applicant Login" },
 ];
 
 export const talentCategories = [
@@ -30,6 +41,7 @@ export const talentCategories = [
   "Customer Experience & Support",
   "Virtual & Executive Assistance",
   "Sales & Business Support",
+  "Real Estate & Hospitality",
   "Technology & IT",
   "Finance & Accounting",
   "Project Managers & Estimators",

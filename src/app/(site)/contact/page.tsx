@@ -15,7 +15,7 @@ export default async function Contact() {
       <section className="sec sec--pale">
         <div className="wrap split split--top">
           <div className="panel">
-            <h2>Send us a message</h2>
+            <h2>Send Us a Message</h2>
             <Form kind="contact" submitLabel="Send Message" thanksText="Thanks for reaching out. We have received your message and will respond as soon as possible.">
               <div className="two">
                 <Field label="Full name" name="full_name" required autoComplete="name" />
@@ -31,18 +31,18 @@ export default async function Contact() {
           </div>
           <div style={{ display: "grid", gap: 18 }}>
             <div className="card card--dark">
-              <h3>Hiring for your business?</h3>
+              <h3>Hiring for Your Business?</h3>
               <p>Book a consultation and tell us about the roles you need to fill.</p>
               <a className="btn btn--main" href="/book-consultation" style={{ alignSelf: "start", marginTop: 8 }}>Book a Consultation</a>
             </div>
             <div className="card">
-              <h3>Our office</h3>
+              <h3>Our Office</h3>
               <p>{company.address.map((l) => <span key={l}>{l}<br /></span>)}</p>
               {company.email && <p><a href={`mailto:${company.email}`}>{company.email}</a></p>}
               {company.phone && <p><a href={`tel:${company.phone.replace(/[^+\d]/g, "")}`}>{company.phone}</a></p>}
             </div>
             <div className="card">
-              <h3>Common questions</h3>
+              <h3>Common Questions</h3>
               <ul>
                 <li>What roles can RemoteCore help fill?</li>
                 <li>How does hiring work?</li>

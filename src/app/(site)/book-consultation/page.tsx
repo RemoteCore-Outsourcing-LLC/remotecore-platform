@@ -32,7 +32,7 @@ export default function BookConsultation() {
         </div>
         <div className="panel">
           <h2>Tell Us About Your Needs</h2>
-          <p>Fill out the form and our team will contact you shortly.</p>
+          <p>Fill out the form and tell us when suits you. Our team will email you to confirm the time of your call.</p>
           <Form kind="consultation" submitLabel="Book a Consultation" thanksTitle="Request received." thanksText="Thank you for contacting RemoteCore. Our team will review your needs and contact you to schedule your consultation." note="Your information is secure and will never be shared.">
             <Field label="Company name" name="company" required autoComplete="organization" />
             <div className="two">
@@ -44,6 +44,7 @@ export default function BookConsultation() {
               <Field label="Company website" name="website" type="url" optional autoComplete="url" />
             </div>
             <Select label="What type of talent are you looking for?" name="talent_type" options={talentCategories} required />
+            <Field label="Preferred day & time, with your time zone" name="preferred_time" optional placeholder="For example: Tuesday or Wednesday, 10am to 1pm Eastern" />
             <Field label="Tell us more about your requirements" name="requirements" type="textarea" optional rows={4} placeholder="Job role, skills, location, expected start date..." />
             <Consent>I agree that RemoteCore may contact me about this request, as described in the <a href="/privacy">Privacy Policy</a>.</Consent>
           </Form>

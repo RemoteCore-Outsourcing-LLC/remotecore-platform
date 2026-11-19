@@ -7,11 +7,14 @@ const TYPE: Record<string, string> = { full_time: "Full time", part_time: "Part 
 // The public card number. The team finds the candidate by it (search "RC-..." in admin candidates).
 export const listingCode = (id: string) => `RC-${id.replace(/-/g, "").slice(0, 6).toUpperCase()}`;
 
+// Caribbean islands use America/ time zones, so they are listed by name first.
+const CARIBBEAN = new Set(["Anguilla", "Antigua", "Aruba", "Barbados", "Cayman", "Curacao", "Dominica", "Grand_Turk", "Grenada", "Guadeloupe", "Havana", "Jamaica", "Kralendijk", "Lower_Princes", "Marigot", "Martinique", "Montserrat", "Nassau", "Port-au-Prince", "Port_of_Spain", "Puerto_Rico", "Santo_Domingo", "St_Barthelemy", "St_Kitts", "St_Lucia", "St_Thomas", "St_Vincent", "Tortola", "Guyana", "Paramaribo", "Belize"]);
 function zone(tz: string | null) {
   if (!tz) return "Flexible";
-  if (tz.startsWith("America/")) return "Americas";
+  if (tz.startsWith("America/") && CARIBBEAN.has(tz.slice(8))) return "Caribbean";
+  if (tz.startsWith("America/")) return "Americas / Latin America";
   if (tz.startsWith("Europe/") || tz.startsWith("Africa/") || tz.startsWith("Atlantic/")) return "Africa / Europe";
-  if (tz.startsWith("Asia/") || tz.startsWith("Australia/") || tz.startsWith("Pacific/") || tz.startsWith("Indian/")) return "Asia Pacific";
+  if (tz.startsWith("Asia/") || tz.startsWith("Australia/") || tz.startsWith("Pacific/") || tz.startsWith("Indian/")) return "Asia Pacific / Philippines";
   return "Flexible";
 }
 function years(n: number | null) {

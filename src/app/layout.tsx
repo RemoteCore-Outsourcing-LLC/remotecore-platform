@@ -5,7 +5,7 @@ const site = process.env.NEXT_PUBLIC_SITE_URL || "https://remotecoreoutsourcing.
 
 export const metadata: Metadata = {
   metadataBase: new URL(site),
-  title: { default: "RemoteCore Outsourcing | Build Your Dream Remote Team", template: "%s | RemoteCore Outsourcing" },
+  title: { default: "RemoteCore Outsourcing | Global Remote Staffing & Recruitment Agency", template: "%s | RemoteCore Outsourcing" },
   description:
     "RemoteCore Outsourcing connects businesses with skilled, carefully screened remote professionals for healthcare administration, customer support, virtual assistance, and more.",
   // Keep search engines out until launch day. The launch step switches this on.

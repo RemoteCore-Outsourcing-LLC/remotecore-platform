@@ -12,10 +12,10 @@ export function ForgotForm() {
     await supabaseBrowser().auth.resetPasswordForEmail(email, { redirectTo: `${location.origin}/auth/callback?next=/reset-password` });
     setSent(true); // Same answer either way, so nobody can test which emails have accounts.
   }
-  if (sent) return <div className="thanks" role="status"><h2>Check your email</h2><p>If there is an account for that address, we sent a link to set a new password.</p></div>;
+  if (sent) return <div className="thanks" role="status"><h2>Check Your Email</h2><p>If there is an account for that address, we sent a link to set a new password.</p></div>;
   return (
     <form className="form" method="post" onSubmit={onSubmit}>
-      <h2>Reset your password</h2>
+      <h2>Reset Your Password</h2>
       <label className="field"><span>Email</span><input name="email" type="email" autoComplete="email" required /></label>
       <button className="btn btn--main" type="submit" disabled={busy}>Send reset link</button>
       <small><a href="/login">Back to log in</a></small>
@@ -37,7 +37,7 @@ export function ResetForm() {
   }
   return (
     <form className="form" method="post" onSubmit={onSubmit}>
-      <h2>Choose a new password</h2>
+      <h2>Choose a New Password</h2>
       <label className="field"><span>New password</span><input name="password" type="password" autoComplete="new-password" minLength={8} required /></label>
       {error && <p className="err" role="alert">{error}</p>}
       <button className="btn btn--main" type="submit" disabled={busy}>Save password</button>

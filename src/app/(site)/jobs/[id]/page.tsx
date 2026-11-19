@@ -60,10 +60,10 @@ export default async function PublicJobPage({ params }: { params: Promise<{ id: 
             </div>
           </header>
           <div className="jobpage__body">
-            <section><h2>About the role</h2><p>{j.description}</p></section>
+            <section><h2>About the Role</h2><p>{j.description}</p></section>
             {j.skills.length > 0 && <section><h2>Skills</h2><p>{j.skills.join(", ")}</p></section>}
             {j.qualifications && <section><h2>Qualifications</h2><p>{j.qualifications}</p></section>}
-            {j.computer_requirements && <section><h2>Computer and internet</h2><p>{j.computer_requirements}</p></section>}
+            {j.computer_requirements && <section><h2>Computer and Internet</h2><p>{j.computer_requirements}</p></section>}
             <dl>
               {j.hours_time_zone && <><dt>Hours and time zone</dt><dd>{j.hours_time_zone}</dd></>}
               {j.deadline && <><dt>Apply by</dt><dd>{shortDate(j.deadline)}</dd></>}

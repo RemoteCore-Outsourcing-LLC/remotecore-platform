@@ -18,16 +18,16 @@ export default async function FindOpportunities({ searchParams }: { searchParams
     <>
       <PageHero page="find-opportunities">
         <a className="btn btn--main" href="#join">Join Our Talent Network</a>
-        <a className="btn btn--ghost" href="#jobs">See open jobs</a>
+        <a className="btn btn--ghost" href="#jobs">See Open Jobs</a>
       </PageHero>
 
       <section className="sec sec--pale" id="jobs" aria-labelledby="jobs-h">
         <div className="wrap jobboard">
-          <div className="head"><h2 id="jobs-h">Open remote jobs</h2><p className="lede">Search by job title, skill or industry. Every role here is open now.</p></div>
+          <div className="head"><h2 id="jobs-h">Open Remote Jobs</h2><p className="lede">Search by job title, skill or industry. Every role here is open now.</p></div>
           <JobSearch base="/find-opportunities" anchor="#jobs" f={f} cats={cats} />
           {res.jobs.length === 0 ? (
             <div className="pj-empty">
-              <h3>{searching ? "No jobs match this search" : "No open jobs right now"}</h3>
+              <h3>{searching ? "No Jobs Match This Search" : "No Open Jobs Right Now"}</h3>
               <p>{searching ? "Try fewer words or remove a filter." : "New roles are added often. Create your profile now so you can apply the moment one opens."}</p>
               {searching ? <a href="/find-opportunities#jobs">Clear the search</a> : <a className="btn btn--main" href="/register/job-seeker">Create Your Profile</a>}
             </div>
@@ -43,7 +43,7 @@ export default async function FindOpportunities({ searchParams }: { searchParams
 
       <section className="sec">
         <div className="wrap">
-          <div className="head" data-sc-in><h2>How it works</h2></div>
+          <div className="head" data-sc-in><h2>How It Works</h2></div>
           <Steps items={[
             { title: "Create Your Account", text: "Enter your name, email, password, and country of residence. Confirm your email address." },
             { title: "Complete Your Profile", text: "Add your professional summary, employment experience, skills, tools, languages, preferred roles, availability, and time zone. Upload your resume." },
@@ -56,7 +56,7 @@ export default async function FindOpportunities({ searchParams }: { searchParams
       <section className="sec sec--pale">
         <div className="wrap split split--top">
           <div data-sc-in>
-            <h2>Join our talent network</h2>
+            <h2>Join Our Talent Network</h2>
             <p className="lede">Tell us about yourself and the kind of remote work you want.</p>
             <div className="notice" style={{ marginTop: 28 }}>
               <b>Important notice.</b> Joining the talent network does not guarantee placement or employment. Learning Hub courses and paid Career Services are optional and are not required to apply for jobs.
@@ -64,8 +64,8 @@ export default async function FindOpportunities({ searchParams }: { searchParams
             <p className="soft" style={{ marginTop: 18, fontSize: 15 }}>You choose whether your profile appears in our Talent Marketplace. Businesses never see your phone, email or resume without your permission.</p>
           </div>
           <div className="panel" id="join">
-            <h2>Candidate registration</h2>
-            
+            <h2>Candidate Registration</h2>
+            <p className="form-help">Submit your quick profile below to join our talent pool, or <a href="/register/job-seeker">create a full job seeker account</a> to set a password, upload your resume, and track your applications.</p>
             <Form kind="candidate" submitLabel="Join Our Talent Network" thanksText="Welcome to the RemoteCore talent network. We will email you about suitable opportunities.">
               <div className="two">
                 <Field label="Full name" name="full_name" required autoComplete="name" />
@@ -91,8 +91,10 @@ export default async function FindOpportunities({ searchParams }: { searchParams
         </div>
       </section>
 
-      <Close title="Take the Next Step in Your Remote Career.">
-        <a className="btn btn--main" href="/register/job-seeker">Create Your Profile</a>
+      <Close title="Take the Next Step in Your Remote Career." text="Create a full account to upload your resume, apply for jobs and follow every application. Want to build your skills first? See our Career Services and Learning Hub.">
+        <a className="btn btn--main" href="/register/job-seeker">Create Your Account</a>
+        <a className="btn btn--line" href="/career-services">Career Services</a>
+        <a className="btn btn--line" href="/learning-hub">Learning Hub</a>
       </Close>
     </>
   );
