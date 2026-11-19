@@ -18,7 +18,7 @@ export default async function FindOpportunities({ searchParams }: { searchParams
     <>
       <PageHero page="find-opportunities">
         <a className="btn btn--main" href="#join">Join Our Talent Network</a>
-        <a className="btn btn--ghost" href="#jobs">See Open Jobs</a>
+        <a className="btn btn--line" href="#jobs">See Open Jobs</a>
       </PageHero>
 
       <section className="sec sec--pale" id="jobs" aria-labelledby="jobs-h">
