@@ -43,7 +43,9 @@ Use the matching skill in `.claude/skills/`:
 7. **Check every changed page at phone width** (390 pixels wide) as well as computer width.
 8. **Never use** `git push --force`, `git reset --hard` on pushed work, or delete branches on GitHub.
    To take something back, use the `undo-change` skill (it adds a new "undo" save, it does not erase history).
-9. One change at a time. Publish it, check it live, then start the next one.
+9. A price, phone number or other fact often shows in several places (pages, FAQ, footer, Terms, emails).
+   Search the whole `src/` folder for it and list every place before changing one.
+10. One change at a time. Publish it, check it live, then start the next one.
 
 ## Where things are
 | What | File |
