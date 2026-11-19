@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { hasDbKeys, supabaseAdmin } from "@/lib/supabase/admin";
 
 const site = process.env.NEXT_PUBLIC_SITE_URL || "https://remotecoreoutsourcing.com";
 export const revalidate = 3600;
@@ -13,7 +13,9 @@ const PAGES: [string, number][] = [
 // Every public page plus every live job.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const { data: jobs } = await supabaseAdmin().from("jobs").select("id, updated_at").eq("status", "published").limit(5000);
+  const { data: jobs } = hasDbKeys()
+    ? await supabaseAdmin().from("jobs").select("id, updated_at").eq("status", "published").limit(5000)
+    : { data: [] as { id: string; updated_at: string }[] };
   return [
     ...PAGES.map(([path, priority]) => ({ url: `${site}${path}`, lastModified: now, priority })),
     ...(jobs ?? []).map((j) => ({ url: `${site}/jobs/${j.id}`, lastModified: new Date(j.updated_at), priority: 0.7 })),

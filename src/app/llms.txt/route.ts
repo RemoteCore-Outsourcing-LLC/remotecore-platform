@@ -1,6 +1,6 @@
 import { getSettings } from "@/lib/settings";
 import { company } from "@/lib/site";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { hasDbKeys, supabaseAdmin } from "@/lib/supabase/admin";
 
 const site = process.env.NEXT_PUBLIC_SITE_URL || "https://remotecoreoutsourcing.com";
 export const revalidate = 3600;
@@ -8,7 +8,9 @@ export const revalidate = 3600;
 // A plain text summary for AI assistants and answer engines (the llms.txt convention), built from the site's own text.
 export async function GET() {
   const s = await getSettings();
-  const { data: jobs } = await supabaseAdmin().from("jobs").select("id, title").eq("status", "published").order("published_at", { ascending: false }).limit(50);
+  const { data: jobs } = hasDbKeys()
+    ? await supabaseAdmin().from("jobs").select("id, title").eq("status", "published").order("published_at", { ascending: false }).limit(50)
+    : { data: [] as { id: string; title: string }[] };
   const lines = [
     `# ${company.name}`,
     "",

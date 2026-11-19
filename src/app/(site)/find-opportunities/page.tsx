@@ -11,8 +11,10 @@ export const metadata: Metadata = { title: "Find Opportunities", description: "J
 
 export default async function FindOpportunities({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const f = readFilters(await searchParams);
-  const sb = await supabaseServer();
-  const [res, cats] = await Promise.all([searchJobs(sb, f), categories(sb)]);
+  // Without the database keys (a laptop build) the job board shows as empty instead of failing.
+  const [res, cats] = process.env.NEXT_PUBLIC_SUPABASE_URL
+    ? await (async () => { const sb = await supabaseServer(); return Promise.all([searchJobs(sb, f), categories(sb)]); })()
+    : [{ jobs: [], total: 0, failed: false }, []] as [Awaited<ReturnType<typeof searchJobs>>, Awaited<ReturnType<typeof categories>>];
   const searching = !!f.q || activeCount(f) > 0;
   return (
     <>

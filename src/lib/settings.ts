@@ -1,6 +1,6 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { hasDbKeys, supabaseAdmin } from "@/lib/supabase/admin";
 import { company as COMPANY } from "@/lib/site";
 import { DEFAULT_FAQ, DEFAULT_MAIN, DEFAULT_MORE, type MainService, type MoreService } from "@/lib/content";
 import { HERO_PAGES, type Hero } from "@/lib/heroes";
@@ -26,6 +26,8 @@ export const DEFAULTS: Settings = {
 export const SETTINGS_TAG = "site-settings";
 
 const load = unstable_cache(async (): Promise<Settings> => {
+  // No database keys (a laptop build without .env.local): show the built in text instead of failing.
+  if (!hasDbKeys()) return DEFAULTS;
   const { data, error } = await supabaseAdmin().from("site_settings").select("key, value");
   if (error) return DEFAULTS;
   const m = new Map((data ?? []).map((r) => [r.key as string, r.value]));

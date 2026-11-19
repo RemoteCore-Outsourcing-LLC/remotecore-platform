@@ -4,6 +4,13 @@ import { NextResponse, type NextRequest } from "next/server";
 // Keeps the login fresh and keeps signed out visitors out of the portals.
 export async function middleware(req: NextRequest) {
   let res = NextResponse.next({ request: req });
+  // A laptop without the database keys: let the public pages show, keep the portal closed.
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    if (!req.nextUrl.pathname.startsWith("/portal")) return res;
+    const url = req.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
   const sb = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     cookies: {
       getAll: () => req.cookies.getAll(),

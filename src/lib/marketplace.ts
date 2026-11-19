@@ -1,5 +1,5 @@
 import "server-only";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { hasDbKeys, supabaseAdmin } from "@/lib/supabase/admin";
 import type { Profile } from "@/components/site/Marketplace";
 
 const TYPE: Record<string, string> = { full_time: "Full time", part_time: "Part time", contract: "Contract", freelance: "Freelance" };
@@ -28,6 +28,7 @@ function years(n: number | null) {
 // Candidates an admin published, with their consent still on. Only public fields leave the database:
 // first name and last initial, headline, summary, skills, languages. Never contact details or files.
 export async function publishedListings(): Promise<Profile[]> {
+  if (!hasDbKeys()) return [];
   const db = supabaseAdmin();
   const { data } = await db.from("seeker_profiles")
     .select("user_id, headline, summary, years_experience, employment_types, preferred_categories, time_zone, profiles!inner(full_name, status)")
