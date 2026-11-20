@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // CSS goes inside the page, so phones paint without waiting for a separate CSS file.
+  experimental: { inlineCss: true },
 };
 
 export default nextConfig;

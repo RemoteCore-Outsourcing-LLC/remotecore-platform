@@ -48,9 +48,9 @@ export default async function Home() {
           <div className="scene" id="scene" aria-hidden="true">
             <div className="plane scene__glow" />
             <div className="plane scene__orbit" />
-            <div className="plane pc pc--a"><img src="/assets/p1.webp" width={720} height={900} alt="" /><div><b>Marco D.</b><span>Customer Support</span></div></div>
-            <div className="plane pc pc--b"><img src="/assets/p2.webp" width={720} height={900} alt="" /><div><b>Lucía R.</b><span>Executive Assistant</span></div></div>
-            <div className="plane pc pc--c"><img src="/assets/p3.webp" width={720} height={900} alt="" /><div><b>Amara O.</b><span>Patient Intake Coordinator</span></div></div>
+            <div className="plane pc pc--a"><img src="/assets/p1-sm.webp" width={720} height={900} decoding="async" alt="" /><div><b>Marco D.</b><span>Customer Support</span></div></div>
+            <div className="plane pc pc--b"><img src="/assets/p2-sm.webp" width={720} height={900} decoding="async" alt="" /><div><b>Lucía R.</b><span>Executive Assistant</span></div></div>
+            <div className="plane pc pc--c"><img src="/assets/p3-sm.webp" width={720} height={900} decoding="async" alt="" /><div><b>Amara O.</b><span>Patient Intake Coordinator</span></div></div>
             <div className="plane chip chip--a"><span className="wave" data-wave="14" />Voice introduction</div>
             <div className="plane chip chip--b">Customer support <small>· US hours</small></div>
             <div className="plane chip chip--c"><i className="dot" />Shortlisted</div>
@@ -92,7 +92,7 @@ export default async function Home() {
             </div>
           </div>
           <figure className="photo" data-sc-reveal="up" data-sc-reveal-at="0.05 0.45">
-            <img src="/assets/work.webp" width={1400} height={933} alt="Two people talking across a desk with a laptop and a notebook" />
+            <img src="/assets/work.webp" width={1400} height={933} loading="lazy" decoding="async" alt="Two people talking across a desk with a laptop and a notebook" />
           </figure>
         </div>
       </section>
@@ -144,9 +144,9 @@ export default async function Home() {
               <div><i />Availability</div>
             </div>
             <div className="short">
-              <div className="cand"><img src="/assets/p3.webp" width={720} height={900} alt="" /><div><b>Amara O.</b>6 years<span className="wave" data-wave="18" /></div></div>
-              <div className="cand" data-pick="1"><img src="/assets/p1.webp" width={720} height={900} alt="" /><span className="stamp">Selected</span><div><b>Marco D.</b>4 years<span className="wave" data-wave="18" /></div></div>
-              <div className="cand"><img src="/assets/p2.webp" width={720} height={900} alt="" /><div><b>Lucía R.</b>9 years<span className="wave" data-wave="18" /></div></div>
+              <div className="cand"><img src="/assets/p3-sm.webp" width={720} height={900} loading="lazy" decoding="async" alt="" /><div><b>Amara O.</b>6 years<span className="wave" data-wave="18" /></div></div>
+              <div className="cand" data-pick="1"><img src="/assets/p1-sm.webp" width={720} height={900} loading="lazy" decoding="async" alt="" /><span className="stamp">Selected</span><div><b>Marco D.</b>4 years<span className="wave" data-wave="18" /></div></div>
+              <div className="cand"><img src="/assets/p2-sm.webp" width={720} height={900} loading="lazy" decoding="async" alt="" /><div><b>Lucía R.</b>9 years<span className="wave" data-wave="18" /></div></div>
             </div>
             <p className="sample">Example request with sample profiles</p>
           </div>
@@ -166,7 +166,7 @@ export default async function Home() {
             </div>
             {profiles.map((p) => (
               <article key={p.name} className="prof">
-                <img src={p.img} width={720} height={900} alt="" />
+                <img src={p.img} width={720} height={900} alt="" loading="lazy" decoding="async" />
                 <div>
                   <span className="tag tag--plum">Sample profile, not available for hire</span>
                   <h3>{p.role}</h3>

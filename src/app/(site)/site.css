@@ -531,3 +531,9 @@ figure { margin: 0; }
   .pc--c { top: 40%; }
 }
 @media (max-width: 560px) { .chip--c { left: 30%; top: 0; } }
+
+/* Request card: steps not reached yet look empty instead of faded, so all visible text keeps full contrast */
+.rq__fields div, .screen div { opacity: 1; transition: background-color .35s var(--ease), box-shadow .35s var(--ease); }
+.rq__fields div:not(.is-on) { background: transparent; box-shadow: inset 0 0 0 1.5px var(--line); }
+.rq__fields div:not(.is-on) b { visibility: hidden; }
+.screen div:not(.is-on) { background: transparent; box-shadow: inset 0 0 0 1.5px var(--line); color: var(--sc-ink-soft); }

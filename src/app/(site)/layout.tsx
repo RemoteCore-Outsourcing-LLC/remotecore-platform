@@ -3,6 +3,7 @@ import { Footer } from "@/components/site/Footer";
 import { Engine } from "@/components/site/Engine";
 import { getSettings } from "@/lib/settings";
 import { company as base } from "@/lib/site";
+import { geist, schibsted } from "@/lib/fonts";
 import "./scrollcraft.css";
 import "./site.css";
 
@@ -19,10 +20,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   };
   return (
     <>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-      <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap" rel="stylesheet" />
+      <style>{`html:root{--sc-font-text:${geist.style.fontFamily};--sc-font-display:${schibsted.style.fontFamily}}`}</style>
       <a className="skip" href="#main">Skip to content</a>
       {a.active && a.text && (
         <div className="announce" role="region" aria-label="Announcement">
