@@ -27,7 +27,7 @@ export default function HireTalent() {
 
       <section className="sec sec--pale">
         <div className="wrap split split--top">
-          <div data-sc-in>
+          <div className="sticky-col" data-sc-in>
             <h2>A Clear, Straightforward Hiring Model.</h2>
             <p className="lede">Your business hires and pays its selected professional directly, starting at $5/hr, with no ongoing markup. RemoteCore charges a one-time flat placement fee, due only when you hire, with $0 upfront deposit. Every placement comes with our 60-day free replacement guarantee. Your custom quote is provided during your free consultation.</p>
             <div className="btns" style={{ marginTop: 28 }}>

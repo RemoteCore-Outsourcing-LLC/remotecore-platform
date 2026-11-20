@@ -74,7 +74,7 @@ export default async function FindOpportunities({ searchParams }: { searchParams
                 <Field label="Email" name="email" type="email" required autoComplete="email" />
               </div>
               <div className="two">
-                <Field label="Phone, with country code" name="phone" type="tel" optional autoComplete="tel" placeholder="+63 ..." />
+                <Field label="Phone, with country code" name="phone" type="tel" optional autoComplete="tel" placeholder="e.g. +1 876 555 0199" />
                 <Field label="Country" name="country" required autoComplete="country-name" />
               </div>
               <div className="two">

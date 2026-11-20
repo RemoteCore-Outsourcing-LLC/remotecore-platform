@@ -2,16 +2,19 @@ import type { ReactNode } from "react";
 import { heroFor } from "@/lib/settings";
 
 // page: the key in lib/heroes.ts. The title and intro come from the admin settings, or the built in text.
-export async function PageHero({ page, children, badge }: { page: string; children?: ReactNode; badge?: string }) {
+export async function PageHero({ page, children, badge, aside }: { page: string; children?: ReactNode; badge?: string; aside?: ReactNode }) {
   const { eyebrow, title, lede } = await heroFor(page);
   return (
     <section className="phero">
-      <div className="wrap">
-        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-        <h1>{title}</h1>
-        {lede && <p className="lede">{lede}</p>}
-        {children && <div className="btns">{children}</div>}
-        {badge && <p className="badge"><i aria-hidden="true" />{badge}</p>}
+      <div className={aside ? "wrap phero__in" : "wrap"}>
+        <div>
+          {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+          <h1>{title}</h1>
+          {lede && <p className="lede">{lede}</p>}
+          {children && <div className="btns">{children}</div>}
+          {badge && <p className="badge"><i aria-hidden="true" />{badge}</p>}
+        </div>
+        {aside}
       </div>
     </section>
   );
@@ -41,9 +44,9 @@ export function Close({ title, text, children, compact, trust }: { title: string
   );
 }
 
-export function Steps({ items }: { items: { title: string; text: string; action?: ReactNode }[] }) {
+export function Steps({ items, five }: { items: { title: string; text: string; action?: ReactNode }[]; five?: boolean }) {
   return (
-    <ol className="steps" data-sc-in data-sc-stagger="70">
+    <ol className={five ? "steps steps--five" : "steps"} data-sc-in data-sc-stagger="70">
       {items.map((s) => (
         <li key={s.title}>
           <h3>{s.title}</h3>

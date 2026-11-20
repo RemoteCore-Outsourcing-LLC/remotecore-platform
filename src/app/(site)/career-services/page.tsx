@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Icon, PageHero, Steps } from "@/components/site/Blocks";
 import { Consent, Field, Form, Select } from "@/components/site/Form";
+import { ServicePick } from "@/components/site/ServicePick";
 
 export const metadata: Metadata = { title: "Career Services", description: "Interview preparation, mock interviews, resume support, LinkedIn profile development, and career readiness coaching." };
 
@@ -22,18 +23,19 @@ export default function CareerServices() {
       <section className="sec" id="services">
         <div className="wrap">
           <div className="head" data-sc-in><h2>Career Support Services</h2></div>
-          <div className="cards" data-sc-in data-sc-stagger="70">
+          <div className="cards cards--five" data-sc-in data-sc-stagger="70">
             {services.map(([icon, t, d]) => (
-              <article key={t} className="card"><Icon name={icon} /><h3>{t}</h3><p>{d}</p></article>
+              <a key={t} className="card card--link" href="#book" data-pick-service={t}><Icon name={icon} /><h3>{t}</h3><p>{d}</p><span className="svc-main__link">Request a Session <span aria-hidden="true">→</span></span></a>
             ))}
           </div>
+          <ServicePick />
         </div>
       </section>
 
       <section className="sec sec--pale">
         <div className="wrap">
           <div className="head" data-sc-in><h2>How Booking Works</h2></div>
-          <Steps items={[
+          <Steps five items={[
             { title: "Choose a Service", text: "Pick the support you need from the services above." },
             { title: "Submit Your Request", text: "Fill in the short form below. It takes about a minute." },
             { title: "Review Scope & Pricing", text: "We email you what is included, how long it takes, and the price. Nothing is charged before you agree." },

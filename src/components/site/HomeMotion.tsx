@@ -45,9 +45,13 @@ export function HomeMotion() {
       const cands = $$<HTMLElement>(".cand", card);
       const state = $<HTMLElement>("#rqState");
       const labels = ["Request received", "Screening", "Shortlist ready", "Selected"];
+      const dots = $$<HTMLElement>(".stepdots i", act);
+      const num = $<HTMLElement>("#stepNum");
+      // Phones show the four steps as a plain list, so the card shows its finished state.
+      const small = matchMedia("(max-width: 860px)");
       let last = -1, raf = 0;
       const paint = () => {
-        const p = reduce ? 1 : parseFloat(act.style.getPropertyValue("--sc-p")) || 0;
+        const p = reduce || small.matches ? 1 : parseFloat(act.style.getPropertyValue("--sc-p")) || 0;
         if (Math.abs(p - last) > 0.0005) {
           last = p;
           const ph = p < 0.24 ? 0 : p < 0.48 ? 1 : p < 0.72 ? 2 : 3;
@@ -60,6 +64,8 @@ export function HomeMotion() {
           cands.forEach((el, i) => el.classList.toggle("is-on", ph > 2 || c * cands.length > i + 0.2));
           cands.forEach((el) => el.classList.toggle("is-pick", ph === 3 && el.dataset.pick === "1"));
           if (state) state.textContent = labels[ph];
+          dots.forEach((d, i) => d.classList.toggle("is-on", i === ph));
+          if (num) num.textContent = `${ph + 1} / 4`;
         }
         raf = requestAnimationFrame(paint);
       };

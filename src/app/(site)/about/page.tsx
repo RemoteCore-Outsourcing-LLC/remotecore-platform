@@ -14,15 +14,16 @@ const values = [
 export default function About() {
   return (
     <>
-      <PageHero page="about" />
+      <PageHero page="about" aside={<div className="phero__stat"><b>3 Global Regions</b><span>Caribbean · Latin America · Philippines</span><b>US-Aligned Hours</b><span>Managed from Fall River, Massachusetts</span></div>} />
 
       <section className="sec">
         <div className="wrap split split--top">
           <div data-sc-in>
             <h2>Our Story</h2>
-            <p className="lede">Our approach is informed by firsthand experience in healthcare administration, customer support, and remote business operations. We understand how important clear communication, reliable support, and the right team members are to daily operations. RemoteCore connects businesses with professionals while supporting career growth through practical learning and preparation.</p>
+            <p className="lede">Our approach is built on firsthand experience in healthcare administration, customer support, and remote business operations.</p>
+            <p className="lede">We know how much clear communication and dependable team members matter to your daily workflow, so we connect businesses with skilled professionals while supporting practical career growth.</p>
           </div>
-          <div className="cards" data-sc-in data-sc-stagger="80">
+          <div className="cards cards--even" data-sc-in data-sc-stagger="80">
             <div className="card card--dark"><Icon name="star" /><h3>Mission</h3><p>To connect businesses with capable remote professionals while creating pathways for professional growth, meaningful opportunities, and lasting partnerships.</p></div>
             <div className="card"><Icon name="growth" /><h3>Vision</h3><p>To build a globally recognized staffing and professional development company known for quality, integrity, innovation, and opportunity.</p></div>
           </div>
@@ -38,15 +39,15 @@ export default function About() {
         </div>
       </section>
 
-      <section className="sec">
+      <section className="sec sec--lead">
         <div className="wrap split split--top">
           <div data-sc-in>
             <p className="eyebrow" style={{ color: "var(--teal)" }}>About our leadership</p>
             <h2>Leadership Grounded in Real-World Operations.</h2>
           </div>
           <div data-sc-in>
-            <p className="lede" style={{ marginTop: 0 }}>Our leadership team has hands-on experience managing remote teams, supporting healthcare administrative workflows, and running the daily operations of a business.</p>
-            <p className="lede">That experience shapes how we screen candidates and how we match each person to the role, the schedule, and the team they will join.</p>
+            <p className="lede" style={{ marginTop: 0 }}>Our leadership team brings hands-on experience managing remote teams, healthcare administrative workflows, and daily business operations.</p>
+            <p className="lede">That real-world background guides how we screen every candidate and match them to your role, schedule, and team culture.</p>
             <p className="lede" style={{ color: "var(--sc-ink)", fontWeight: 600 }}>Great talent knows no borders. Great partnerships create lasting success.</p>
           </div>
         </div>

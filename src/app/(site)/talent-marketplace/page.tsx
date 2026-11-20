@@ -57,7 +57,7 @@ export default async function TalentMarketplace() {
               </div>
               <div className="two">
                 <Field label="Job title" name="job_title" required />
-                <Field label="Selected profile IDs" name="profile_ids" required placeholder="Click Request an Introduction on a profile" />
+                <Field label="Selected profile IDs" name="profile_ids" required placeholder="Tap ‘Request an Introduction’ above" />
               </div>
               <Field label="Role requirements" name="requirements" type="textarea" required rows={3} />
               <Field label="Preferred interview times" name="interview_times" optional />

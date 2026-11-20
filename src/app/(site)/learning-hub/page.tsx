@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Learning Hub", description: "Practic
 
 // The last item is the course format, shown on each card instead of a repeated "Coming Soon".
 const courses = [
-  ["health", "Healthcare Administration & Medical Virtual Assistance", "Patient coordination, scheduling, terminology, documentation, and administrative workflows.", "Self-Paced · Practical Scenarios"],
+  ["health", "Healthcare & Medical Virtual Assistance", "Patient coordination, scheduling, terminology, documentation, and administrative workflows.", "Self-Paced · Practical Scenarios"],
   ["laptop", "Healthcare Software Familiarization", "Approved demonstrations and simulated environments using fictional patient information.", "Self-Paced · Simulated Software"],
   ["assist", "Virtual Assistance & Business Administration", "Digital tools, calendar management, professional communication, and administrative support.", "Self-Paced · Practical Exercises"],
   ["chat", "Customer Service & Communication", "Service quality, problem solving, and issue resolution.", "Self-Paced · Realistic Scenarios"],
@@ -28,7 +28,7 @@ export default function LearningHub() {
             <h2>Learn Beyond the Classroom.</h2>
             <p className="lede">Our planned courses combine structured lessons, practical exercises, realistic scenarios, and knowledge assessments.</p>
           </div>
-          <div className="cards" data-sc-in data-sc-stagger="70">
+          <div className="cards cards--five" data-sc-in data-sc-stagger="70">
             {courses.map(([icon, t, d, format]) => (
               <article key={t} className="card"><Icon name={icon} /><span className="tag" style={{ alignSelf: "start" }}>{format}</span><h3>{t}</h3><p>{d}</p></article>
             ))}
@@ -39,7 +39,7 @@ export default function LearningHub() {
       <section className="sec sec--pale">
         <div className="wrap">
           <div className="head" data-sc-in><h2>Your Learning Journey</h2></div>
-          <Steps items={[
+          <Steps five items={[
             { title: "Explore Courses", text: "Find the course that fits the role you want." },
             { title: "Enroll in a Course", text: "Sign up and start when you are ready." },
             { title: "Complete Lessons and Exercises", text: "Learn with practical tasks and realistic scenarios." },

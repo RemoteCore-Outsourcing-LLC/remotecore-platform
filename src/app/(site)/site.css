@@ -434,3 +434,100 @@ figure { margin: 0; }
 .trust { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 10px; color: var(--night-ink); font-size: 16px; }
 .trust li { display: flex; gap: 10px; align-items: start; }
 .trust svg { flex: none; margin-top: 3px; color: var(--teal-light); }
+
+/* ---------- Final polish (Sasha's checklist, 2026-11-20) ---------- */
+/* Form rows: inputs line up even when one label wraps to two lines */
+.form .two, .mk-filters { align-items: end; }
+/* Cards in a row share one height; buttons sit on one line at the bottom */
+.cards--even > * { height: 100%; }
+.mk-card .btn { margin-top: 4px; }
+.mk-card .note { margin-top: auto; }
+@media (max-width: 960px) { .mk-filters > :last-child { grid-column: 1 / -1; } }
+
+/* Home: the team photo runs from the heading to the bottom of the last card */
+@media (min-width: 861px) {
+  .sec--pale .split:has(.why4) { align-items: stretch; }
+  .split:has(.why4) .photo { display: flex; }
+  .split:has(.why4) .photo img { height: 100%; aspect-ratio: auto; min-height: 420px; }
+}
+
+/* Home: step counter beside How Hiring Works */
+.stepdots { display: flex; align-items: center; gap: 8px; margin: -4px 0 18px; }
+.stepdots span { font: 700 13px/1 var(--sc-font-text); letter-spacing: .06em; color: var(--night-soft); min-width: 3.4em; }
+.stepdots i { width: 26px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.18); transition: background-color .3s var(--ease); }
+.stepdots i.is-on { background: var(--teal-light); }
+
+/* Home on phones: How Hiring Works is a plain list (heading, then its text) above the finished request card,
+   and the talent cards stack instead of sliding sideways. */
+@media (max-width: 860px) {
+  .req, .talent { height: auto !important; }
+  .req [data-sc-stage], .talent [data-sc-stage] { position: static; height: auto; overflow: visible; }
+  .req [data-sc-stage] { padding-top: clamp(56px, 12vw, 80px); padding-bottom: clamp(56px, 12vw, 80px); gap: 28px; }
+  .stepdots { display: none; }
+  .caps { min-height: 0; display: grid; gap: 22px; }
+  .cap { position: static; opacity: 1; transform: none; }
+  .cap .big { font-size: 1.5rem; }
+  .cap p:not(.big):not(.kicker) { display: block !important; font-size: 16px; margin-top: 8px; max-width: none; }
+  .cap .btn { display: inline-flex; margin-top: 16px; }
+  .rq { padding: 16px 16px 24px; }
+  .rq__fields div:nth-child(n+5) { display: block; }
+  .rq__head p { display: block !important; }
+  .talent [data-sc-stage] { padding: clamp(56px, 12vw, 80px) 0; }
+  .rail { transform: none !important; flex-direction: column; align-items: stretch; width: auto; padding: 0 clamp(16px, 4vw, 48px); gap: 16px; }
+  .rail__lead { width: auto; padding-right: 0; margin-bottom: 8px; }
+  .prof { width: 100%; flex-direction: row; }
+  .prof img { width: 38%; aspect-ratio: auto; height: auto; object-fit: cover; }
+  .prof div { flex: 1; min-width: 0; padding: 14px 14px 16px; }
+}
+@media (max-width: 420px) { .prof { flex-direction: column; } .prof img { width: 100%; aspect-ratio: 5 / 4; } }
+
+/* About: small facts card on the right of the dark banner */
+.phero__in { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(24px, 4vw, 64px); align-items: center; }
+.phero__stat { display: grid; gap: 4px; padding: 26px 28px; border-radius: var(--r); background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(111,216,206,.28); backdrop-filter: blur(6px); min-width: 280px; }
+.phero__stat b { font: 800 clamp(1.4rem, 1.1rem + 1vw, 1.9rem)/1.1 var(--sc-font-display); color: #fff; letter-spacing: -0.02em; }
+.phero__stat span { font-size: 14.5px; color: var(--night-soft); }
+.phero__stat span + b { margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.12); }
+@media (max-width: 860px) { .phero__in { grid-template-columns: 1fr; } .phero__stat { min-width: 0; } }
+@media (max-width: 760px) { .sec--lead { padding-top: 36px; } }
+
+/* Hire Talent: pricing and guarantee stay in view next to the tall form */
+@media (min-width: 861px) { .sticky-col { position: sticky; top: calc(var(--bar) + 28px); } }
+
+/* Five card rows: five across on wide screens, so no card sits alone */
+@media (min-width: 1100px) {
+  .cards--five, .steps--five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .steps--five li:not(:last-child)::after { right: -13px; }
+}
+@media (min-width: 640px) and (max-width: 1099px) {
+  .cards--five, .steps--five { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cards--five > :last-child, .steps--five li:last-child { grid-column: 1 / -1; }
+  .steps--five li::after { display: none; }
+}
+
+/* Career Services: each service card opens the form with that service picked */
+.card--link { text-decoration: none; color: inherit; transition: box-shadow .2s, transform .2s; }
+.card--link:hover { box-shadow: inset 0 0 0 1px var(--teal), var(--shadow); transform: translateY(-2px); }
+.card--link .svc-main__link { margin-top: auto; }
+
+/* Home hero: every sample card shows its full name and job title */
+.pc--b { z-index: 2; }
+.pc--c { z-index: 1; left: 36%; top: 34%; }
+.chip--b { bottom: 14%; }
+.pc div { background: #fff; position: relative; }
+@media (max-width: 960px) {
+  .scene { height: 430px; }
+  .pc--c { left: calc(50% - 73px); top: 44%; }
+  .chip--b { display: none; }
+  .chip--a { bottom: 0; }
+}
+@media (max-width: 420px) { .prof img { aspect-ratio: 16 / 10; } }
+@media (max-width: 560px) {
+  .scene { height: 460px; }
+  .pc { width: 132px; } .pc--c { left: calc(50% - 66px); top: 45%; }
+  .pc b { font-size: 14px; } .pc span { font-size: 11.5px; }
+}
+@media (max-width: 560px) {
+  .pc { aspect-ratio: auto; } .pc img { height: 120px; flex: none; }
+  .pc--c { top: 40%; }
+}
+@media (max-width: 560px) { .chip--c { left: 30%; top: 0; } }

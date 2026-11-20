@@ -37,7 +37,7 @@ export default async function Home() {
             <p className="brand">RemoteCore Outsourcing LLC</p>
             <p className="tagline">Global Talent.<br />Local Impact.</p>
             <h1>Build Your Dream Remote Team.</h1>
-            <p className="hero__sub">Connect with skilled, carefully screened remote professionals from the Caribbean, Latin America, and the Philippines. We help businesses find the right talent across multiple industries—without the complexity of traditional hiring.</p>
+            <p className="hero__sub">Hire pre-vetted remote professionals from the Caribbean, Latin America, and the Philippines, without the headaches of traditional recruiting.</p>
             <div className="btns">
               <a className="btn btn--main" href="/hire-talent">Hire Remote Talent</a>
               <a className="btn btn--line" href="/book-consultation">Book a Consultation</a>
@@ -101,6 +101,7 @@ export default async function Home() {
         <div data-sc-stage>
           <div className="req__left">
           <h2 className="kicker">How Hiring Works</h2>
+          <div className="stepdots" aria-hidden="true"><span id="stepNum">1 / 4</span><i className="is-on" /><i /><i /><i /></div>
           <div className="caps">
             <div className="cap is-on">
               <h3 className="big">1. Tell Us What You Need.</h3>
@@ -116,8 +117,8 @@ export default async function Home() {
             </div>
             <div className="cap">
               <h3 className="big">4. Select and Onboard.</h3>
-              <p>Choose your preferred candidate, pay your one-time flat placement fee only upon hire, and welcome your new team member. With our direct-hire model, you pay your professional directly (starting at $5/hr) with zero ongoing markups—backed by our 60-day replacement guarantee.</p>
-              <a className="btn btn--main" href="/hire-talent">See How Hiring Works</a>
+              <p>Choose your preferred candidate, pay your one-time flat placement fee only upon hire, and welcome your new team member. With our direct-hire model, you pay your professional directly (starting at $5/hr) with zero ongoing markups, backed by our 60-day replacement guarantee.</p>
+              <a className="btn btn--main" href="/hire-talent#request">Submit a Staffing Request</a>
             </div>
           </div>
           </div>

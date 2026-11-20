@@ -54,15 +54,15 @@ export default async function Services() {
               <Icon name="plus" />
               <h3>Custom Roles</h3>
               <p>Need something different? We’ll recruit talent based on your specific requirements.</p>
-              <a className="svc-main__link" href="/hire-talent#request">Tell Us What You Need <span aria-hidden="true">→</span></a>
+              <a className="svc-main__link" href="/hire-talent#request" style={{ whiteSpace: "nowrap" }}>Request Custom Role <span aria-hidden="true">→</span></a>
             </article>
           </div>
         </div>
       </section>
 
       <Close trust title="Your Business Is Unique. Your Hiring Should Be Too." text="Tell us the skills, experience, schedule, and responsibilities you need. We will work to identify suitable candidates.">
-        <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
-        <a className="btn btn--line" href="/hire-talent#request">Request Talent</a>
+        <a className="btn btn--main" href="/hire-talent#request">Request Talent</a>
+        <a className="btn btn--line" href="/book-consultation">Book a Consultation</a>
       </Close>
     </>
   );
