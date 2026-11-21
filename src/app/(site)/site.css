@@ -537,3 +537,11 @@ figure { margin: 0; }
 .rq__fields div:not(.is-on) { background: transparent; box-shadow: inset 0 0 0 1.5px var(--line); }
 .rq__fields div:not(.is-on) b { visibility: hidden; }
 .screen div:not(.is-on) { background: transparent; box-shadow: inset 0 0 0 1.5px var(--line); color: var(--sc-ink-soft); }
+
+/* About: founder portrait under the leadership heading */
+.founder { margin: 28px 0 0; max-width: 340px; }
+.founder img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--r); box-shadow: 0 24px 48px -24px rgba(36,16,74,.35); }
+.founder figcaption { display: grid; gap: 2px; margin-top: 14px; }
+.founder figcaption b { font-size: 17px; color: var(--sc-ink); }
+.founder figcaption span { font-size: 15px; color: var(--sc-ink-soft); }
+@media (max-width: 860px) { .founder { max-width: 280px; } }

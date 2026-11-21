@@ -44,6 +44,10 @@ export default function About() {
           <div data-sc-in>
             <p className="eyebrow" style={{ color: "var(--teal)" }}>About our leadership</p>
             <h2>Leadership Grounded in Real-World Operations.</h2>
+            <figure className="founder">
+              <img src="/assets/founder.webp" width={720} height={900} loading="lazy" decoding="async" alt="Portrait of the founder of RemoteCore Outsourcing" />
+              <figcaption><b>Founder</b><span>RemoteCore Outsourcing</span></figcaption>
+            </figure>
           </div>
           <div data-sc-in>
             <p className="lede" style={{ marginTop: 0 }}>Our leadership team brings hands-on experience managing remote teams, healthcare administrative workflows, and daily business operations.</p>
