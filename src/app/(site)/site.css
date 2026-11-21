@@ -545,3 +545,7 @@ figure { margin: 0; }
 .founder figcaption b { font-size: 17px; color: var(--sc-ink); }
 .founder figcaption span { font-size: 15px; color: var(--sc-ink-soft); }
 @media (max-width: 860px) { .founder { max-width: 280px; } }
+
+/* Phones: the hero cards and tags stay where they are while you scroll (Sasha, 2026-11-21).
+   Only their small tilt is kept, so nothing slides over the text above. */
+@media (max-width: 860px) { .scene .plane { transform: rotate(var(--rot, 0deg)); } }
