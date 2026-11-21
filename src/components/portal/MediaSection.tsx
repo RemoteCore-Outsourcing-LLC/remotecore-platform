@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { setMedia } from "@/app/(portal)/portal/profile/media-actions";
+import { autofillFromResume } from "@/app/(portal)/portal/profile/autofill-action";
 
 const MB = 1024 * 1024;
 const RESUME_TYPES: Record<string, string> = {
@@ -64,9 +65,18 @@ function ResumeBox({ userId, current }: { userId: string; current: Props["resume
     const path = `${userId}/resume-${Date.now()}.${ext}`;
     const err = await upload("resumes", path, file, type);
     const res = err ? { ok: false, message: "Upload failed. Please try again." } : await setMedia("resume", path);
-    setBusy(false);
-    setMsg(res.ok ? { ok: true, text: "Resume saved" } : { ok: false, text: res.message ?? "Upload failed." });
     if (input.current) input.current.value = "";
+    if (!res.ok) { setBusy(false); return setMsg({ ok: false, text: res.message ?? "Upload failed." }); }
+    setMsg({ ok: true, text: "Resume saved. Reading it to fill your profile..." });
+    const fill = await autofillFromResume().catch(() => null);
+    setBusy(false);
+    if (fill?.filled.length) {
+      // Show the filled parts: the form fields keep their first values until the page loads again.
+      try { sessionStorage.setItem("rc-autofill", fill.filled.join(", ")); } catch {}
+      window.location.reload();
+      return;
+    }
+    setMsg({ ok: true, text: fill?.message ?? "Resume saved" });
   }
 
   return (

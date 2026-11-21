@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState, useTransition, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
 import { saveSection, type SaveResult } from "@/app/(portal)/portal/profile/actions";
 import { COUNTRIES, CURRENCIES, countryByName } from "@/lib/geo";
 import { ARRANGEMENTS, LEVELS, type SectionKey } from "@/lib/portal/schema";
@@ -109,6 +109,7 @@ export function ProfileEditor({ initial, categories, email, media, mediaDone }: 
       </aside>
 
       <div className="pedit__main">
+        <AutofillNotice />
         <Section id="about" title="About you" done={done.about} status={s.about.res} pending={s.about.pending}
           onSave={() => s.about.save({ full_name: about.full_name, phone: `${about.dial} ${about.phone.replace(/[^\d]/g, "")}`, country: about.country, headline: about.headline, summary: about.summary })}>
           <div className="pgrid">
@@ -220,4 +221,16 @@ export function ProfileEditor({ initial, categories, email, media, mediaDone }: 
       </div>
     </div>
   );
+}
+
+// After a resume upload fills the empty parts, the page reloads and says which parts to check.
+function AutofillNotice() {
+  const [parts, setParts] = useState<string | null>(null);
+  const ref = useRef<HTMLParagraphElement>(null);
+  useEffect(() => { if (parts) ref.current?.scrollIntoView({ block: "center" }); }, [parts]);
+  useEffect(() => {
+    try { const v = sessionStorage.getItem("rc-autofill"); if (v) { setParts(v); sessionStorage.removeItem("rc-autofill"); } } catch {}
+  }, []);
+  if (!parts) return null;
+  return <p ref={ref} className="notice notice--ok" role="status">We filled these parts from your resume: {parts}. Please check each one, fix anything that is wrong, and add what is missing.</p>;
 }
