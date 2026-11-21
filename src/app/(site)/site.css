@@ -549,3 +549,21 @@ figure { margin: 0; }
 /* Phones: the hero cards and tags stay where they are while you scroll (Sasha, 2026-11-21).
    Only their small tilt is kept, so nothing slides over the text above. */
 @media (max-width: 860px) { .scene .plane { transform: rotate(var(--rot, 0deg)); } }
+
+/* Phones: the hero sample cards sit in a simple grid, nothing on top of anything (Sasha, 2026-11-21).
+   Two cards side by side, the third centered under them, then the tags. Nothing moves on scroll. */
+@media (max-width: 860px) {
+  .scene { height: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 16px 14px; align-items: start; padding: 8px 2px 34px; margin-top: 28px; }
+  .scene .plane { position: relative; left: auto; right: auto; top: auto; bottom: auto; }
+  .scene .scene__glow, .scene .scene__orbit { position: absolute; }
+  .scene .scene__orbit { display: none; }
+  .scene { max-width: 480px; margin-inline: auto; width: 100%; }
+  .scene .pc { width: 100%; z-index: 1; }
+  .pc--a { --rot: -2.5deg; grid-column: 1; grid-row: 1; }
+  .pc--b { --rot: 2.5deg; grid-column: 2; grid-row: 1; }
+  .pc--c { --rot: 0deg; grid-column: 1 / -1; grid-row: 2; justify-self: center; width: calc(50% - 7px) !important; }
+  .scene .chip { grid-column: 1 / -1; justify-self: center; z-index: 1; }
+  .chip--c { grid-row: 3; }
+  .chip--a { grid-row: 4; margin-top: -4px; }
+  .scene .sample { position: static; grid-column: 1 / -1; grid-row: 5; justify-self: end; font-size: 13px; }
+}
