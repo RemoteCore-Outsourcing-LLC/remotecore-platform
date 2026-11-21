@@ -58,6 +58,7 @@ Use the matching skill in `.claude/skills/`:
 | Look of the public site (colours, fonts, spacing) | `src/app/(site)/site.css` |
 | Photos and pictures | `public/assets/`, logo in `public/brand/` |
 | Email words | `src/lib/email/templates.ts` |
+| Resume autofill (reads a resume, fills empty profile parts with Claude Haiku, about $1 per 1,000 resumes; off when ANTHROPIC_API_KEY is empty) | `src/lib/resume/autofill.ts`, `src/app/(portal)/portal/profile/autofill-action.ts` |
 | Google page list | `src/app/sitemap.ts` |
 
 ## Look and feel
