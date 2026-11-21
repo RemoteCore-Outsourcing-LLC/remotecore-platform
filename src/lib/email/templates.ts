@@ -69,13 +69,13 @@ export function newApplicationEmployer(a: { job: string }) {
   );
 }
 
-// Supabase sends these two itself (through Resend). The {{ .ConfirmationURL }} tag is filled in by Supabase.
+// Supabase sends these two itself (through Resend). Supabase fills in {{ .SiteURL }} and {{ .TokenHash }}; the link opens /auth/confirm, which works on any device.
 export const authConfirm = build(
   "Confirm your email for RemoteCore",
   "One click and your account is ready.",
   "Confirm your email",
   ["Thanks for joining RemoteCore Outsourcing.", "Click the button to confirm your email and finish setting up your profile."],
-  { label: "Confirm my email", href: "{{ .ConfirmationURL }}" },
+  { label: "Confirm my email", href: "{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email" },
   "This link works for 1 hour. If you did not sign up, you can ignore this email.",
 );
 export const authRecovery = build(
@@ -83,7 +83,7 @@ export const authRecovery = build(
   "Choose a new password with the link inside.",
   "Reset your password",
   ["We got a request to reset the password for your RemoteCore account.", "Click the button to choose a new one."],
-  { label: "Choose a new password", href: "{{ .ConfirmationURL }}" },
+  { label: "Choose a new password", href: "{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery" },
   "This link works for 1 hour. If you did not ask for this, ignore this email and your password stays the same.",
 );
 
