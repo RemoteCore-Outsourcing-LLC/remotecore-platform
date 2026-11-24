@@ -24,7 +24,7 @@ export default async function Billing() {
   const due = open.reduce((n, i) => n + i.amount_cents, 0);
   return (
     <div className="pwrap">
-      <PageHead title="Invoices and payments" sub="Your invoices from RemoteCore and the payments you made. Pay any open invoice by card." />
+      <PageHead title="Invoices and payments" sub="Your invoices from RemoteCore and the payments you made. Pay any open invoice by card." aside={<a className="btn btn--ghost btn--sm" href="/portal/contract">Service agreement</a>} />
       {open.length > 0 && <p className="notice" role="status">{open.length} {open.length === 1 ? "invoice is" : "invoices are"} waiting for payment, {money(due, open[0].currency)} in total.</p>}
       <section className="panel" aria-labelledby="inv-h">
         <header className="panel__head"><h2 id="inv-h">Invoices</h2></header>

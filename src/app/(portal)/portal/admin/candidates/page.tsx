@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAdmin, LISTING_STATUS } from "@/lib/portal/admin";
-import { money, ago } from "@/lib/portal/seeker";
+import { money, ago, STAGE_LABEL } from "@/lib/portal/seeker";
 import { PageHead, Empty } from "@/components/portal/Dash";
 import { listingCode } from "@/lib/marketplace";
 
 export const metadata: Metadata = { title: "Candidates", robots: { index: false } };
 
-type Search = { q?: string; skill?: string; country?: string; tag?: string; min_years?: string; max_pay?: string; listing?: string; files?: string };
+type Search = { q?: string; skill?: string; country?: string; tag?: string; min_years?: string; max_pay?: string; listing?: string; files?: string; stage?: string };
 type Row = {
   id: string; name: string; email: string; country: string | null; created_at: string; status: string;
   headline: string | null; years: number | null; pay: number | null; currency: string; listing: string;
-  resume: boolean; audio: boolean; skills: string[]; tags: string[];
+  resume: boolean; audio: boolean; skills: string[]; tags: string[]; stage: string; submitted: boolean;
 };
 
 // The whole candidate pool in one list. Filters run on the server; the pool is small enough to filter in memory.
@@ -21,7 +21,7 @@ export default async function AdminCandidates({ searchParams }: { searchParams: 
   const sp = await searchParams;
   const [people, details, skillRows, tagRows] = await Promise.all([
     sb.from("profiles").select("id, full_name, email, country, created_at, status").eq("role", "job_seeker").order("created_at", { ascending: false }).limit(2000),
-    sb.from("seeker_profiles").select("user_id, headline, years_experience, expected_salary, salary_currency, marketplace_status, resume_path, audio_path"),
+    sb.from("seeker_profiles").select("user_id, headline, years_experience, expected_salary, salary_currency, marketplace_status, resume_path, audio_path, stage, submitted_at"),
     sb.from("seeker_skills").select("user_id, skill"),
     sb.from("candidate_tags").select("seeker_id, tag"),
   ]);
@@ -36,7 +36,7 @@ export default async function AdminCandidates({ searchParams }: { searchParams: 
       id: p.id, name: p.full_name || p.email, email: p.email, country: p.country, created_at: p.created_at, status: p.status,
       headline: d?.headline ?? null, years: d?.years_experience ?? null, pay: d?.expected_salary != null ? Number(d.expected_salary) : null,
       currency: d?.salary_currency || "USD", listing: d?.marketplace_status ?? "hidden", resume: !!d?.resume_path, audio: !!d?.audio_path,
-      skills: skills.get(p.id) ?? [], tags: tags.get(p.id) ?? [],
+      skills: skills.get(p.id) ?? [], tags: tags.get(p.id) ?? [], stage: d?.stage ?? "new", submitted: !!d?.submitted_at,
     };
   });
 
@@ -52,6 +52,7 @@ export default async function AdminCandidates({ searchParams }: { searchParams: 
     if (minYears != null && Number.isFinite(minYears) && (r.years ?? -1) < minYears) return false;
     if (maxPay != null && Number.isFinite(maxPay) && (r.pay == null || r.pay > maxPay)) return false;
     if (sp.listing && r.listing !== sp.listing) return false;
+    if (sp.stage && r.stage !== sp.stage) return false;
     if (sp.files === "both" && !(r.resume && r.audio)) return false;
     return true;
   });
@@ -85,6 +86,9 @@ export default async function AdminCandidates({ searchParams }: { searchParams: 
         <label className="field"><span>Marketplace</span>
           <select name="listing" defaultValue={sp.listing ?? ""}><option value="">Any</option>{Object.entries(LISTING_STATUS).map(([k, s]) => <option key={k} value={k}>{s.label}</option>)}</select>
         </label>
+        <label className="field"><span>Stage</span>
+          <select name="stage" defaultValue={sp.stage ?? ""}><option value="">Any stage</option>{Object.entries(STAGE_LABEL).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>
+        </label>
         <label className="field"><span>Files</span>
           <select name="files" defaultValue={sp.files ?? ""}><option value="">Any</option><option value="both">Resume and voice intro</option></select>
         </label>
@@ -114,6 +118,8 @@ export default async function AdminCandidates({ searchParams }: { searchParams: 
                   </div>
                   <span className="apills">
                     {r.status !== "active" && <span className="pill pill--bad">{r.status === "suspended" ? "Suspended" : "Deactivated"}</span>}
+                    {r.stage !== "new" && <span className={`pill ${r.stage === "not_a_fit" ? "" : "pill--info"}`}>{STAGE_LABEL[r.stage] ?? r.stage}</span>}
+                    {!r.submitted && <span className="pill">Not submitted</span>}
                     {r.listing !== "hidden" && <span className={`pill pill--${l.tone}`}>{l.label}</span>}
                   </span>
                 </li>

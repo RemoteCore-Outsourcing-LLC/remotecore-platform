@@ -4,10 +4,9 @@ import { getAdmin, ACCOUNT_STATUS, LISTING_STATUS } from "@/lib/portal/admin";
 import { loadSeeker, fileLabel } from "@/lib/portal/candidates";
 import { listingCode } from "@/lib/marketplace";
 import { profileProgress } from "@/lib/portal/seeker";
-import { StatusPill } from "@/components/portal/Dash";
 import { LocalTime } from "@/components/portal/DashClient";
 import { CandidateProfile } from "@/components/portal/CandidateProfile";
-import { SeekerFileButton, SeekerVoice, TagEditor, NoteForm, DeleteNoteButton, ListingButtons } from "@/components/portal/AdminClient";
+import { SeekerFileButton, SeekerVoice, TagEditor, NoteForm, DeleteNoteButton, ListingButtons, AdminAppStatus, StageButtons, InterviewButtons } from "@/components/portal/AdminClient";
 
 export const metadata: Metadata = { title: "Candidate", robots: { index: false } };
 
@@ -21,15 +20,19 @@ export default async function AdminCandidate({ params }: { params: Promise<{ id:
   const { data: person } = await sb.from("profiles").select("id, role, status, full_name, email, phone, country, created_at").eq("id", id).maybeSingle();
   if (!person || person.role !== "job_seeker") notFound();
 
-  const [s, extra, progress, apps, tagRows, allTags, notes] = await Promise.all([
+  const [s, extra, progress, apps, tagRows, allTags, notes, ivs] = await Promise.all([
     loadSeeker(sb, id),
-    sb.from("seeker_profiles").select("linkedin, marketplace_consent, marketplace_consent_at, marketplace_status, marketplace_changed_at, preferred_categories").eq("user_id", id).maybeSingle(),
+    sb.from("seeker_profiles").select("stage, submitted_at, linkedin, marketplace_consent, marketplace_consent_at, marketplace_status, marketplace_changed_at, preferred_categories").eq("user_id", id).maybeSingle(),
     profileProgress(sb, id, person),
     sb.from("applications").select("id, status, created_at, note, extra_documents, jobs(id, title, companies(name))").eq("seeker_id", id).order("created_at", { ascending: false }),
     sb.from("candidate_tags").select("tag").eq("seeker_id", id).order("tag"),
     sb.from("candidate_tags").select("tag").limit(1000),
     sb.from("candidate_notes").select("id, body, created_at, profiles!candidate_notes_author_id_fkey(full_name, email)").eq("seeker_id", id).order("created_at", { ascending: false }),
+    sb.from("interviews").select("id, status, starts_at, invited_at").eq("seeker_id", id).order("created_at", { ascending: false }).limit(5),
   ]);
+  const interviews = (ivs.data ?? []) as { id: string; status: string; starts_at: string | null; invited_at: string }[];
+  const openIv = interviews.find((v) => v.status === "invited" || v.status === "booked") ?? null;
+  const IV_LABEL: Record<string, string> = { invited: "Invited, no time picked yet", booked: "Booked", cancelled: "Cancelled", done: "Done", no_show: "Did not show up" };
   const p = s.sp.data;
   const x = extra.data;
   const data = {
@@ -83,7 +86,7 @@ export default async function AdminCandidate({ params }: { params: Promise<{ id:
                             <span className="alist__files">{a.extra_documents.map((d, i) => <SeekerFileButton key={i} seekerId={id} kind="document" appId={a.id} index={i} label={fileLabel(d)} />)}</span>
                           )}
                         </span>
-                        <StatusPill status={a.status} />
+                        <AdminAppStatus appId={a.id} status={a.status} />
                       </li>
                     ))}
                   </ul>
@@ -94,6 +97,29 @@ export default async function AdminCandidate({ params }: { params: Promise<{ id:
         </div>
 
         <aside className="cand__side" aria-label="Files, tags and notes">
+          <section className="panel cside">
+            <header className="panel__head"><h2>Stage</h2>{x?.submitted_at ? <span className="pill pill--good">Application submitted</span> : <span className="pill">Not submitted yet</span>}</header>
+            <div className="cside__body">
+              <p className="soft small">Your team&apos;s own stage for this person, with or without a job. Shortlisted sends them a link to pick an interview time.</p>
+              <StageButtons seekerId={id} stage={x?.stage ?? "new"} />
+            </div>
+          </section>
+          <section className="panel cside">
+            <header className="panel__head"><h2>Interview</h2></header>
+            <div className="cside__body">
+              {interviews.length === 0 ? <p className="soft small">No interview yet.</p> : (
+                <ul className="anotes">
+                  {interviews.map((v) => (
+                    <li key={v.id}>
+                      <b className="small">{IV_LABEL[v.status] ?? v.status}</b>
+                      <span className="soft small">{v.starts_at ? <LocalTime iso={v.starts_at} /> : <>Invited <LocalTime iso={v.invited_at} /></>}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <InterviewButtons seekerId={id} interviewId={openIv?.id} status={openIv?.status} />
+            </div>
+          </section>
           <section className="panel cside">
             <header className="panel__head"><h2>Resume and voice intro</h2></header>
             <div className="cside__body">

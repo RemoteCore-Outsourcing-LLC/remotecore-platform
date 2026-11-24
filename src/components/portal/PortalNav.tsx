@@ -6,7 +6,7 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 const LINKS: Record<string, [string, string][]> = {
   job_seeker: [["/portal", "Dashboard"], ["/portal/jobs", "Jobs"], ["/portal/saved", "Saved"], ["/portal/applications", "Applications"], ["/portal/profile", "Profile"]],
   employer: [["/portal", "Dashboard"], ["/portal/postings", "Jobs"], ["/portal/candidates", "Candidates"], ["/portal/requests", "Requests"], ["/portal/messages", "Messages"], ["/portal/billing", "Invoices"], ["/portal/company", "Company"]],
-  admin: [["/portal", "Dashboard"], ["/portal/admin/jobs", "Jobs"], ["/portal/admin/applications", "Applications"], ["/portal/admin/candidates", "Candidates"], ["/portal/admin/users", "Users"], ["/portal/admin/billing", "Billing"], ["/portal/admin/inbox", "Inbox"], ["/portal/admin/website", "Website"]],
+  admin: [["/portal", "Dashboard"], ["/portal/admin/jobs", "Jobs"], ["/portal/admin/applications", "Applications"], ["/portal/admin/candidates", "Candidates"], ["/portal/admin/interviews", "Interviews"], ["/portal/admin/users", "Users"], ["/portal/admin/billing", "Billing"], ["/portal/admin/contracts", "Contracts"], ["/portal/admin/inbox", "Inbox"], ["/portal/admin/website", "Website"]],
 };
 
 export function PortalNav({ role, name, unread }: { role: string; name: string; unread: number }) {

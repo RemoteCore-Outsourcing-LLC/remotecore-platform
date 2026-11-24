@@ -15,7 +15,7 @@ export function PayButton({ id, label }: { id: string; label: string }) {
   const [err, setErr] = useState("");
   return (
     <span className="aact">
-      <button type="button" className="btn btn--main" disabled={pending} onClick={() => start(async () => { setErr(""); const r = await payInvoice(id); if (r.ok && r.url) location.href = r.url; else setErr(r.message ?? "Please try again."); })}>
+      <button type="button" className="btn btn--main" disabled={pending} onClick={() => start(async () => { setErr(""); const r = await payInvoice(id); if (r.url) location.href = r.url; else setErr(r.message ?? "Please try again."); })}>
         <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" strokeWidth="1.8" /><path d="M3 10h18" stroke="currentColor" strokeWidth="1.8" /></svg>
         {pending ? "Opening the secure page..." : label}
       </button>

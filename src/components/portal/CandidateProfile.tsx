@@ -51,11 +51,13 @@ export function CandidateProfile({ c, requirements }: { c: ProfileData; requirem
                   <dl className="facts">{shownPrefs.map(([k, v]) => <Fact key={k} k={k} v={v!} />)}</dl>
                 </section>
               )}
-              <section aria-labelledby="pc-h">
-                <h2 id="pc-h">Computer and internet</h2>
-                {requirements && <p className="cand__req small"><b>Your job asks for:</b> {requirements}</p>}
-                {shownSpecs.length ? <dl className="facts">{shownSpecs.map(([k, v]) => <Fact key={k} k={k} v={v!} />)}</dl> : <p className="soft">The candidate has not added their computer details yet.</p>}
-              </section>
+              {(requirements || shownSpecs.length > 0) && (
+                <section aria-labelledby="pc-h">
+                  <h2 id="pc-h">Computer and internet</h2>
+                  {requirements && <p className="cand__req small"><b>Your job asks for:</b> {requirements}</p>}
+                  {shownSpecs.length ? <dl className="facts">{shownSpecs.map(([k, v]) => <Fact key={k} k={k} v={v!} />)}</dl> : <p className="soft">RemoteCore checks each candidate&apos;s computer and internet on a screen share in the first interview.</p>}
+                </section>
+              )}
               <section aria-labelledby="work-h">
                 <h2 id="work-h">Work history</h2>
                 {c.work.length ? (

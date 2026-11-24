@@ -1,7 +1,7 @@
 import "server-only";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendEmail, adminEmails } from "./send";
-import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin, employerWelcome, newEmployerAdmin, employerApproved, newJobPostAdmin, staffingRequestReceived, newStaffingRequestAdmin, newEmployerMessageAdmin, jobApproved, jobNeedsChanges, teamReply } from "./templates";
+import { applicationReceived, newApplicationAdmin, newApplicationEmployer, statusChanged, welcomeSeeker, newSeekerAdmin, employerWelcome, newEmployerAdmin, employerApproved, newJobPostAdmin, staffingRequestReceived, newStaffingRequestAdmin, newEmployerMessageAdmin, jobApproved, jobNeedsChanges, teamReply, profileSubmitted, newProfileAdmin } from "./templates";
 
 const ref = (id: string) => id.slice(0, 8).toUpperCase();
 
@@ -33,6 +33,12 @@ export async function notifyNewApplication(appId: string) {
 export async function notifyStatusChange(appId: string) {
   const a = await loadApp(appId);
   if (!a?.job || !a.who) return;
+  // Shortlisted: the candidate gets the "pick your interview time" email instead (when booking is on).
+  if (a.status === "shortlisted") {
+    const { inviteToInterview } = await import("@/lib/interviews");
+    const r = await inviteToInterview(a.seeker_id, { applicationId: a.id });
+    if (r.ok) return;
+  }
   const mail = statusChanged({ name: a.who.full_name, job: a.job.title, status: a.status });
   if (mail) await sendEmail({ to: a.who.email, ...mail });
 }
@@ -125,5 +131,16 @@ export async function notifyTeamReply(messageId: string) {
   await Promise.allSettled([
     db.from("notifications").insert({ user_id: c.owner_id, title: "New message from RemoteCore", body: m.body.slice(0, 160), link: "/portal/messages" }),
     sendEmail({ to: c.email, ...teamReply({ name: c.contact_person, body: m.body }) }),
+  ]);
+}
+
+// The first time a job seeker completes every part of their application.
+export async function notifyProfileSubmitted(userId: string) {
+  const { data: p } = await supabaseAdmin().from("profiles").select("full_name, email, country").eq("id", userId).maybeSingle();
+  if (!p?.email) return;
+  const team = adminEmails();
+  await Promise.allSettled([
+    sendEmail({ to: p.email, ...profileSubmitted({ name: p.full_name }) }),
+    team.length ? sendEmail({ to: team, ...newProfileAdmin({ name: p.full_name, email: p.email, country: p.country ?? "", id: userId }) }) : null,
   ]);
 }

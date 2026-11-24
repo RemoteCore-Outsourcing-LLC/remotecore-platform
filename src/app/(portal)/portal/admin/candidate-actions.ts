@@ -103,3 +103,52 @@ export async function setListing(seekerId: string, publish: boolean): Promise<Re
   revalidatePath("/talent-marketplace");
   return { ok: true };
 }
+
+/* ---------- Stage and interviews (call 2026-11-23) ---------- */
+
+const STAGES = ["new", "shortlisted", "interview", "approved", "not_a_fit"] as const;
+
+// The team's own stage for a candidate, with or without a job application.
+// Shortlisting sends the "pick your interview time" email when interview booking is on.
+export async function setStage(seekerId: string, stage: string): Promise<Result> {
+  const a = await requireAdmin();
+  if (!a) return { ok: false, message: "Please log in again." };
+  if (!UUID.test(seekerId) || !(STAGES as readonly string[]).includes(stage)) return { ok: false, message: "Something is wrong with this request." };
+  const { error } = await supabaseAdmin().from("seeker_profiles").update({ stage }).eq("user_id", seekerId);
+  if (error) return { ok: false, message: "We could not save the stage. Please try again." };
+  await log(a.me.id, "candidate_stage", seekerId, { stage });
+  let message: string | undefined;
+  if (stage === "shortlisted") {
+    const { inviteToInterview } = await import("@/lib/interviews");
+    const r = await inviteToInterview(seekerId, { by: a.me.id });
+    message = r.ok ? "Shortlisted. We emailed them a link to pick an interview time." : r.reason === "open" ? "Shortlisted. They already have an interview invite." : "Shortlisted. Interview booking is off, so no invite went out.";
+  }
+  refresh(seekerId);
+  return { ok: true, message };
+}
+
+// Send the interview invite by hand (also works when automatic invites are off).
+export async function sendInterviewInvite(seekerId: string): Promise<Result> {
+  const a = await requireAdmin();
+  if (!a) return { ok: false, message: "Please log in again." };
+  if (!UUID.test(seekerId)) return { ok: false, message: "Something is wrong with this request." };
+  const { inviteToInterview } = await import("@/lib/interviews");
+  const r = await inviteToInterview(seekerId, { by: a.me.id, force: true });
+  if (!r.ok) return { ok: false, message: r.reason === "open" ? "They already have an open invite or a booked interview." : r.reason === "off" ? "Turn on interview booking first, in Admin, Interviews." : "Please try again." };
+  await log(a.me.id, "interview_invite", seekerId, {});
+  refresh(seekerId);
+  return { ok: true };
+}
+
+// Close an interview: cancelled (frees the time), done, or did not show up.
+export async function closeInterview(interviewId: string, status: "cancelled" | "done" | "no_show"): Promise<Result> {
+  const a = await requireAdmin();
+  if (!a) return { ok: false, message: "Please log in again." };
+  if (!UUID.test(interviewId) || !["cancelled", "done", "no_show"].includes(status)) return { ok: false, message: "Something is wrong with this request." };
+  const { data } = await supabaseAdmin().from("interviews").update({ status }).eq("id", interviewId).in("status", ["invited", "booked"]).select("seeker_id").maybeSingle();
+  if (!data) return { ok: false, message: "This interview is already closed." };
+  await log(a.me.id, "interview_" + status, data.seeker_id, { interviewId });
+  refresh(data.seeker_id);
+  revalidatePath("/portal/admin/interviews");
+  return { ok: true };
+}

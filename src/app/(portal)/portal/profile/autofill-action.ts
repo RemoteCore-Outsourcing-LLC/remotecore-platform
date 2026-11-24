@@ -25,7 +25,8 @@ export async function autofillFromResume(): Promise<AutofillResult> {
   if (!file) return { ok: false, filled: [] };
 
   const text = await resumeText(file, ext);
-  await sb.from("seeker_profiles").update({ resume_text: text || null }).eq("user_id", uid);
+  // The resume fills the saved profile, so an older typed draft must not hide it.
+  await sb.from("seeker_profiles").update({ resume_text: text || null, draft: null, draft_at: null }).eq("user_id", uid);
   if (!autofillEnabled()) return { ok: true, filled: [] };
   if (!text) return { ok: true, filled: [], message: ext === "doc" ? "We can only read .docx and PDF files to fill your profile. Please fill it in below." : "We could not read the text in this file. Please fill your profile in below." };
 

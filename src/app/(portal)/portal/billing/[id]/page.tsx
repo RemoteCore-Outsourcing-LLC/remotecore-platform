@@ -8,6 +8,7 @@ import { PageHead } from "@/components/portal/Dash";
 import { LocalTime } from "@/components/portal/DashClient";
 import { NotApproved } from "@/components/portal/EmployerGate";
 import { PayButton } from "@/components/portal/BillingClient";
+import { needsSignature } from "@/lib/contracts";
 
 export const metadata: Metadata = { title: "Invoice", robots: { index: false } };
 
@@ -28,6 +29,7 @@ export default async function Invoice({ params, searchParams }: { params: Promis
   const { data: inv } = await sb.from("invoices").select("id, number, status, description, note, amount_cents, refunded_cents, currency, due_date, sent_at, paid_at, receipt_url, invoice_items(id, description, amount_cents)").eq("id", id).maybeSingle();
   if (!inv) notFound();
   const s = INVOICE_STATUS[inv.status];
+  const mustSign = inv.status === "open" ? await needsSignature(company.id) : null;
   const items = (inv.invoice_items ?? []) as { id: number; description: string; amount_cents: number }[];
   return (
     <div className="pwrap pwrap--narrow">
@@ -55,9 +57,12 @@ export default async function Invoice({ params, searchParams }: { params: Promis
           </table>
           {inv.note && <p className="prose small">{inv.note}</p>}
           <div className="aact__row">
-            {inv.status === "open" && <PayButton id={inv.id} label={`Pay ${money(inv.amount_cents, inv.currency)} by card`} />}
+            {inv.status === "open" && (mustSign
+              ? <a className="btn btn--main" href={`/portal/contract?next=/portal/billing/${inv.id}`}>Sign the agreement, then pay</a>
+              : <PayButton id={inv.id} label={`Pay ${money(inv.amount_cents, inv.currency)} by card`} />)}
             {inv.receipt_url && <a className="btn btn--ghost btn--sm" href={inv.receipt_url} target="_blank" rel="noopener noreferrer">Card receipt</a>}
           </div>
+          {mustSign && <p className="soft small">Before your first payment, please read and sign our service agreement ({mustSign.title}). It takes a minute.</p>}
           {inv.status === "open" && <p className="soft small">You pay on a secure Stripe page. RemoteCore never sees your card number.</p>}
         </div>
       </article>

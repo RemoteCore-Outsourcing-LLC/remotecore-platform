@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 // Shared by the dashboard pages: profile progress, labels and job formatting.
 
 export const PROFILE_SECTIONS = [
-  ["about", "About you"], ["media", "Resume and voice"], ["work_prefs", "Pay and availability"], ["computer", "Computer and internet"],
+  ["about", "About you"], ["media", "Resume and voice"], ["work_prefs", "Pay and availability"],
   ["work", "Work history"], ["education", "Education"], ["certs", "Qualifications"], ["skills", "Skills and languages"],
 ] as const;
 
@@ -12,9 +12,8 @@ export type SectionDone = Record<(typeof PROFILE_SECTIONS)[number][0], boolean>;
 // Same rules as the profile editor, worked out on the server.
 export async function profileProgress(sb: SupabaseClient, uid: string, profile: { full_name?: string; phone?: string | null; country?: string | null }) {
   const head = { count: "exact" as const, head: true };
-  const [sp, pc, work, edu, certs, skills, langs] = await Promise.all([
+  const [sp, work, edu, certs, skills, langs] = await Promise.all([
     sb.from("seeker_profiles").select("expected_salary, employment_types, time_zone, qualifications, resume_path, audio_path").eq("user_id", uid).maybeSingle(),
-    sb.from("computer_specs").select("computer_type").eq("user_id", uid).maybeSingle(),
     sb.from("work_history").select("user_id", head).eq("user_id", uid),
     sb.from("education").select("user_id", head).eq("user_id", uid),
     sb.from("certifications").select("user_id", head).eq("user_id", uid),
@@ -26,7 +25,6 @@ export async function profileProgress(sb: SupabaseClient, uid: string, profile: 
     about: !!(profile.full_name && profile.phone && profile.country),
     media: !!(p.resume_path && p.audio_path),
     work_prefs: !!(p.expected_salary && Array.isArray(p.employment_types) && p.employment_types.length && p.time_zone),
-    computer: !!pc.data?.computer_type,
     work: (work.count ?? 0) > 0,
     education: (edu.count ?? 0) > 0,
     certs: !!p.qualifications || (certs.count ?? 0) > 0,
@@ -90,3 +88,6 @@ export function ago(iso: string) {
   if (d < 30) return `${d} days ago`;
   return shortDate(iso);
 }
+
+// The RemoteCore team's own stage for a candidate (set on the admin candidate page).
+export const STAGE_LABEL: Record<string, string> = { new: "New", shortlisted: "Shortlisted", interview: "Interviewed", approved: "Approved", not_a_fit: "Not a fit" };

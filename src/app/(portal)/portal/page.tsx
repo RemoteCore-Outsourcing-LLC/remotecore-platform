@@ -56,7 +56,7 @@ export default async function PortalHome() {
   }
 
   const head = { count: "exact" as const, head: true };
-  const [progress, apps, appCount, savedCount, unread, jobs, notes] = await Promise.all([
+  const [progress, apps, appCount, savedCount, unread, jobs, notes, iv] = await Promise.all([
     profileProgress(sb, user.id, profile),
     sb.from("applications").select("id, status, created_at, updated_at, jobs(id, title)").eq("seeker_id", user.id).order("updated_at", { ascending: false }).limit(4),
     sb.from("applications").select("id", head).eq("seeker_id", user.id),
@@ -64,6 +64,7 @@ export default async function PortalHome() {
     sb.from("notifications").select("id", head).eq("user_id", user.id).is("read_at", null),
     sb.from("jobs").select(JOB_COLUMNS).eq("status", "published").order("published_at", { ascending: false, nullsFirst: false }).limit(3),
     sb.from("notifications").select("id, title, body, link, read_at, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(4),
+    sb.from("interviews").select("status, starts_at").eq("seeker_id", user.id).in("status", ["invited", "booked"]).maybeSingle(),
   ]);
   const jobList = (jobs.data ?? []) as unknown as JobRow[];
   const { data: savedRows } = jobList.length
@@ -79,6 +80,16 @@ export default async function PortalHome() {
         <h1>{first ? `Welcome back, ${first}` : "Welcome back"}</h1>
         <p>Your applications, saved jobs and messages from RemoteCore, all in one place.</p>
       </header>
+
+      {iv.data && (
+        <section className="banner banner--ok" aria-labelledby="ivh">
+          <div>
+            <h2 id="ivh">{iv.data.status === "booked" ? "Your interview is booked" : "You were shortlisted"}</h2>
+            <p>{iv.data.status === "booked" ? "See the time and the meeting link, or move it to another time." : "Pick a time for a short video interview with our team."}</p>
+          </div>
+          <div className="banner__act"><a className="btn btn--main" href="/portal/interview">{iv.data.status === "booked" ? "See my interview" : "Pick my interview time"}</a></div>
+        </section>
+      )}
 
       {progress.complete ? (
         <section className="banner banner--ok" aria-labelledby="pdone">

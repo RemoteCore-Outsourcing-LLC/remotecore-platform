@@ -16,6 +16,8 @@ Log in at remotecoreoutsourcing.com, then Admin, then **Website**. It holds:
 - the announcement bar at the top of the site
 - the heading and intro text of each page
 - the services lists, the FAQ, and the testimonials section on the homepage
+Also in the admin dashboard: **Interviews** (open hours, meeting link, days off) and **Contracts**
+(the service agreement text, with blanks like {{client_name}} that fill in by themselves).
 Jobs, candidates, employers, invoices and team logins are all in the admin dashboard too.
 If the dashboard can do it, tell them where to click instead of changing code.
 Text saved in the dashboard wins over the text in the code, so a code change to those parts shows nothing.
@@ -60,6 +62,9 @@ Use the matching skill in `.claude/skills/`:
 | Email words | `src/lib/email/templates.ts` |
 | Resume autofill (reads a resume, fills empty profile parts with Claude Haiku, about $1 per 1,000 resumes; off when ANTHROPIC_API_KEY is empty) | `src/lib/resume/autofill.ts`, `src/app/(portal)/portal/profile/autofill-action.ts` |
 | Google page list | `src/app/sitemap.ts` |
+| Job seeker profile (one Submit button, autosave draft, "we received your application" email) | `src/components/portal/ProfileEditor.tsx`, `src/app/(portal)/portal/profile/actions.ts` |
+| Interview booking (open hours, slots, reminder the day before) | Admin, Interviews. Code: `src/lib/interviews.ts`, `src/app/(portal)/portal/interview/` |
+| Service agreement employers sign before paying | Admin, Contracts. Code: `src/lib/contracts.ts`, `src/app/(portal)/portal/contract/` |
 
 ## Look and feel
 - Colours come from the variables at the top of `site.css` (`--teal`, `--plum`, `--night`, `--sc-ink` and others).

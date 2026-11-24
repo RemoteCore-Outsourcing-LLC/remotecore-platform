@@ -298,3 +298,75 @@ export function formReceived(kind: string, entry: Record<string, string>, ref: s
   const name = entry.full_name || entry.contact_name || "";
   return build(r.subject, r.line(entry).replace(/<[^>]+>/g, ""), r.heading, [`Hi ${first(name)},`, r.line(entry), `Your reference is <b>${esc(ref)}</b>.`], r.button, undefined, FORM_FOOTER);
 }
+
+/* ---------- Added after the call on 2026-11-23 ---------- */
+
+// Job seeker: the whole application (profile) is complete for the first time.
+export function profileSubmitted(a: { name: string }) {
+  return build(
+    "We received your application",
+    "Thank you for applying to RemoteCore. Our team will review your profile.",
+    "Application received",
+    [
+      `Hi ${first(a.name)},`,
+      "Thank you for applying to RemoteCore Outsourcing. Your application is complete and it reached our team.",
+      "We review every application. If your profile fits a role, we will email you to book a short interview. You can update your profile at any time.",
+    ],
+    { label: "See my profile", href: `${SITE}/portal/profile` },
+  );
+}
+
+export const newProfileAdmin = (a: { name: string; email: string; country: string; id: string }) =>
+  team(`New application: ${a.name || a.email}`, "New completed application", [`<b>${esc(a.name || "A job seeker")}</b> completed every part of their application.`, row("Email", a.email), ...(a.country ? [row("Country", a.country)] : [])], `${SITE}/portal/admin/candidates/${a.id}`);
+
+// Job seeker: shortlisted, pick an interview time.
+export function interviewInvite(a: { name: string; job?: string | null }) {
+  return build(
+    "You were shortlisted. Please pick an interview time",
+    "Choose a time that suits you for a short interview with RemoteCore.",
+    "You were shortlisted",
+    [
+      `Hi ${first(a.name)},`,
+      a.job ? `Good news. You were shortlisted for <b>${esc(a.job)}</b>.` : "Good news. You were shortlisted.",
+      "The next step is a short video interview with our team. Please pick a time that suits you. You will see the times in your own time zone.",
+      "In the interview we will ask you to share your screen, so please join from the computer you would work on.",
+    ],
+    { label: "Pick my interview time", href: `${SITE}/portal/interview` },
+  );
+}
+
+// Job seeker: interview booked (also used for the reminder the day before).
+export function interviewBooked(a: { name: string; when: string; link: string | null; reminder?: boolean }) {
+  const lines = [
+    `Hi ${first(a.name)},`,
+    a.reminder ? `This is a reminder of your interview with RemoteCore on <b>${esc(a.when)}</b>.` : `Your interview with RemoteCore is booked for <b>${esc(a.when)}</b>.`,
+    a.link ? `Join the meeting here: <a href="${esc(a.link)}">${esc(a.link)}</a>` : "We will send you the meeting link before the interview.",
+    "Please join from the computer you would work on. We will ask you to share your screen.",
+  ];
+  if (!a.reminder) lines.push("The calendar file attached to this email adds the interview to your calendar.");
+  return build(
+    a.reminder ? "Reminder: your RemoteCore interview" : "Your RemoteCore interview is booked",
+    a.when,
+    a.reminder ? "Your interview is coming up" : "Interview booked",
+    lines,
+    { label: "See or change my interview", href: `${SITE}/portal/interview` },
+  );
+}
+
+export const interviewBookedAdmin = (a: { name: string; email: string; when: string; job?: string | null; id: string }) =>
+  team(`Interview booked: ${a.name || a.email}`, "New interview booked", [`<b>${esc(a.name || a.email)}</b> booked an interview.`, row("When", a.when), row("Email", a.email), ...(a.job ? [row("Role", a.job)] : [])], `${SITE}/portal/admin/candidates/${a.id}`);
+
+// Employer and team: a copy of the signed agreement.
+export function contractCopy(a: { name: string; title: string; body: string; signedAt: string; signer: string; company: string; team?: boolean }) {
+  return build(
+    a.team ? `Signed: ${a.title} (${a.company})` : `Your signed copy: ${a.title}`,
+    `Signed by ${a.signer} for ${a.company}`,
+    a.team ? "An agreement was signed" : "Your signed agreement",
+    [
+      a.team ? `<b>${esc(a.signer)}</b> signed <b>${esc(a.title)}</b> for <b>${esc(a.company)}</b>.` : `Hi ${first(a.name)}, here is your copy of the agreement you signed.`,
+      row("Signed", `${when(a.signedAt)} by ${a.signer}`),
+      `<span style="white-space:pre-line">${esc(a.body)}</span>`,
+    ],
+    { label: a.team ? "Open the dashboard" : "See it in your dashboard", href: `${SITE}${a.team ? "/portal/admin/contracts" : "/portal/contract"}` },
+  );
+}

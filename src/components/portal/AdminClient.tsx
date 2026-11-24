@@ -3,8 +3,8 @@ import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { setAccountStatus, setCompanyStatus, setAdminLevel, addTeamMember, deleteAccount } from "@/app/(portal)/portal/admin/actions";
 import { reviewJob, adminSetJobStatus, removeJob, adminSetApplicationStatus, addCategory, renameCategory, moveCategory, deleteCategory } from "@/app/(portal)/portal/admin/job-actions";
-import { APP_STATUS } from "@/lib/portal/seeker";
-import { openSeekerFile, addTag, removeTag, addNote, deleteNote, setListing } from "@/app/(portal)/portal/admin/candidate-actions";
+import { APP_STATUS, STAGE_LABEL } from "@/lib/portal/seeker";
+import { openSeekerFile, addTag, removeTag, addNote, deleteNote, setListing, setStage, sendInterviewInvite, closeInterview } from "@/app/(portal)/portal/admin/candidate-actions";
 
 type Msg = { ok: boolean; text: string } | null;
 type Res = { ok: boolean; message?: string; id?: string };
@@ -13,11 +13,11 @@ function useAction() {
   const router = useRouter();
   const [msg, setMsg] = useState<Msg>(null);
   const [pending, start] = useTransition();
-  const run = (fn: () => Promise<Res>, okText: string, after?: (r: Res) => void) => start(async () => {
+  const run = (fn: () => Promise<Res>, okText: string | ((r: Res) => string), after?: (r: Res) => void) => start(async () => {
     setMsg(null);
     const r = await fn();
     if (!r.ok) { setMsg({ ok: false, text: r.message ?? "Please try again." }); return; }
-    setMsg({ ok: true, text: okText });
+    setMsg({ ok: true, text: typeof okText === "function" ? okText(r) : okText });
     if (after) after(r); else router.refresh();
   });
   return { msg, pending, run, router };
@@ -309,5 +309,46 @@ export function AddCategoryForm() {
       <button className="btn btn--main btn--sm" disabled={pending || v.trim().length < 2}>Add</button>
       <Note msg={msg} />
     </form>
+  );
+}
+
+
+// The team's stage for a candidate. Shortlist sends the interview booking email.
+export function StageButtons({ seekerId, stage }: { seekerId: string; stage: string }) {
+  const { msg, pending, run } = useAction();
+  return (
+    <div className="aact">
+      <div className="aact__row">
+        {Object.entries(STAGE_LABEL).map(([k, label]) => (
+          <button key={k} type="button" className={`btn btn--sm ${k === stage ? "btn--main" : "btn--ghost"}`} aria-pressed={k === stage} disabled={pending || k === stage}
+            onClick={() => run(() => setStage(seekerId, k), (r) => r.message ?? `Stage set to ${label}.`)}>
+            {label}
+          </button>
+        ))}
+      </div>
+      <Note msg={msg} />
+    </div>
+  );
+}
+
+export function InterviewButtons({ seekerId, interviewId, status }: { seekerId: string; interviewId?: string | null; status?: string | null }) {
+  const { msg, pending, run } = useAction();
+  if (!interviewId || !status || !["invited", "booked"].includes(status)) {
+    return (
+      <div className="aact">
+        <button type="button" className="btn btn--ghost btn--sm" disabled={pending} onClick={() => run(() => sendInterviewInvite(seekerId), "Invite sent. They pick a time from the email.")}>Send interview invite</button>
+        <Note msg={msg} />
+      </div>
+    );
+  }
+  return (
+    <div className="aact">
+      <div className="aact__row">
+        {status === "booked" && <button type="button" className="btn btn--ghost btn--sm" disabled={pending} onClick={() => run(() => closeInterview(interviewId, "done"), "Marked as done.")}>Mark done</button>}
+        {status === "booked" && <button type="button" className="btn btn--ghost btn--sm" disabled={pending} onClick={() => run(() => closeInterview(interviewId, "no_show"), "Marked as no show.")}>No show</button>}
+        <button type="button" className="linkbtn small" disabled={pending} onClick={() => { if (confirm("Cancel this interview? The time opens up again.")) run(() => closeInterview(interviewId, "cancelled"), "Cancelled."); }}>Cancel interview</button>
+      </div>
+      <Note msg={msg} />
+    </div>
   );
 }
