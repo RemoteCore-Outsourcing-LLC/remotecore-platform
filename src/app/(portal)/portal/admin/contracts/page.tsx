@@ -27,8 +27,7 @@ export default async function AdminContracts({ searchParams }: { searchParams: P
         <section className="panel" aria-labelledby="ed-h">
           <header className="panel__head"><h2 id="ed-h">{editing.id ? "Edit agreement" : "New agreement"}</h2></header>
           <div className="psec__body">
-            <p className="soft small">Type these blanks anywhere in the text and the platform fills them in for each company: {PLACEHOLDERS.map(([k, l]) => <span key={k}><code>{k}</code> ({l.toLowerCase()}) </span>)}</p>
-            <ContractEditor initial={editing} />
+            <ContractEditor initial={editing} blanks={PLACEHOLDERS} />
           </div>
         </section>
       )}

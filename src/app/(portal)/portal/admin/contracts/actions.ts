@@ -2,6 +2,7 @@
 import { revalidatePath } from "next/cache";
 import { supabaseServer } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { PLACEHOLDERS } from "@/lib/contracts";
 
 type Result = { ok: boolean; message?: string; id?: string };
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -22,6 +23,9 @@ export async function saveContract(input: { id?: string | null; title: string; b
   const title = input.title.trim(), body = input.body.replace(/\r\n/g, "\n").trim();
   if (title.length < 3 || title.length > 150) return { ok: false, message: "Give the agreement a name." };
   if (body.length < 50 || body.length > 100_000) return { ok: false, message: "Paste the full agreement text." };
+  const known = new Set(PLACEHOLDERS.map(([k]) => k));
+  const wrong = Array.from(new Set(body.match(/\{\{[^{}]*\}\}/g) ?? [])).filter((t) => !known.has(t));
+  if (wrong.length) return { ok: false, message: `These blanks are not known: ${wrong.join(", ")}. Use the blank buttons instead.` };
   const db = supabaseAdmin();
   if (input.id && UUID.test(input.id)) {
     const { data: used } = await db.from("contract_signatures").select("id").eq("template_id", input.id).limit(1).maybeSingle();
