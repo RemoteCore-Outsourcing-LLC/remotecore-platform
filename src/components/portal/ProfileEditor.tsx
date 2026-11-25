@@ -16,7 +16,7 @@ export type ProfileData = {
 type Key = Exclude<SectionKey, "computer">;
 
 const NAV: [Key | "media", string][] = [
-  ["about", "About you"], ["media", "Resume and voice"], ["work_prefs", "Pay and availability"],
+  ["about", "About you"], ["media", "Photo, resume and voice"], ["work_prefs", "Pay and availability"],
   ["work", "Work history"], ["education", "Education"], ["certs", "Qualifications"], ["skills", "Skills and languages"],
 ];
 const LOCAL = "rc-profile-draft";

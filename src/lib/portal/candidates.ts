@@ -1,6 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { APP_STATUS } from "@/lib/portal/seeker";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 // Employer side of applications: every applicant to the company's own jobs, read as the employer.
 // Row level security decides what comes back; the company filter only keeps the query tidy.
@@ -64,17 +65,26 @@ export async function candidateDetail(sb: SupabaseClient, companyId: string, app
   if (!a) return null;
   const uid = a.seeker_id as string;
   const { who, sp, pc, work, edu, certs, skills, langs } = await loadSeeker(sb, uid);
+  const { data: canSee } = sp.data?.photo_path ? await sb.rpc("employer_can_see", { seeker: uid }) : { data: false };
+  const photo = canSee === true ? await photoLink(uid, sp.data?.photo_path) : null;
   const hist = ((a.application_status_history ?? []) as { to_status: string; changed_at: string }[])
     .slice().sort((x, y) => y.changed_at.localeCompare(x.changed_at));
   return {
     id: a.id as string, status: a.status as string, note: a.note as string | null, created_at: a.created_at as string,
     hasResume: !!(a.resume_path || sp.data?.resume_path), documents: ((a.extra_documents ?? []) as string[]).map(fileLabel),
-    hasAudio: !!sp.data?.audio_path,
+    hasAudio: !!sp.data?.audio_path, photo,
     job: a.jobs as unknown as { id: string; title: string; status: string; computer_requirements: string | null; documents_required: string | null },
     name: who.data?.full_name || "Candidate", country: who.data?.country ?? null,
     profile: sp.data, computer: pc.data, work: work.data ?? [], education: edu.data ?? [], certs: certs.data ?? [],
     skills: (skills.data ?? []).map((s) => s.skill as string), languages: langs.data ?? [], hist,
   };
+}
+
+// A 10 minute signed link to a job seeker's photo. Callers check who may see it first.
+export async function photoLink(uid: string, path: unknown) {
+  if (!path || typeof path !== "string" || !path.startsWith(`${uid}/`) || path.includes("..")) return null;
+  const { data } = await supabaseAdmin().storage.from("photos").createSignedUrl(path, 600);
+  return data?.signedUrl ?? null;
 }
 
 // The file name a person sees, from a storage path like "<user>/<time>-cv.pdf".
@@ -87,7 +97,7 @@ export function fileLabel(path: string) {
 export async function loadSeeker(sb: SupabaseClient, uid: string) {
   const [who, sp, pc, work, edu, certs, skills, langs] = await Promise.all([
     sb.from("profiles").select("full_name, country").eq("id", uid).maybeSingle(),
-    sb.from("seeker_profiles").select("headline, summary, years_experience, employment_types, preferred_hours, time_zone, available_from, qualifications, expected_salary, salary_currency, audio_path, resume_path").eq("user_id", uid).maybeSingle(),
+    sb.from("seeker_profiles").select("headline, summary, years_experience, employment_types, preferred_hours, time_zone, available_from, qualifications, expected_salary, salary_currency, audio_path, resume_path, photo_path").eq("user_id", uid).maybeSingle(),
     sb.from("computer_specs").select("computer_type, operating_system, processor, ram, storage, connection_type, download_mbps, upload_mbps, has_webcam, has_microphone, other_equipment").eq("user_id", uid).maybeSingle(),
     sb.from("work_history").select("company, title, start_date, end_date, description").eq("user_id", uid).order("start_date", { ascending: false, nullsFirst: false }),
     sb.from("education").select("school, degree, field, start_year, end_year").eq("user_id", uid).order("end_year", { ascending: false, nullsFirst: false }),

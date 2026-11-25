@@ -18,7 +18,7 @@ export default function Page() {
           <li>Account details: your name, email address, phone number, country and password. We never see your password; it is stored in a protected form.</li>
           <li>Your profile: work history, education, certifications, skills, languages, years of experience, the kind of work and pay you are looking for, availability, working hours and time zone.</li>
           <li>Your computer and internet setup, such as device type, operating system, memory and connection.</li>
-          <li>Files you upload: your resume, your voice introduction and any documents an application asks for.</li>
+          <li>Files you upload: your photo, your resume, your voice introduction and any documents an application asks for.</li>
           <li>Your activity: the jobs you save and apply to, and the status of each application.</li>
         </ul>
         <h3>From Employers</h3>
@@ -49,14 +49,14 @@ export default function Page() {
         <h2>3. Who Sees Your Information</h2>
         <ul>
           <li>The RemoteCore team, to run the platform and support you.</li>
-          <li>Employers you apply to. They see your profile, resume and voice introduction for that job. They do not see your email address or phone number. All contact goes through RemoteCore.</li>
+          <li>Employers you apply to. They see your profile, photo, resume and voice introduction for that job. They do not see your email address or phone number. All contact goes through RemoteCore.</li>
           <li>The public, only if you choose to join our Talent Marketplace in your settings. Your public card shows your first name and last initial, headline, skills, languages and experience. It never shows your email, phone number or files. You can leave the marketplace at any time.</li>
           <li>Service providers that run parts of the platform for us: Supabase (database, logins and file storage), Vercel (website hosting), Resend (email delivery), Stripe (card payments) and Cloudflare (domain). They may only use your information to provide their service to us.</li>
           <li>Authorities, when the law requires it.</li>
         </ul>
 
         <h2>4. How We Protect It</h2>
-        <p>Resumes, voice introductions and documents are kept in private storage. They open only through links that expire after a few minutes. Access rules on every part of our database limit each person to the information they are allowed to see. Connections to the site are encrypted. No system is perfectly secure, but we work to protect your information and review our security regularly.</p>
+        <p>Photos, resumes, voice introductions and documents are kept in private storage. They open only through links that expire after a few minutes. Access rules on every part of our database limit each person to the information they are allowed to see. Connections to the site are encrypted. No system is perfectly secure, but we work to protect your information and review our security regularly.</p>
 
         <h2>5. How Long We Keep It</h2>
         <p>We keep your account information while your account is open. When you delete your account, we delete your profile, files, applications and saved jobs. We keep invoices and payment records for as long as tax and accounting laws require. Form messages are kept while they are useful to answer you and then removed.</p>

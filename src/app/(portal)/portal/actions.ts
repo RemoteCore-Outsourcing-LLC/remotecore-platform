@@ -62,7 +62,7 @@ export async function deleteAccount(confirm: string): Promise<Result> {
   if (profile?.role !== "job_seeker") return { ok: false, message: "Employer and admin accounts are closed by RemoteCore. Please contact us." };
 
   const admin = supabaseAdmin();
-  await Promise.all(["resumes", "audio", "documents"].map((b) => removeFolder(admin, b, user.id)));
+  await Promise.all(["resumes", "audio", "documents", "photos"].map((b) => removeFolder(admin, b, user.id)));
   const { error } = await admin.auth.admin.deleteUser(user.id);
   if (error) return { ok: false, message: "We could not delete your account. Please contact us and we will do it for you." };
   await sb.auth.signOut();

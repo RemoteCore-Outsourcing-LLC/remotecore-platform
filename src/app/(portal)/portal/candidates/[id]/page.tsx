@@ -27,6 +27,7 @@ export default async function Candidate({ params }: { params: Promise<{ id: stri
           <article className="jobdoc">
             <header className="jobdoc__head">
               <div className="cand__title">
+                {c.photo && <img className="cand__photo" src={c.photo} alt={`Photo of ${c.name}`} width={72} height={72} />}
                 <h1>{c.name}</h1>
                 <StatusPill status={c.status} />
               </div>

@@ -16,7 +16,8 @@ const AUDIO_EXT: Record<string, string> = {
 };
 const MAX_SECONDS = 180;
 
-type Props = { userId: string; resume: { name: string; url: string } | null; audio: { url: string } | null };
+type Props = { userId: string; resume: { name: string; url: string } | null; audio: { url: string } | null; photo: string | null };
+const PHOTO_TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
 
 async function upload(bucket: string, path: string, file: Blob, type: string) {
   // Storage reads the type from the file itself, so give it the checked type (a .webm file can say video/webm).
@@ -33,20 +34,59 @@ function audioType(f: File) {
   return BY_EXT[f.name.split(".").pop()?.toLowerCase() ?? ""] ?? f.type;
 }
 
-export function MediaSection({ userId, resume, audio }: Props) {
+export function MediaSection({ userId, resume, audio, photo }: Props) {
   const done = !!resume && !!audio;
   return (
     <section className="psec" id="media" aria-labelledby="media-h">
       <header className="psec__head">
-        <h2 id="media-h">Resume and voice introduction</h2>
+        <h2 id="media-h">Photo, resume and voice introduction</h2>
         <span className={`pill ${done ? "pill--ok" : ""}`}>{done ? "Complete" : "To do"}</span>
       </header>
-      <p className="psec__intro">Only the RemoteCore team and employers you apply to can open these files.</p>
+      <p className="psec__intro">Only the RemoteCore team and employers you apply to can see these.</p>
       <div className="psec__body media">
+        <PhotoBox userId={userId} current={photo} />
         <ResumeBox userId={userId} current={resume} />
         <AudioBox userId={userId} current={audio} />
       </div>
     </section>
+  );
+}
+
+function PhotoBox({ userId, current }: { userId: string; current: string | null }) {
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const input = useRef<HTMLInputElement>(null);
+  useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
+
+  async function onPick(file: File | undefined) {
+    if (!file) return;
+    const ext = PHOTO_TYPES[file.type];
+    if (!ext) return setMsg({ ok: false, text: "Please choose a JPG, PNG or WebP picture." });
+    if (file.size > 5 * MB) return setMsg({ ok: false, text: "This picture is over 5 MB. Please choose a smaller one." });
+    setBusy(true); setMsg(null);
+    const path = `${userId}/photo-${Date.now()}.${ext}`;
+    const err = await upload("photos", path, file, file.type);
+    const res = err ? { ok: false, message: "Upload failed. Please try again." } : await setMedia("photo", path);
+    if (input.current) input.current.value = "";
+    setBusy(false);
+    if (!res.ok) return setMsg({ ok: false, text: res.message ?? "Upload failed." });
+    setPreview(URL.createObjectURL(file));
+    setMsg({ ok: true, text: "Photo saved" });
+  }
+
+  const src = preview ?? current;
+  return (
+    <div className="mbox mbox--photo">
+      {src ? <img className="mphoto" src={src} alt="Your profile photo" width={88} height={88} /> : <span className="mphoto" aria-hidden="true">No photo</span>}
+      <h3>Profile photo</h3>
+      <p className="soft" style={{ gridColumn: 2 }}>A clear, friendly photo of your face. JPG, PNG or WebP, up to 5 MB. Optional.</p>
+      <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={(e) => onPick(e.target.files?.[0])} />
+      <div className="mrow">
+        <button type="button" className="btn btn--ghost btn--sm" disabled={busy} onClick={() => input.current?.click()}>{busy ? "Uploading..." : src ? "Change photo" : "Add a photo"}</button>
+        {msg && <span className={msg.ok ? "saved" : "ferr"} role={msg.ok ? "status" : "alert"}>{msg.text}</span>}
+      </div>
+    </div>
   );
 }
 

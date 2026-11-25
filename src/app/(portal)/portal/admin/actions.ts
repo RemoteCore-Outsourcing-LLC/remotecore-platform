@@ -134,7 +134,7 @@ export async function deleteAccount(userId: string, confirm: string): Promise<Re
   const { error: hand } = await db.from("jobs").update({ created_by: a.me.id }).eq("created_by", userId);
   if (hand) return { ok: false, message: "We could not hand over this person's jobs. Nothing was deleted." };
   if (company) await db.from("companies").delete().eq("id", company.id);
-  await Promise.all(["resumes", "audio", "documents"].map((b) => removeFolder(b, userId)));
+  await Promise.all(["resumes", "audio", "documents", "photos"].map((b) => removeFolder(b, userId)));
   const { error } = await db.auth.admin.deleteUser(userId);
   if (error) return { ok: false, message: "We could not delete the account. Please try again." };
   await log(a.me.id, "account_deleted", userId, { email: p.email, name: p.full_name, role: p.role, company: company?.name ?? null });

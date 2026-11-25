@@ -2,9 +2,9 @@
 import { revalidatePath } from "next/cache";
 import { supabaseServer } from "@/lib/supabase/server";
 
-type Kind = "resume" | "audio";
-const BUCKET: Record<Kind, string> = { resume: "resumes", audio: "audio" };
-const COLUMN: Record<Kind, "resume_path" | "audio_path"> = { resume: "resume_path", audio: "audio_path" };
+type Kind = "resume" | "audio" | "photo";
+const BUCKET: Record<Kind, string> = { resume: "resumes", audio: "audio", photo: "photos" };
+const COLUMN: Record<Kind, "resume_path" | "audio_path" | "photo_path"> = { resume: "resume_path", audio: "audio_path", photo: "photo_path" };
 
 // After the browser uploads a file into the user's own private folder, point the profile at it
 // and remove the file it replaces.
@@ -15,7 +15,7 @@ export async function setMedia(kind: Kind, path: string | null): Promise<{ ok: b
   if (!(kind in BUCKET)) return { ok: false, message: "Unknown file type." };
   if (path !== null && !(path.startsWith(`${user.id}/`) && !path.includes(".."))) return { ok: false, message: "That file is not yours." };
 
-  const { data: current } = await sb.from("seeker_profiles").select("resume_path, audio_path").eq("user_id", user.id).single();
+  const { data: current } = await sb.from("seeker_profiles").select("resume_path, audio_path, photo_path").eq("user_id", user.id).single();
   const old = current?.[COLUMN[kind]] as string | null | undefined;
 
   const { error } = await sb.from("seeker_profiles").update({ [COLUMN[kind]]: path, updated_at: new Date().toISOString() }).eq("user_id", user.id);

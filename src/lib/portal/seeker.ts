@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 // Shared by the dashboard pages: profile progress, labels and job formatting.
 
 export const PROFILE_SECTIONS = [
-  ["about", "About you"], ["media", "Resume and voice"], ["work_prefs", "Pay and availability"],
+  ["about", "About you"], ["media", "Photo, resume and voice"], ["work_prefs", "Pay and availability"],
   ["work", "Work history"], ["education", "Education"], ["certs", "Qualifications"], ["skills", "Skills and languages"],
 ] as const;
 

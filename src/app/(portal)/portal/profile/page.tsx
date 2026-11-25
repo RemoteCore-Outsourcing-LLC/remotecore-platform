@@ -50,7 +50,7 @@ export default async function ProfilePage() {
     const { data } = await sb.storage.from(bucket).createSignedUrl(String(path), 600);
     return data?.signedUrl ?? null;
   };
-  const [resumeUrl, audioUrl] = await Promise.all([sign("resumes", p.resume_path), sign("audio", p.audio_path)]);
+  const [resumeUrl, audioUrl, photoUrl] = await Promise.all([sign("resumes", p.resume_path), sign("audio", p.audio_path), sign("photos", p.photo_path)]);
   const resume = resumeUrl ? { name: `Your resume (${String(p.resume_path).split(".").pop()?.toUpperCase()})`, url: resumeUrl } : null;
   const audio = audioUrl ? { url: audioUrl } : null;
 
@@ -60,7 +60,7 @@ export default async function ProfilePage() {
         <h1>My profile</h1>
         <p>This is your application to RemoteCore. Fill in each part, then press Submit application at the bottom. We keep your answers as you type.</p>
       </header>
-      <ProfileEditor saved={saved} draftAt={useDraft ? String(p.draft_at) : null} savedAt={p.updated_at ? String(p.updated_at) : null} submitted={!!p.submitted_at} media={<MediaSection userId={user.id} resume={resume} audio={audio} />} mediaDone={!!resume && !!audio} initial={initial} categories={(cats.data ?? []).map((x) => x.name)} email={s(profile.email)} />
+      <ProfileEditor saved={saved} draftAt={useDraft ? String(p.draft_at) : null} savedAt={p.updated_at ? String(p.updated_at) : null} submitted={!!p.submitted_at} media={<MediaSection userId={user.id} resume={resume} audio={audio} photo={photoUrl} />} mediaDone={!!resume && !!audio} initial={initial} categories={(cats.data ?? []).map((x) => x.name)} email={s(profile.email)} />
     </div>
   );
 }

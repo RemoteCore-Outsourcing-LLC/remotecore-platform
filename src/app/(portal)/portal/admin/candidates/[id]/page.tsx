@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAdmin, ACCOUNT_STATUS, LISTING_STATUS } from "@/lib/portal/admin";
-import { loadSeeker, fileLabel } from "@/lib/portal/candidates";
+import { loadSeeker, fileLabel, photoLink } from "@/lib/portal/candidates";
 import { listingCode } from "@/lib/marketplace";
 import { profileProgress } from "@/lib/portal/seeker";
 import { LocalTime } from "@/components/portal/DashClient";
@@ -35,6 +35,7 @@ export default async function AdminCandidate({ params }: { params: Promise<{ id:
   const IV_LABEL: Record<string, string> = { invited: "Invited, no time picked yet", booked: "Booked", cancelled: "Cancelled", done: "Done", no_show: "Did not show up" };
   const p = s.sp.data;
   const x = extra.data;
+  const photo = await photoLink(id, p?.photo_path);
   const data = {
     profile: p, computer: s.pc.data, work: s.work.data ?? [], education: s.edu.data ?? [], certs: s.certs.data ?? [],
     skills: (s.skills.data ?? []).map((r) => r.skill as string), languages: s.langs.data ?? [],
@@ -54,6 +55,7 @@ export default async function AdminCandidate({ params }: { params: Promise<{ id:
           <article className="jobdoc">
             <header className="jobdoc__head">
               <div className="cand__title">
+                {photo && <img className="cand__photo" src={photo} alt={`Photo of ${person.full_name || "this candidate"}`} width={72} height={72} />}
                 <h1>{person.full_name || person.email}</h1>
                 {person.status !== "active" && <span className={`pill pill--${acct.tone}`}>{acct.label}</span>}
                 {tags.map((t) => <span key={t} className="pill pill--info">{t}</span>)}
@@ -125,6 +127,7 @@ export default async function AdminCandidate({ params }: { params: Promise<{ id:
             <div className="cside__body">
               {p?.resume_path ? <SeekerFileButton seekerId={id} kind="resume" label="Open resume" /> : <p className="soft small">No resume yet.</p>}
               {p?.audio_path ? <SeekerVoice seekerId={id} /> : <p className="soft small">No voice intro yet.</p>}
+              {!p?.photo_path && <p className="soft small">No photo yet.</p>}
             </div>
           </section>
           <section className="panel cside">
