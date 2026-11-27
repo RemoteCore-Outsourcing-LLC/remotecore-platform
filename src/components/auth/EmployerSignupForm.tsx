@@ -2,6 +2,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { COUNTRIES, countryByName } from "@/lib/geo";
+import { CountryOptions } from "./CountryOptions";
 import { INDUSTRIES, cleanWebsite } from "@/lib/employer";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -83,7 +84,7 @@ export function EmployerSignupForm() {
       <label className="field"><span>Country of registration or operation</span>
         <select value={country} onChange={(e) => pickCountry(e.target.value)} aria-invalid={!!errors.country}>
           <option value="" disabled>Choose a country</option>
-          {COUNTRIES.map((c) => <option key={c.code}>{c.name}</option>)}
+          <CountryOptions />
         </select>{fe("country")}
       </label>
       <div className="field"><span id="phone-l">Business phone</span>

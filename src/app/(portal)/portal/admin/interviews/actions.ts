@@ -33,3 +33,17 @@ export async function saveInterviewSettings(input: unknown): Promise<{ ok: boole
   revalidatePath("/portal/admin/interviews");
   return { ok: true };
 }
+
+// Cancels a booked consultation call, so its time opens again. The team tells the business by email.
+export async function cancelConsultation(formData: FormData) {
+  const id = String(formData.get("id") || "");
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return;
+  const sb = await supabaseServer();
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
+  const { data: me } = await sb.from("profiles").select("role, status").eq("id", user.id).single();
+  if (me?.role !== "admin" || me.status !== "active") return;
+  await supabaseAdmin().from("consultation_bookings").update({ status: "cancelled" }).eq("id", id).eq("status", "booked");
+  await supabaseAdmin().from("admin_log").insert({ actor_id: user.id, action: "consultation_cancelled", target: id, details: {} });
+  revalidatePath("/portal/admin/interviews");
+}

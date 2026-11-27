@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import { Close, PageHero } from "@/components/site/Blocks";
+import { Close, PageHero, EXAMPLE_LINE } from "@/components/site/Blocks";
 import { Consent, Field, Form } from "@/components/site/Form";
 import { Marketplace, type Profile } from "@/components/site/Marketplace";
 import { publishedListings } from "@/lib/marketplace";
+
+// The "Request an Introduction" form is hidden while every profile is an example (Kemar's doc 2026-11-26, part 1.3).
+// Set this to true to bring the form and the per card buttons back once real candidate profiles are live.
+const SHOW_INTRO_FORM = false;
 
 // Fresh listings within 5 minutes; publishing from the admin screen refreshes it at once.
 export const revalidate = 300;
@@ -29,16 +33,29 @@ export default async function TalentMarketplace() {
     <>
       <PageHero page="talent-marketplace">
         <a className="btn btn--main" href="#browse">Browse Talent</a>
-        <a className="btn btn--line" href="/hire-talent#request">Request Custom Recruitment</a>
+        <a className="btn btn--line" href="/book-consultation">Book a Consultation</a>
       </PageHero>
 
       <section className="sec sec--pale" id="browse">
         <div className="wrap">
-          <Marketplace profiles={profiles} sample={isSample} />
+          <Marketplace profiles={profiles} sample={isSample} note={EXAMPLE_LINE} introForm={SHOW_INTRO_FORM} />
           <p className="soft" style={{ marginTop: 22, fontSize: 14 }}>Profiles are published with candidate permission. Candidate availability and suitability are confirmed during the introduction process.</p>
         </div>
       </section>
 
+      {SHOW_INTRO_FORM && <IntroductionForm />}
+
+      <Close title="Can’t Find the Right Profile?" text="Tell us what you need and we will recruit for you.">
+        <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
+        <a className="btn btn--line" href="/hire-talent#request">Request Talent</a>
+      </Close>
+    </>
+  );
+}
+
+// Kept for when real candidate profiles are live (see SHOW_INTRO_FORM above).
+function IntroductionForm() {
+  return (
       <section className="sec">
         <div className="wrap split split--top">
           <div data-sc-in>
@@ -66,10 +83,5 @@ export default async function TalentMarketplace() {
           </div>
         </div>
       </section>
-
-      <Close title="Can’t Find the Right Profile?" text="Tell us what you need and we will recruit for you.">
-        <a className="btn btn--main" href="/hire-talent#request">Request Talent</a>
-      </Close>
-    </>
   );
 }

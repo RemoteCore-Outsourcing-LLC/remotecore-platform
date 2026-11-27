@@ -1,14 +1,14 @@
 "use client";
 import { useMemo, useState, type FormEvent } from "react";
 import { supabaseBrowser } from "@/lib/supabase/browser";
-import { COUNTRIES, CURRENCIES, countryByName } from "@/lib/geo";
+import { COUNTRIES, countryByName } from "@/lib/geo";
+import { CountryOptions } from "./CountryOptions";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export function SignupForm() {
   const [country, setCountry] = useState("");
   const [dial, setDial] = useState("+1");
-  const [currency, setCurrency] = useState("USD");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
   const [sentTo, setSentTo] = useState("");
@@ -17,7 +17,7 @@ export function SignupForm() {
   function pickCountry(name: string) {
     setCountry(name);
     const c = countryByName(name);
-    if (c) { setDial(c.dial); setCurrency(c.currency); }
+    if (c) setDial(c.dial);
   }
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -30,8 +30,6 @@ export function SignupForm() {
     if (!countryByName(country)) err.country = "Choose your country from the list.";
     const digits = v("phone").replace(/[^\d]/g, "");
     if (digits.length < 6 || digits.length > 14) err.phone = "Enter your mobile number without the country code.";
-    const pay = Number(v("expected_salary"));
-    if (!v("expected_salary") || !Number.isFinite(pay) || pay <= 0) err.expected_salary = "Enter the monthly pay you expect, as a number.";
     if (v("password").length < 8) err.password = "Use at least 8 characters.";
     if (f.get("terms") !== "yes") err.terms = "Please accept the terms to continue.";
     setErrors(err);
@@ -43,7 +41,8 @@ export function SignupForm() {
       password: v("password"),
       options: {
         emailRedirectTo: `${location.origin}/auth/callback?next=/portal/profile`,
-        data: { role: "job_seeker", full_name: v("full_name"), phone: `${dial} ${digits}`, country, expected_salary: String(pay), salary_currency: currency },
+        // Expected monthly pay is asked later, in the profile, with USD as the default currency.
+        data: { role: "job_seeker", full_name: v("full_name"), phone: `${dial} ${digits}`, country, salary_currency: "USD" },
       },
     });
     if (error) {
@@ -74,7 +73,7 @@ export function SignupForm() {
       <label className="field"><span>Country of residence</span>
         <select value={country} onChange={(e) => pickCountry(e.target.value)} aria-invalid={!!errors.country}>
           <option value="" disabled>Choose your country</option>
-          {COUNTRIES.map((c) => <option key={c.code}>{c.name}</option>)}
+          <CountryOptions />
         </select>{fe("country")}
       </label>
       <div className="field"><span id="phone-l">Mobile number</span>
@@ -82,12 +81,6 @@ export function SignupForm() {
           <select aria-label="Country dial code" value={dial} onChange={(e) => setDial(e.target.value)}>{dials.map((d) => <option key={d}>{d}</option>)}</select>
           <input name="phone" type="tel" inputMode="tel" autoComplete="tel-national" aria-labelledby="phone-l" aria-invalid={!!errors.phone} />
         </div>{fe("phone")}
-      </div>
-      <div className="field"><span id="pay-l">Expected monthly pay</span>
-        <div className="combo">
-          <select aria-label="Currency" value={currency} onChange={(e) => setCurrency(e.target.value)}>{CURRENCIES.map((c) => <option key={c}>{c}</option>)}</select>
-          <input name="expected_salary" type="number" min="1" step="1" inputMode="numeric" aria-labelledby="pay-l" aria-invalid={!!errors.expected_salary} />
-        </div>{fe("expected_salary")}
       </div>
       <label className="field"><span>Password</span><input name="password" type="password" autoComplete="new-password" minLength={8} aria-invalid={!!errors.password} /><em className="hint">At least 8 characters.</em>{fe("password")}</label>
       <label className="check"><input type="checkbox" name="terms" value="yes" /><span>I agree to the <a href="/terms">Terms of Use</a> and <a href="/privacy">Privacy Policy</a>, and to receive recruitment related emails.</span></label>

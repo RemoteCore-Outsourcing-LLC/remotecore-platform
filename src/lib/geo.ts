@@ -13,3 +13,6 @@ export const COUNTRIES: Country[] = Object.entries(countries)
 export const CURRENCIES: string[] = Array.from(new Set(["USD", "EUR", "GBP", "CAD", "AUD", ...COUNTRIES.map((c) => c.currency)])).filter(Boolean);
 
 export const countryByName = (name: string) => COUNTRIES.find((c) => c.name === name);
+
+// Shown first in the country lists of both sign up forms, above a divider and the full A to Z list (Kemar's doc 2026-11-26).
+export const TOP_COUNTRIES = ["United States", "Jamaica", "Trinidad and Tobago", "Barbados", "Guyana", "Philippines", "Colombia", "Mexico", "Dominican Republic"];

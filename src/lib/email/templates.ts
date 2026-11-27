@@ -370,3 +370,49 @@ export function contractCopy(a: { name: string; title: string; body: string; sig
     { label: a.team ? "Open the dashboard" : "See it in your dashboard", href: `${SITE}${a.team ? "/portal/admin/contracts" : "/portal/contract"}` },
   );
 }
+
+/* ---------- Website changes 2026-11-26 ---------- */
+
+// Business: consultation call booked from /book-consultation.
+export function consultationBooked(a: { name: string; when: string; link: string | null; ref: string }) {
+  return build(
+    "Your RemoteCore consultation is booked",
+    a.when,
+    "Consultation booked",
+    [
+      `Hi ${first(a.name)},`,
+      `Thanks for booking a free consultation with RemoteCore Outsourcing. Your call is set for <b>${esc(a.when)}</b>.`,
+      a.link ? `Join the video call here: <a href="${esc(a.link)}">${esc(a.link)}</a>` : "We will email you the meeting link before the call.",
+      "On the call we talk through the role, the hours and the skills you need, and we give you a custom quote. The calendar file attached to this email adds the call to your calendar.",
+      `Need another time? Just reply to this email. Your reference is <b>${esc(a.ref)}</b>.`,
+    ],
+    undefined, undefined, FORM_FOOTER,
+  );
+}
+
+export const consultationBookedAdmin = (a: { company: string; name: string; email: string; when: string; talent: string; ref: string }) =>
+  team(`Consultation booked: ${a.company || a.name}`, "New consultation booked", [
+    `<b>${esc(a.name)}</b>${a.company ? ` from <b>${esc(a.company)}</b>` : ""} booked a consultation call.`,
+    row("When", a.when), row("Email", a.email), ...(a.talent ? [row("Talent type", a.talent)] : []), row("Reference", a.ref),
+    "The full form is in Admin, Inbox. The calendar file is attached.",
+  ], `${SITE}/portal/admin/inbox`);
+
+// Job seeker: signed up but the application is not finished (24 hours, 3 days and 7 days after sign up).
+export function signupReminder(a: { name: string; missing: string[]; step: number; unsubscribe: string }) {
+  const lines = [
+    `Hi ${first(a.name)},`,
+    a.step === 3 ? "This is our last reminder. Your RemoteCore profile is still not finished." : "Your RemoteCore profile is not finished yet.",
+    "Clients can only see complete profiles, so finishing it is the step that gets you considered for remote roles.",
+  ];
+  if (a.missing.length) lines.push(`Still missing: <b>${a.missing.map(esc).join(", ")}</b>.`);
+  lines.push("It only takes a few minutes, and your progress is saved as you go.");
+  return build(
+    a.step === 3 ? "Last reminder: finish your RemoteCore profile" : "Your RemoteCore profile is almost ready",
+    a.missing.length ? `Still missing: ${a.missing.join(", ")}` : "Finish your profile so clients can see it.",
+    "Finish your profile",
+    lines,
+    { label: "Complete my profile", href: `${SITE}/portal/profile` },
+    undefined,
+    `You get this email because you created an account on <a href="${SITE}" style="color:#8A84A0">remotecoreoutsourcing.com</a>. <a href="${a.unsubscribe}" style="color:#8A84A0">Unsubscribe from these reminders</a>.`,
+  );
+}

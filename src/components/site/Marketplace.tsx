@@ -9,7 +9,7 @@ const zones = (list: Profile[]) => [...REGIONS.slice(0, 3), ...REGIONS.slice(3).
 
 const opts = (list: Profile[], k: keyof Profile) => Array.from(new Set(list.flatMap((p) => (Array.isArray(p[k]) ? (p[k] as string[]) : [p[k] as string])))).sort();
 
-export function Marketplace({ profiles, sample = false }: { profiles: Profile[]; sample?: boolean }) {
+export function Marketplace({ profiles, sample = false, note, introForm = true }: { profiles: Profile[]; sample?: boolean; note?: string; introForm?: boolean }) {
   const [q, setQ] = useState("");
   const [picked, setPicked] = useState<string[]>([]);
   // Adds the profile ID to the form below (several are fine), then scrolls to the form.
@@ -66,9 +66,9 @@ export function Marketplace({ profiles, sample = false }: { profiles: Profile[];
 
       <div className="head" style={{ marginTop: 40, marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "end", gap: 16, flexWrap: "wrap", maxWidth: "none" }}>
         <h2>Explore Our Talent Network</h2>
-        <span className="soft" aria-live="polite">{shown.length} {sample ? "sample " : ""}{shown.length === 1 ? "profile" : "profiles"}</span>
+        <span className="soft" aria-live="polite">{shown.length} {sample ? "example " : ""}{shown.length === 1 ? "profile" : "profiles"}</span>
       </div>
-      {sample && <p className="mk-sample" role="note"><b>Sample profiles.</b> These examples show how the marketplace works. They are not real candidates and are not available for hire.</p>}
+      {sample && note && <p className="mk-sample" role="note">{note}</p>}
 
       {shown.length === 0 ? (
         <div className="card" style={{ alignItems: "start" }}>
@@ -85,9 +85,13 @@ export function Marketplace({ profiles, sample = false }: { profiles: Profile[];
               <p>{p.summary}</p>
               <div className="tags">{p.skills.map((s) => <span key={s} className="tag">{s}</span>)}</div>
               <p className="note soft">{p.years} · {p.availability} · {p.zone}</p>
-              <a className="btn btn--ghost btn--sm" href="#introduction" onClick={(e) => { e.preventDefault(); pick(p.id); }}>
-                {picked.includes(p.id) ? "Added to Your Request ✓" : "Request an Introduction"}
-              </a>
+              {introForm ? (
+                <a className="btn btn--ghost btn--sm" href="#introduction" onClick={(e) => { e.preventDefault(); pick(p.id); }}>
+                  {picked.includes(p.id) ? "Added to Your Request ✓" : "Request an Introduction"}
+                </a>
+              ) : (
+                <a className="btn btn--ghost btn--sm" href="/book-consultation">Book a Consultation</a>
+              )}
             </article>
           ))}
         </div>

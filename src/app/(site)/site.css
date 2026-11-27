@@ -567,3 +567,76 @@ figure { margin: 0; }
   .chip--a { grid-row: 4; margin-top: -4px; }
   .scene .sample { position: static; grid-column: 1 / -1; grid-row: 5; justify-self: end; font-size: 13px; }
 }
+
+/* ---------- Website changes 2026-11-26 (Kemar's doc) ---------- */
+
+/* Homepage services: three core tiles, then one small row */
+.svc3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.svc3__card { display: grid; gap: 10px; align-content: start; padding: 26px 24px; border-radius: var(--r); background: var(--sc-surface); box-shadow: inset 0 0 0 1px var(--line); text-decoration: none; color: var(--sc-ink); transition: box-shadow .2s, transform .2s; }
+.svc3__card .ico { width: 48px; height: 48px; border-radius: 12px; background: var(--teal-soft); color: var(--teal); display: grid; place-items: center; }
+.svc3__card .ico svg { width: 24px; height: 24px; }
+.svc3__card b { font-family: var(--sc-font-display); font-size: 21px; font-weight: 700; line-height: 1.2; }
+.svc3__card span { font-size: 15.5px; line-height: 1.5; color: #4A4361; }
+@media (hover: hover) { .svc3__card:hover { box-shadow: inset 0 0 0 1px var(--teal), var(--shadow); transform: translateY(-2px); } }
+.svc3__card:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+.also { margin-top: 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.also__h { font-family: var(--sc-font-text); font-size: 15px; font-weight: 600; color: var(--sc-ink-soft); letter-spacing: 0; }
+.also__list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.also__list a { display: inline-block; padding: 8px 14px; border-radius: 999px; background: var(--sc-canvas); box-shadow: inset 0 0 0 1px var(--line); color: var(--sc-ink); font-size: 14.5px; font-weight: 500; text-decoration: none; }
+.also__list a:hover { box-shadow: inset 0 0 0 1px var(--teal); color: var(--teal-hover); }
+@media (max-width: 860px) { .svc3 { grid-template-columns: 1fr; } .svc3__card { grid-template-columns: 48px 1fr; column-gap: 16px; padding: 20px; } .svc3__card .ico { grid-row: span 2; } }
+
+/* Services page: three core cards side by side, the healthcare privacy block inside the first one */
+.cards--core { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .cards--core { grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); } }
+.privacy { margin-top: 14px; padding: 16px 18px; border-radius: var(--r-sm); background: var(--teal-soft); }
+.privacy h4 { margin: 0 0 8px; font-family: var(--sc-font-display); font-size: 16px; color: var(--sc-ink); }
+.privacy ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14.5px; line-height: 1.45; }
+.privacy p { margin: 10px 0 0; font-size: 13.5px; color: var(--sc-ink-soft); }
+
+/* Pricing table (homepage and Hire Talent) */
+.pricing__box { background: #fff; border-radius: 22px; box-shadow: var(--shadow); padding: clamp(18px, 3vw, 30px); max-width: 860px; }
+.pricing__table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.pricing__table th, .pricing__table td { padding: 14px 12px; text-align: left; border-top: 1px solid var(--line); }
+.pricing__table thead th { border-top: 0; font-family: var(--sc-font-display); font-size: 18px; color: var(--sc-ink); }
+.pricing__table thead td { border-top: 0; }
+.pricing__table tbody th { font-weight: 500; color: var(--sc-ink-soft); width: 46%; }
+.pricing__table tbody td { font-weight: 700; color: var(--sc-ink); }
+.pricing__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px; margin-top: 18px; }
+.pricing__foot p { margin: 0; font-size: 14px; color: var(--sc-ink-soft); max-width: 440px; }
+@media (max-width: 560px) {
+  .pricing__table thead { display: none; }
+  .pricing__table tr { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); padding: 12px 0; }
+  .pricing__table tbody th { grid-column: 1 / -1; width: auto; border: 0; padding: 0 0 6px; }
+  .pricing__table tbody td { border: 0; padding: 0; font-size: 15px; }
+  .pricing__table tbody td::before { content: attr(data-label); display: block; font-size: 12.5px; font-weight: 500; color: var(--sc-ink-soft); }
+  .pricing__foot .btn { width: 100%; }
+}
+
+/* The line above example profile cards */
+.example-line { margin-top: 14px; font-size: 15px; line-height: 1.5; color: var(--sc-ink); font-weight: 500; }
+
+/* Hire Talent: the staffing request is the second choice */
+.secondary-cta { margin: 0 0 12px; font-weight: 600; font-size: 17px; color: var(--sc-ink); }
+
+/* About: founder story */
+.story .lede + .lede { margin-top: 14px; }
+
+/* Book a Consultation: pick a day, then a time */
+.slotpick { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 10px; }
+.slotpick legend { font-size: 14px; font-weight: 600; padding: 0; margin-bottom: 4px; }
+.slotpick__help { margin: 0; font-size: 13.5px; color: var(--sc-ink-soft); }
+.slotpick__days { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: thin; }
+.slotpick__day { flex: none; display: grid; gap: 2px; justify-items: center; min-width: 64px; padding: 9px 10px; border-radius: var(--r-sm); border: 1.5px solid var(--line); background: #fff; color: var(--sc-ink); font: inherit; cursor: pointer; }
+.slotpick__day b { font-size: 13px; font-weight: 600; color: var(--sc-ink-soft); }
+.slotpick__day span { font-size: 15px; font-weight: 700; }
+.slotpick__day.is-on { border-color: var(--teal); background: var(--teal-soft); }
+.slotpick__day.is-on b { color: var(--teal-hover); }
+.slotpick__times { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+.slotpick__time { position: relative; display: grid; place-items: center; min-height: 44px; border-radius: 10px; border: 1.5px solid var(--line); background: #fff; font-size: 15px; font-weight: 600; cursor: pointer; }
+.slotpick__time input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.slotpick__time:has(input:focus-visible) { outline: 3px solid var(--teal-light); outline-offset: 2px; }
+.slotpick__time.is-on { border-color: var(--teal); background: var(--teal); color: #fff; }
+.slotpick__picked { margin: 2px 0 0; font-size: 14.5px; color: var(--sc-ink-soft); }
+.slotpick__picked b { color: var(--sc-ink); }
+@media (hover: hover) { .slotpick__day:hover, .slotpick__time:hover { border-color: var(--teal); } }

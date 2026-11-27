@@ -1,23 +1,29 @@
 /* eslint-disable @next/next/no-img-element */
-import { Close, Icon } from "@/components/site/Blocks";
+import type { Metadata } from "next";
+import { Close, Icon, Pricing, EXAMPLE_LINE, REGIONS_TEXT } from "@/components/site/Blocks";
 import { HomeMotion } from "@/components/site/HomeMotion";
 import { Proof } from "@/components/site/Proof";
 
-// The nine approved service cards (RCO Homepage Corrections, 2026-11-17).
-const services = [
-  ["support", "Customer Support", "Customer service representatives, live chat, email and phone support specialists."],
-  ["assist", "Virtual Administrative", "Virtual assistants, executive assistants, scheduling and administrative professionals."],
-  ["sales", "Sales & Marketing", "Sales representatives, lead generation specialists and digital marketing professionals."],
-  ["home", "Real Estate & Hospitality", "Property management assistants, reservation agents and guest support specialists."],
-  ["tech", "Technology & IT", "IT support specialists, software developers and technical support professionals."],
-  ["health", "Healthcare Administration", "Medical virtual assistants, patient coordinators and healthcare support staff."],
-  ["money", "Finance & Accounting", "Bookkeepers, billing specialists and accounting support professionals."],
-  ["clipboard", "Project Managers & Estimators", "Project coordinators, project managers and cost estimation professionals."],
-  ["plus", "Custom Roles", "Need something different? We’ll recruit talent based on your specific requirements."],
+// Search title and description (Kemar's doc 2026-11-26, part 6). Social cards show the same text.
+const TITLE = "Hire Remote Staff from $5/hr | Healthcare Admin, Customer Support & VAs | RemoteCore";
+const DESCRIPTION = "Hire pre-vetted remote professionals from the Caribbean, Latin America, the Philippines and Africa. One flat placement fee, no monthly markups, 60-day replacement guarantee.";
+export const metadata: Metadata = {
+  title: { absolute: TITLE },
+  description: DESCRIPTION,
+  openGraph: { title: TITLE, description: DESCRIPTION, siteName: "RemoteCore Outsourcing", type: "website", images: ["/brand/rco-logo.webp"] },
+  twitter: { card: "summary", title: TITLE, description: DESCRIPTION },
+};
+
+// Three core services first, then one smaller row (Kemar's doc 2026-11-26, part 5.1).
+const core = [
+  ["health", "Healthcare Administration", "Medical virtual assistants, patient coordinators and healthcare support staff.", "/services#health"],
+  ["support", "Customer Support", "Customer service representatives, live chat, email and phone support specialists.", "/services#support"],
+  ["assist", "Virtual & Executive Assistants", "Virtual assistants, executive assistants, scheduling and administrative professionals.", "/services#assist"],
 ];
+const alsoRecruit = ["Sales & Marketing", "Real Estate & Hospitality", "Technology & IT", "Finance & Accounting", "Project Managers & Estimators", "Custom Roles"];
 const why = [
   ["match", "Tailored Talent Matching", "We match each role to the skills, experience and working hours your business needs."],
-  ["globe", "Global Talent Access", "Skilled professionals from the Caribbean, Latin America and the Philippines."],
+  ["globe", "Global Talent Access", `Skilled professionals from ${REGIONS_TEXT}.`],
   ["person", "Personalized Service", "A recruitment team that takes the time to learn how your business works."],
   ["receipt", "Transparent, Flat-Fee Pricing", "Hire pre-vetted remote professionals starting at $5/hr with a simple one-time flat placement fee, $0 upfront deposit, and no ongoing monthly markups."],
   ["star", "60-Day Free Replacement Guarantee", "Hire with complete peace of mind. If a placed candidate isn't the right fit within their first 60 days, we'll source and place a replacement at no additional cost."],
@@ -37,12 +43,12 @@ export default async function Home() {
             <p className="brand">RemoteCore Outsourcing LLC</p>
             <p className="tagline">Global Talent.<br />Local Impact.</p>
             <h1>Build Your Dream Remote Team.</h1>
-            <p className="hero__sub">Hire pre-vetted remote professionals from the Caribbean, Latin America, and the Philippines, without the headaches of traditional recruiting.</p>
+            <p className="hero__sub">Hire pre-vetted remote professionals from {REGIONS_TEXT}, without the headaches of traditional recruiting.</p>
             <div className="btns">
-              <a className="btn btn--main" href="/hire-talent">Hire Remote Talent</a>
-              <a className="btn btn--line" href="/book-consultation">Book a Consultation</a>
+              <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
+              <a className="btn btn--line" href="/hire-talent">Hire Remote Talent</a>
             </div>
-            <p className="hero__trust">Vetted talent starting at <b>$5/hr</b><i aria-hidden="true"> • </i><b>$0 upfront deposit</b><i aria-hidden="true"> • </i><b>60-day replacement guarantee</b></p>
+            <p className="hero__trust">Talent from <b>$5/hr</b><i aria-hidden="true"> • </i>One-time placement fee starting at <b>$1,000</b>, paid only when you hire<i aria-hidden="true"> • </i><b>60-day replacement guarantee</b></p>
           </div>
 
           <div className="scene" id="scene" aria-hidden="true">
@@ -54,7 +60,7 @@ export default async function Home() {
             <div className="plane chip chip--a"><span className="wave" data-wave="14" />Voice introduction</div>
             <div className="plane chip chip--b">Customer support <small>· US hours</small></div>
             <div className="plane chip chip--c"><i className="dot" />Shortlisted</div>
-            <span className="sample">Sample profiles</span>
+            <span className="sample">Example profiles</span>
           </div>
         </div>
       </section>
@@ -62,16 +68,21 @@ export default async function Home() {
       <section className="sec">
         <div className="wrap">
           <div className="head" data-sc-in>
-            <h2>Built for Businesses. Designed Around People.</h2>
-            <p className="lede">Great businesses are built by great people. At RemoteCore Outsourcing, we connect companies with skilled remote professionals across multiple industries, helping them build dependable teams, simplify recruitment, and grow with confidence.</p>
+            <h2>Remote support for healthcare offices, customer service teams and busy owners</h2>
+            <p className="lede">We specialize in three areas, and recruit for many more.</p>
           </div>
-          <div className="svc9" data-sc-in data-sc-stagger="50">
-            {services.map(([icon, title, text]) => (
-              <a key={title} className="svc9__card" href={title === "Custom Roles" ? "/hire-talent#request" : "/services"}>
+          <div className="svc3" data-sc-in data-sc-stagger="60">
+            {core.map(([icon, title, text, href]) => (
+              <a key={title} className="svc3__card" href={href}>
                 <Icon name={icon} />
-                <span><b>{title}</b><span>{text}</span></span>
+                <b>{title}</b>
+                <span>{text}</span>
               </a>
             ))}
+          </div>
+          <div className="also" data-sc-in>
+            <h3 className="also__h">We also recruit for:</h3>
+            <ul className="also__list">{alsoRecruit.map((r) => <li key={r}><a href={r === "Custom Roles" ? "/book-consultation" : "/services#more"}>{r}</a></li>)}</ul>
           </div>
         </div>
       </section>
@@ -97,6 +108,8 @@ export default async function Home() {
         </div>
       </section>
 
+      <Pricing />
+
       <section className="req" id="request" data-sc-act="pin" data-sc-span="3.4">
         <div data-sc-stage>
           <div className="req__left">
@@ -118,7 +131,7 @@ export default async function Home() {
             <div className="cap">
               <h3 className="big">4. Select and Onboard.</h3>
               <p>Choose your preferred candidate, pay your one-time flat placement fee only upon hire, and welcome your new team member. With our direct-hire model, you pay your professional directly (starting at $5/hr) with zero ongoing markups, backed by our 60-day replacement guarantee.</p>
-              <a className="btn btn--main" href="/hire-talent#request">Submit a Staffing Request</a>
+              <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
             </div>
           </div>
           </div>
@@ -148,7 +161,7 @@ export default async function Home() {
               <div className="cand" data-pick="1"><img src="/assets/p1-sm.webp" width={720} height={900} loading="lazy" decoding="async" alt="" /><span className="stamp">Selected</span><div><b>Marco D.</b>4 years<span className="wave" data-wave="18" /></div></div>
               <div className="cand"><img src="/assets/p2-sm.webp" width={720} height={900} loading="lazy" decoding="async" alt="" /><div><b>Lucía R.</b>9 years<span className="wave" data-wave="18" /></div></div>
             </div>
-            <p className="sample">Example request with sample profiles</p>
+            <p className="sample">Example request with example profiles</p>
           </div>
         </div>
       </section>
@@ -159,16 +172,17 @@ export default async function Home() {
             <div className="rail__lead">
               <h2>Meet the Talent Behind Great Teams.</h2>
               <p className="soft">Explore skilled remote professionals across a wide range of industries. Browse available talent, discover their experience and expertise, or let our recruitment team find the right match for your business.</p>
+              <p className="example-line">{EXAMPLE_LINE}</p>
               <div className="btns">
-                <a className="btn btn--main" href="/talent-marketplace">Browse Talent</a>
-                <a className="btn btn--ghost" href="/hire-talent#request">Request Talent</a>
+                <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
+                <a className="btn btn--ghost" href="/talent-marketplace">Browse Talent</a>
               </div>
             </div>
             {profiles.map((p) => (
               <article key={p.name} className="prof">
                 <img src={p.img} width={720} height={900} alt="" loading="lazy" decoding="async" />
                 <div>
-                  <span className="tag tag--plum">Sample profile, not available for hire</span>
+                  <span className="tag tag--plum">Example profile</span>
                   <h3>{p.role}</h3>
                   <ul className="prof__skills" aria-label="Skills">{p.skills.map((k) => <li key={k}>{k}</li>)}</ul>
                   <dl className="prof__facts"><dt>Experience</dt><dd>{p.exp}</dd><dt>Availability</dt><dd>{p.avail}</dd></dl>

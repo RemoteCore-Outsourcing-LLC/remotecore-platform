@@ -3,10 +3,11 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendEmail, adminEmails } from "@/lib/email/send";
 import { formAdmin, formReceived } from "@/lib/email/templates";
+import { linkConsultation, notifyConsultationBooked, releaseConsultation, reserveConsultation, type Booked } from "@/lib/consultations";
 
 // Every public form posts here. Each kind lists its required fields.
 const KINDS: Record<string, { required: string[]; consent?: string[] }> = {
-  consultation: { required: ["company", "contact_name", "email", "phone", "talent_type"], consent: ["consent"] },
+  consultation: { required: ["company", "contact_name", "email", "talent_type"], consent: ["consent"] },
   "staffing-request": { required: ["full_name", "company", "email", "industry", "roles", "hires", "responsibilities"], consent: ["consent"] },
   candidate: { required: ["full_name", "email", "country", "category"], consent: ["consent"] },
   contact: { required: ["full_name", "email", "inquiry_type", "message"], consent: ["consent"] },
@@ -63,10 +64,27 @@ export async function POST(req: Request, { params }: { params: Promise<{ kind: s
   if ((byEmail.count ?? 0) >= 3) return NextResponse.json({ ok: true });
   if (entry.email) entry.email = entry.email.toLowerCase();
 
+  // Consultation with a picked time: hold the time first, so two visitors can never get the same call.
+  let booked: Booked | null = null;
+  const who = { company: entry.company ?? "", name: entry.contact_name ?? "", email: entry.email ?? "", talent: entry.talent_type ?? "" };
+  if (kind === "consultation" && entry.slot) {
+    const r = await reserveConsultation(entry.slot, entry.tz || null, who);
+    if (r === "taken") return NextResponse.json({ error: "Sorry, that time was just taken. Please pick another time.", taken: true }, { status: 409 });
+    if (r !== "off") { booked = r; entry.call_time = r.teamWhen; }
+  }
+  delete entry.slot; delete entry.tz;
+
   const { data: saved, error } = await db.from("form_submissions").insert({ kind, email: entry.email ?? null, data: entry, ip_hash: ipHash }).select("id").single();
   if (error || !saved) {
     console.error("[form] save failed", kind, error?.message);
+    if (booked) await releaseConsultation(booked.id);
     return NextResponse.json({ error: "We could not send this right now. Please try again in a minute." }, { status: 500 });
+  }
+  if (booked) {
+    const ref = saved.id.slice(0, 8).toUpperCase();
+    await linkConsultation(booked.id, saved.id);
+    await notifyConsultationBooked(booked, who, ref);
+    return NextResponse.json({ ok: true, thanksTitle: "Your consultation is booked.", thanks: `See you on ${booked.visitorWhen}. We emailed the details and a calendar file to ${who.email}.` });
   }
   // Alert the team (reply goes to the visitor) and send the visitor a short receipt. Email problems never fail the form.
   const ref = saved.id.slice(0, 8).toUpperCase();

@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import { Consent, Field, Form, Select } from "@/components/site/Form";
+import { SlotPicker } from "@/components/site/SlotPicker";
 import { talentCategories } from "@/lib/site";
+import { consultationSlots } from "@/lib/consultations";
+import { hasDbKeys } from "@/lib/supabase/admin";
 
-export const metadata: Metadata = { title: "Book a Consultation", description: "Tell us about your staffing needs. Our team will contact you to talk through the right remote talent for your business." };
+// Open times stay fresh: the page is rebuilt at most once a minute, and the server checks the time again on submit.
+export const revalidate = 60;
+
+export const metadata: Metadata = { title: "Book a Consultation", description: "Pick a time for a free call with RemoteCore. We talk through the remote talent your business needs and send you a custom quote." };
 
 const points = [
   ["Access Skilled Remote Professionals", "M13 2L4 14h7l-1 8 9-12h-7z"],
@@ -11,14 +17,15 @@ const points = [
   ["Partner with a Trusted Outsourcing Expert", "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4"],
 ];
 
-export default function BookConsultation() {
+export default async function BookConsultation() {
+  const { slots, minutes } = hasDbKeys() ? await consultationSlots() : { slots: [] as string[], minutes: 30 };
   return (
     <section className="phero" style={{ paddingBottom: "clamp(56px, 8vw, 110px)" }}>
       <div className="wrap split split--top">
         <div>
           <p className="eyebrow">For businesses & companies</p>
           <h1>Book a Consultation</h1>
-          <p className="lede">Let us help you find the right remote talent for your business. Tell us what you need and our team will contact you with a personalized solution.</p>
+          <p className="lede">Let us help you find the right remote talent for your business. Tell us what you need, pick a time, and we will talk it through on a free video call.</p>
           <ul style={{ listStyle: "none", padding: 0, margin: "8px 0 0", display: "grid", gap: 16 }}>
             {points.map(([t, d]) => (
               <li key={t} style={{ display: "flex", gap: 14, alignItems: "center", fontWeight: 600, fontSize: 17 }}>
@@ -32,20 +39,20 @@ export default function BookConsultation() {
         </div>
         <div className="panel">
           <h2>Tell Us About Your Needs</h2>
-          <p>Fill out the form and tell us when suits you. Our team will email you to confirm the time of your call.</p>
-          <Form kind="consultation" submitLabel="Book a Consultation" thanksTitle="Request received." thanksText="Thank you for contacting RemoteCore. Our team will review your needs and contact you to schedule your consultation." note="Your information is secure and will never be shared.">
+          <p>Fill in a few details and pick a time. You get a confirmation on this page and by email.</p>
+          <Form kind="consultation" submitLabel="Book My Consultation" thanksTitle="Request received." thanksText="Thank you for contacting RemoteCore. Our team will review your needs and email you to confirm the time of your consultation." note="Your information is secure and will never be shared.">
             <Field label="Company name" name="company" required autoComplete="organization" />
             <div className="two">
               <Field label="Contact person" name="contact_name" required autoComplete="name" />
               <Field label="Business email" name="email" type="email" required autoComplete="email" />
             </div>
             <div className="two">
-              <Field label="Phone number" name="phone" type="tel" required autoComplete="tel" />
+              <Field label="Phone number" name="phone" type="tel" optional autoComplete="tel" />
               <Field label="Company website" name="website" type="url" optional autoComplete="url" />
             </div>
             <Select label="What type of talent are you looking for?" name="talent_type" options={talentCategories} required />
-            <Field label="Preferred day & time, with your time zone" name="preferred_time" optional placeholder="For example: Tuesday or Wednesday, 10am to 1pm Eastern" />
-            <Field label="Tell us more about your requirements" name="requirements" type="textarea" optional rows={4} placeholder="Job role, skills, location, expected start date..." />
+            <SlotPicker initial={slots} minutes={minutes} />
+            <Field label="Tell us more about your requirements" name="requirements" type="textarea" optional rows={3} placeholder="Job role, skills, location, expected start date..." />
             <Consent>I agree that RemoteCore may contact me about this request, as described in the <a href="/privacy">Privacy Policy</a>.</Consent>
           </Form>
         </div>

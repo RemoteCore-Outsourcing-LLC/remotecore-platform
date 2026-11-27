@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Close, PageHero, Steps } from "@/components/site/Blocks";
-import { Consent, Field, Form, Select } from "@/components/site/Form";
-import { talentCategories } from "@/lib/site";
 import { supabaseServer } from "@/lib/supabase/server";
 import { readFilters, searchJobs, categories, PER_PAGE, activeCount } from "@/lib/jobs/search";
 import { JobSearch, ResultsHead, Pager } from "@/components/jobs/JobSearch";
@@ -19,7 +17,7 @@ export default async function FindOpportunities({ searchParams }: { searchParams
   return (
     <>
       <PageHero page="find-opportunities">
-        <a className="btn btn--main" href="#join">Join Our Talent Network</a>
+        <a className="btn btn--main" href="/register/job-seeker">Join Our Talent Network</a>
         <a className="btn btn--line" href="#jobs">See Open Jobs</a>
       </PageHero>
 
@@ -66,29 +64,12 @@ export default async function FindOpportunities({ searchParams }: { searchParams
             <p className="soft" style={{ marginTop: 18, fontSize: 15 }}>You choose whether your profile appears in our Talent Marketplace. Businesses never see your phone, email or resume without your permission.</p>
           </div>
           <div className="panel" id="join">
-            <h2>Candidate Registration</h2>
-            <p className="form-help">Submit your quick profile below to join our talent pool, or <a href="/register/job-seeker">create a full job seeker account</a> to set a password, upload your resume, and track your applications.</p>
-            <Form kind="candidate" submitLabel="Join Our Talent Network" thanksText="Welcome to the RemoteCore talent network. We will email you about suitable opportunities.">
-              <div className="two">
-                <Field label="Full name" name="full_name" required autoComplete="name" />
-                <Field label="Email" name="email" type="email" required autoComplete="email" />
-              </div>
-              <div className="two">
-                <Field label="Phone, with country code" name="phone" type="tel" optional autoComplete="tel" placeholder="e.g. +1 876 555 0199" />
-                <Field label="Country" name="country" required autoComplete="country-name" />
-              </div>
-              <div className="two">
-                <Field label="Time zone" name="time_zone" optional />
-                <Select label="Target job category" name="category" options={talentCategories.filter((c) => c !== "Custom Role").concat("Other")} required />
-              </div>
-              <div className="two">
-                <Field label="Years of experience" name="years" type="number" optional />
-                <Field label="Preferred work hours" name="hours" optional />
-              </div>
-              <Field label="Skills and software" name="skills" optional />
-              <Field label="LinkedIn" name="linkedin" type="url" optional />
-              <Consent>I agree to receive recruitment related messages from RemoteCore and accept the <a href="/privacy">Privacy Policy</a>.</Consent>
-            </Form>
+            <h2>Create Your Free Account</h2>
+            <p className="form-help">One sign up for everything. Create your account, confirm your email, then add your resume, experience and a short voice introduction. You can apply for jobs and follow every application from your dashboard.</p>
+            <div className="btns" style={{ marginTop: 22 }}>
+              <a className="btn btn--main" href="/register/job-seeker">Join Our Talent Network</a>
+            </div>
+            <small className="soft" style={{ display: "block", marginTop: 14 }}>Already have an account? <a href="/login?as=applicant">Log in</a></small>
           </div>
         </div>
       </section>

@@ -18,14 +18,17 @@ export default async function Services() {
   return (
     <>
       <PageHero page="services">
-        <a className="btn btn--main" href="/hire-talent#request">Request Talent</a>
-        <a className="btn btn--line" href="/book-consultation">Book a Consultation</a>
+        <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
+        <a className="btn btn--line" href="/hire-talent#request">Request Talent</a>
       </PageHero>
 
       <section className="sec">
         <div className="wrap">
-          <div className="head" data-sc-in><h2>Core Staffing &amp; Outsourcing Solutions</h2></div>
-          <div className="cards" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 420px), 1fr))" }} data-sc-in data-sc-stagger="70">
+          <div className="head" data-sc-in>
+            <h2>Remote support for healthcare offices, customer service teams and busy owners</h2>
+            <p className="lede">We specialize in three areas, and recruit for many more.</p>
+          </div>
+          <div className="cards cards--core" data-sc-in data-sc-stagger="70">
             {main.map((s) => {
               const cta = CTA[s.icon] ?? CTA.default;
               return (
@@ -36,6 +39,7 @@ export default async function Services() {
                   <ul>{s.items.map((i) => <li key={i}>{i}</li>)}</ul>
                   {s.note && <p className="note">{s.note}</p>}
                   <a className="svc-main__link" href={cta.href}>{cta.label} <span aria-hidden="true">→</span></a>
+                  {s.icon === "health" && <Privacy />}
                 </article>
               );
             })}
@@ -43,9 +47,9 @@ export default async function Services() {
         </div>
       </section>
 
-      <section className="sec sec--pale">
+      <section className="sec sec--pale" id="more">
         <div className="wrap">
-          <div className="head" data-sc-in><h2>Additional Specialized Roles</h2></div>
+          <div className="head" data-sc-in><h2>We also recruit for</h2></div>
           <div className="cards" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 210px), 1fr))" }} data-sc-in data-sc-stagger="70">
             {more.map((m) => (
               <article key={m.name} className="card"><Icon name={m.icon} /><h3>{m.name}</h3><p>{m.text}</p></article>
@@ -61,9 +65,25 @@ export default async function Services() {
       </section>
 
       <Close trust title="Your Business Is Unique. Your Hiring Should Be Too." text="Tell us the skills, experience, schedule, and responsibilities you need. We will work to identify suitable candidates.">
-        <a className="btn btn--main" href="/hire-talent#request">Request Talent</a>
-        <a className="btn btn--line" href="/book-consultation">Book a Consultation</a>
+        <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
+        <a className="btn btn--line" href="/hire-talent#request">Request Talent</a>
       </Close>
     </>
+  );
+}
+
+// Shown directly under Healthcare Administrative Support (Kemar's doc 2026-11-26, part 5.2).
+// The HIPAA training line waits until the owners confirm it is true.
+function Privacy() {
+  return (
+    <div className="privacy">
+      <h4>Built for healthcare privacy</h4>
+      <ul>
+        <li>Every healthcare professional signs a confidentiality agreement before placement.</li>
+        <li>Your hire works only inside your systems and accounts. Patient data never sits on our servers.</li>
+        <li>Access stays fully under your control and can be removed at any time.</li>
+      </ul>
+      <p>We place non-clinical administrative staff only.</p>
+    </div>
   );
 }

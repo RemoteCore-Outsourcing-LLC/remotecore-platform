@@ -486,6 +486,8 @@ a.jrows__apps:hover b { color: var(--teal); }
 .ntable th:first-child { text-align: left; }
 .ntable thead th { border-top: 0; color: var(--ink-soft); font-weight: 600; font-size: 13px; }
 .ntable tbody th { font-weight: 600; }
+.ntable--left th, .ntable--left td { text-align: left; }
+.ntable--left td:first-child { white-space: normal; }
 @media (max-width: 600px) { .srow { grid-template-columns: 1fr; } .tscroll { padding: 0 16px 16px; } }
 .inbox .aact__row .field:first-child { flex: 0 0 170px; }
 @media (max-width: 600px) { .inbox .aact__row .field:first-child { flex: 1 1 100%; } }
@@ -555,3 +557,7 @@ a.jrows__apps:hover b { color: var(--teal); }
   .pbar, .crumb, .contract button { display: none !important; }
   .contract__text { max-height: none; overflow: visible; border: 0; background: none; padding: 0; }
 }
+
+/* Admin > Interviews: buttons on a consultation call row */
+.callbtns { display: flex; gap: 8px; flex-wrap: wrap; }
+.callbtns form { margin: 0; }

@@ -14,6 +14,8 @@ type Props = {
 export function Form({ kind, submitLabel, thanksTitle = "Thank you.", thanksText, children, note }: Props) {
   const [state, setState] = useState<"idle" | "sending" | "done">("idle");
   const [error, setError] = useState("");
+  // The server can send its own thank you text (for example the booked call time).
+  const [thanks, setThanks] = useState<{ title?: string; text?: string }>({});
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,7 +26,12 @@ export function Form({ kind, submitLabel, thanksTitle = "Thank you.", thanksText
     try {
       const res = await fetch(`/api/forms/${kind}`, { method: "POST", body: new FormData(form) });
       const out = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(out.error || "Something went wrong. Please try again.");
+      if (!res.ok) {
+        // A picked time was taken a moment ago: reload the open times.
+        if (out.taken) window.dispatchEvent(new Event("slots:refresh"));
+        throw new Error(out.error || "Something went wrong. Please try again.");
+      }
+      setThanks({ title: out.thanksTitle, text: out.thanks });
       setState("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
@@ -38,8 +45,8 @@ export function Form({ kind, submitLabel, thanksTitle = "Thank you.", thanksText
         <span className="ok" aria-hidden="true">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
         </span>
-        <h3>{thanksTitle}</h3>
-        <p>{thanksText}</p>
+        <h3>{thanks.title ?? thanksTitle}</h3>
+        <p>{thanks.text ?? thanksText}</p>
       </div>
     );
   }

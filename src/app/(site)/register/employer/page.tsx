@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Create a company account", robots: {
 
 export default function EmployerSignup() {
   return (
-    <AuthShell title="Hire Remote Talent With RemoteCore" lede="Create a company account to post jobs, send staffing requests and review candidates. Our team checks every new company before the account opens.">
+    <AuthShell title="Hire Remote Talent With RemoteCore" lede="Create a company account to post jobs, send staffing requests and review candidates. Our team checks every new company before the account opens. This usually takes 1 business day.">
       <EmployerSignupForm />
     </AuthShell>
   );

@@ -66,7 +66,7 @@ export default async function AdminCandidates({ searchParams }: { searchParams: 
 
   return (
     <div className="pwrap">
-      <PageHead title="Candidates" sub="Every job seeker with their skills, experience, pay and files. Filter the pool to find people for a role." />
+      <PageHead title="Candidates" sub="Every job seeker with their skills, experience, pay and files. Filter the pool to find people for a role." aside={<a className="btn btn--ghost btn--sm" href="/portal/admin/unfinished">Unfinished sign ups</a>} />
       {wants > 0 && sp.listing !== "pending" && <p className="notice" role="status">{wants} {wants === 1 ? "candidate wants" : "candidates want"} to be listed on the Talent Marketplace. <a href="/portal/admin/candidates?listing=pending">Review them</a>.</p>}
       <form className="afilter" action="/portal/admin/candidates" role="search">
         <label className="field afilter__q"><span>Search</span><input name="q" defaultValue={sp.q} placeholder="Name, email, skill, tag or card number (RC-...)" /></label>

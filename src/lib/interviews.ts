@@ -36,8 +36,14 @@ function zoned(tz: string, y: number, m: number, d: number, hh: number, mm: numb
 export async function freeSlots(s?: InterviewSettings): Promise<string[]> {
   const set = s ?? (await getInterviewSettings());
   if (!set.active) return [];
-  const { data: taken } = await supabaseAdmin().from("interviews").select("starts_at").eq("status", "booked").gte("starts_at", new Date().toISOString());
-  const busy = new Set((taken ?? []).map((r) => new Date(r.starts_at as string).toISOString()));
+  // Interviews and consultation calls share the same open hours, so a time taken by either one is gone.
+  const now = new Date().toISOString();
+  const db = supabaseAdmin();
+  const [{ data: taken }, { data: calls }] = await Promise.all([
+    db.from("interviews").select("starts_at").eq("status", "booked").gte("starts_at", now),
+    db.from("consultation_bookings").select("starts_at").eq("status", "booked").gte("starts_at", now),
+  ]);
+  const busy = new Set([...(taken ?? []), ...(calls ?? [])].map((r) => new Date(r.starts_at as string).toISOString()));
   const earliest = Date.now() + set.notice_hours * 3600_000;
   const [sh, sm] = set.start_time.split(":").map(Number);
   const [eh, em] = set.end_time.split(":").map(Number);
@@ -70,14 +76,14 @@ export const whenText = (iso: string, tz: string) =>
   new Date(iso).toLocaleString("en-US", { timeZone: tz, weekday: "long", month: "long", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" });
 
 // A calendar file (.ics) so the interview lands in any calendar app.
-export function icsFile(a: { id: string; start: string; end: string; title: string; link: string | null; description: string }) {
+export function icsFile(a: { id: string; start: string; end: string; title: string; link: string | null; description: string; alarm?: string }) {
   const f = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
   const clean = (t: string) => t.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
   const lines = [
     "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//RemoteCore Outsourcing//Interviews//EN", "METHOD:PUBLISH", "BEGIN:VEVENT",
     `UID:${a.id}@remotecoreoutsourcing.com`, `DTSTAMP:${f(new Date().toISOString())}`, `DTSTART:${f(a.start)}`, `DTEND:${f(a.end)}`,
     `SUMMARY:${clean(a.title)}`, `DESCRIPTION:${clean(a.description)}`, ...(a.link ? [`LOCATION:${clean(a.link)}`, `URL:${a.link}`] : []),
-    "BEGIN:VALARM", "TRIGGER:-PT30M", "ACTION:DISPLAY", "DESCRIPTION:Interview in 30 minutes", "END:VALARM",
+    "BEGIN:VALARM", "TRIGGER:-PT30M", "ACTION:DISPLAY", `DESCRIPTION:${clean(a.alarm ?? "Interview in 30 minutes")}`, "END:VALARM",
     "END:VEVENT", "END:VCALENDAR",
   ];
   return Buffer.from(lines.join("\r\n")).toString("base64");

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Close, PageHero, Steps } from "@/components/site/Blocks";
+import { Close, PageHero, Pricing, Steps } from "@/components/site/Blocks";
 import { Consent, Field, Form, Select } from "@/components/site/Form";
 import { talentCategories } from "@/lib/site";
 
@@ -9,7 +9,7 @@ export default function HireTalent() {
   return (
     <>
       <PageHero page="hire-talent">
-        <a className="btn btn--main" href="#request">Request Talent</a>
+        <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
         <a className="btn btn--line" href="/talent-marketplace">Browse Talent Marketplace</a>
       </PageHero>
 
@@ -31,13 +31,15 @@ export default function HireTalent() {
             <h2>A Clear, Straightforward Hiring Model.</h2>
             <p className="lede">Your business hires and pays its selected professional directly, starting at $5/hr, with no ongoing markup. RemoteCore charges a one-time flat placement fee, due only when you hire, with $0 upfront deposit. Every placement comes with our 60-day free replacement guarantee. Your custom quote is provided during your free consultation.</p>
             <div className="btns" style={{ marginTop: 28 }}>
+              <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>
               <a className="btn btn--ghost" href="/talent-marketplace">Browse Talent Marketplace</a>
-              <a className="btn btn--ghost" href="#request">Request Custom Recruitment</a>
             </div>
           </div>
-          <div className="panel" id="request">
-            <h2>Request Talent</h2>
-            <p>Tell us who you need. Our team reviews every request. Want to post jobs and follow candidates yourself? <a href="/register/employer">Create a company account</a>.</p>
+          <div id="request">
+            <p className="secondary-cta">Already know exactly what you need? Send us a staffing request.</p>
+            <div className="panel">
+            <h2>Staffing Request</h2>
+            <p>Tell us who you need. Our team reviews every request and follows up by email.</p>
             <Form kind="staffing-request" submitLabel="Submit Staffing Request" thanksText="Thank you for contacting RemoteCore. Our team will review your request and follow up.">
               <div className="two">
                 <Field label="Full name" name="full_name" required autoComplete="name" />
@@ -64,9 +66,12 @@ export default function HireTalent() {
               <Field label="Additional details" name="details" type="textarea" optional rows={3} />
               <Consent>I agree that RemoteCore may use these details to respond to my request, as described in the <a href="/privacy">Privacy Policy</a>. I understand that hiring through RemoteCore includes an agreed placement fee, with final terms provided before engagement.</Consent>
             </Form>
+            </div>
           </div>
         </div>
       </section>
+
+      <Pricing />
 
       <Close trust title="Prefer to Discuss Your Hiring Needs First?" text="Book a short consultation and talk through the role with our team before you send a request.">
         <a className="btn btn--main" href="/book-consultation">Book a Consultation</a>

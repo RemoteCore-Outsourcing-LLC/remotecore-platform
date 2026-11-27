@@ -20,6 +20,46 @@ export async function PageHero({ page, children, badge, aside }: { page: string;
   );
 }
 
+// Where our talent comes from, said the same way everywhere (Kemar's doc 2026-11-26, part 3.3).
+export const REGIONS_TEXT = "the Caribbean, Latin America, the Philippines and Africa, matched to each client’s needs";
+
+// The line above the example profile cards on the homepage and the Talent Marketplace (part 3.2).
+export const EXAMPLE_LINE = "These examples show the kind of shortlist you’ll receive. Tell us your role and we’ll send real, pre-screened candidates within 3 business days.";
+
+// One flat placement fee, shown on the homepage and on Hire Talent (part 2.2).
+// The owners have not set a top hourly rate yet, so the rate row reads "From $5/hr".
+export function Pricing() {
+  const rows: [string, string, string][] = [
+    ["Typical hourly rate (paid to your hire)", "From $5/hr", "From $5/hr"],
+    ["One-time placement fee", "Starting at $1,000", "Starting at $1,000"],
+    ["Replacement guarantee", "60 days", "60 days"],
+  ];
+  return (
+    <section className="sec pricing" id="pricing" aria-labelledby="pricing-h">
+      <div className="wrap">
+        <div className="head" data-sc-in>
+          <h2 id="pricing-h">Simple, one-time pricing</h2>
+          <p className="lede">You pay one flat placement fee, only after you choose your hire. After that, you pay your professional directly, with no monthly markups and no agency cut from their wages.</p>
+        </div>
+        <div className="pricing__box" data-sc-in>
+          <table className="pricing__table">
+            <thead><tr><td /><th scope="col">Part-time</th><th scope="col">Full-time</th></tr></thead>
+            <tbody>
+              {rows.map(([label, part, full]) => (
+                <tr key={label}><th scope="row">{label}</th><td data-label="Part-time">{part}</td><td data-label="Full-time">{full}</td></tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="pricing__foot">
+            <p>Specialized roles (developers, bookkeepers, estimators) are quoted per role.</p>
+            <a className="btn btn--main" href="/book-consultation">Get my custom quote</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // The three promises shown next to the main call to action on Our Services and Hire Talent.
 export const TRUST = ["Starting at $5/hr (Paid directly to your hire)", "$0 Upfront Deposit (Pay only when you hire)", "60-Day Free Replacement Guarantee"];
 
